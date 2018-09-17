@@ -31,5 +31,6 @@ to_xml <- function(path, encoding = "UTF-8"){
 clean_content <- function(content){
   content %>%
     stringr::str_replace_all("“", '"') %>%
-    stringr::str_replace_all("”", '"')
+    stringr::str_replace_all("”", '"') %>%
+    stringr::str_replace_all("’", "'")
 }
