@@ -1,0 +1,17 @@
+Package: tinkr
+Title: Casts (R)Markdown files to XML and back
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Maëlle",
+             family = "Salmon",
+             role = c("aut", "cre"),
+             email = "maelle.salmon@yahoo.se"),
+      person(given = "Nick",
+             family = "Wellnhofer",
+             role = "cph",
+             comment = "Nick Wellnhofer wrote the XSLT stylesheet."))
+Description: Casts (R)Markdown files to XML and back to allow their editing via XPat.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
