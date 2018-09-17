@@ -44,10 +44,14 @@ homogeneize <- function(post_xml){
   post_xml
 }
 correct_post <- function(post_path){
+  message(post_path)
   yaml_xml_list <- tinkr::to_xml(post_path)
   yaml_xml_list$body <- homogeneize(yaml_xml_list$body)
   tinkr::to_md(yaml_xml_list, path = post_path)
 }
+
+correct_post(all_posts[grepl("2013-11-21-rgbif-changes",
+                             all_posts)])
 
 purrr::walk(all_posts, correct_post)
 
