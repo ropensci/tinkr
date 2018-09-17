@@ -1,6 +1,8 @@
 # tinkr
 
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip) [![Travis build status](https://travis-ci.org/ropenscilabs/tinkr.svg?branch=master)](https://travis-ci.org/ropenscilabs/tinkr) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/maelle/tinkr?branch=master&svg=true)](https://ci.appveyor.com/project/maelle/tinkr) [![Coverage status](https://codecov.io/gh/ropenscilabs/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropenscilabs/tinkr?branch=master)
+
+
 
 The goal of tinkr is to convert (R)Markdown files to XML and back to allow their editing with `xml2` (XPat!) instead of numerous complicated regular expressions. Possible applications are R scripts using this and XPat in `xml2` to:
 
