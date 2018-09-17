@@ -9,7 +9,10 @@ Authors@R:
       person(given = "Nick",
              family = "Wellnhofer",
              role = "cph",
-             comment = "Nick Wellnhofer wrote the XSLT stylesheet."))
+             comment = "Nick Wellnhofer wrote the XSLT stylesheet."),
+      person(given = "rOpenSci",
+             role = "fnd",
+             comment = "https://ropensci.org/"))
 Description: Casts (R)Markdown files to XML and back to allow their editing via XPat.
 License: GPL-3
 Encoding: UTF-8
@@ -23,4 +26,7 @@ Imports:
     glue,
     fs
 Suggests: 
-    testthat
+    testthat,
+    covr
+URL: https://github.com/ropenscilabs/tinkr
+BugReports: https://github.com/ropenscilabs/tinkr/issues
