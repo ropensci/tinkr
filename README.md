@@ -4,13 +4,23 @@
 
 The goal of tinkr is to cast (R)Markdown files to XML and back to allow their editing via XPat. Possible applications are R scripts using this and XPath in `xml2` to:
 
-* change levels of headers
+* change levels of headers, cf [this script](inst/scripts/roweb2_headers.R) and [this pull request to roweb2](https://github.com/ropensci/roweb2/pull/279)
 
-* change chunk labels and options
+* change chunk labels and options, still [a project](https://github.com/ropenscilabs/tinkr/issues/1)
 
 * etc.
 
-Only the body is cast to XML, using the Commonmark specification via the `commonmark` package. YAML headers could be edited using the `yaml` package, which is not the goal of this package.
+Only the body is cast to XML, using the Commonmark specification via the `commonmark` package. YAML metadata could be edited using the `yaml` package, which is not the goal of this package.
+
+The current workflow I have in mind is
+
+1. use `to_xml`
+
+2. edit the XML using `xml2`
+
+3. use `to_md`
+
+Maybe there could be shortcuts functions for some operations in 2, maybe not.
 
 ## Installation
 
@@ -25,9 +35,10 @@ remotes::install_github("maelle/tinkr")
 This is a basic example. We read "example1.md", change all headers 3 to headers 1, and save it back to md.
 
 ``` r
+# From Markdown to XML
 path <- system.file("extdata", "example1.md", package = "tinkr")
 yaml_xml_list <- to_xml(path)
-names(yaml_xml_list)
+
 library("magrittr")
 # transform level 3 headers into level 1 headers
 body <- yaml_xml_list$body
@@ -40,6 +51,7 @@ xml2::xml_set_attr(headers3, "level", 1)
 
 yaml_xml_list$body <- body
 
+# Back to Markdown
 to_md(yaml_xml_list, "newmd.md")
 file.edit("newmd.md")
 ```
