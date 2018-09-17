@@ -24,7 +24,8 @@ Imports:
     xslt,
     xml2,
     glue,
-    fs
+    fs,
+    yaml
 Suggests: 
     testthat,
     covr
