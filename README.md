@@ -2,7 +2,7 @@
 
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
-The goal of tinkr is to cast (R)Markdown files to XML and back to allow their editing via XPat. Possible applications are R scripts using this and XPath in `xml2` to:
+The goal of tinkr is to convert (R)Markdown files to XML and back to allow their editing with `xml2` (XPat!) instead of numerous complicated regular expressions. Possible applications are R scripts using this and XPat in `xml2` to:
 
 * change levels of headers, cf [this script](inst/scripts/roweb2_headers.R) and [this pull request to roweb2](https://github.com/ropensci/roweb2/pull/279)
 
@@ -27,7 +27,7 @@ Maybe there could be shortcuts functions for some operations in 2, maybe not.
 Not recommended at the moment.
 
 ``` r
-remotes::install_github("maelle/tinkr")
+remotes::install_github("ropenscilabs/tinkr")
 ```
 
 ## Example
