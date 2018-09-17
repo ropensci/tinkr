@@ -18,7 +18,9 @@ to_xml <- function(path, encoding = "UTF-8"){
 
   yaml <- splitted_content$yaml
 
-  body <- splitted_content$body
+  splitted_content$body %>%
+    commonmark::markdown_xml(extensions = FALSE) %>%
+    xml2::read_xml() -> body
 
   list(yaml = yaml,
        body = body)
