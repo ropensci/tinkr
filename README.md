@@ -46,5 +46,4 @@ file.edit("newmd.md")
 
 * At the moment the XLST stylesheet used to cast XML back to Markdown doesn't support extensions (striked through text, tables) so when converting the Markdown files to XML the package uses `extensions=FALSE`.
 
-* We strip the namespace from the XML to make editing it less cumbersome.
 
