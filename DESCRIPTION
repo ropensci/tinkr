@@ -20,4 +20,5 @@ Imports:
     commonmark,
     xslt,
     xml2,
-    glue
+    glue,
+    fs
