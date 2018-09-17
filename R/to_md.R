@@ -26,14 +26,19 @@ to_md <- function(yaml_xml_list, path){
   system.file("extdata", "xml2md.xsl", package = "tinkr") %>%
     xml2::read_xml() -> stylesheet
 
+  temp <- fs::file_temp(ext = ".xml")
+  on.exit(file.remove(temp))
+
 yaml_xml_list$body %>%
+  xml2::write_xml(file = temp)
+
+xml2::read_xml(temp) %>%
     xslt::xml_xslt(stylesheet = stylesheet) -> body
 
 yaml_xml_list$yaml %>%
   glue::glue_collapse(sep = "\n") -> yaml
 
-glue::glue("{{{{yaml}}}}\n\n{{{{body}}}}",
-               .open = "{{{{",
-               .close = "}}}}") %>%
-    writeLines(path, useBytes = TRUE)
+writeLines(c(yaml, body), con = path,
+           useBytes = TRUE,
+           sep =  "\n\n")
 }
