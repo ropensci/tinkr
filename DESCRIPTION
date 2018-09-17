@@ -26,7 +26,8 @@ Imports:
     glue,
     fs,
     yaml,
-    stringr
+    stringr,
+    knitr
 Suggests: 
     testthat,
     covr
