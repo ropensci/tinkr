@@ -13,6 +13,7 @@
 #' names(post_list)
 to_xml <- function(path, encoding = "UTF-8"){
   content <- readLines(path, encoding = encoding)
+  content <- clean_content(content)
 
   splitted_content <- blogdown:::split_yaml_body(content)
 
@@ -27,3 +28,8 @@ to_xml <- function(path, encoding = "UTF-8"){
 }
 
 
+clean_content <- function(content){
+  content %>%
+    stringr::str_replace_all("“", '"') %>%
+    stringr::str_replace_all("”", '"')
+}

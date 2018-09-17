@@ -32,7 +32,7 @@ yaml_xml_list$body %>%
 yaml_xml_list$yaml %>%
   glue::glue_collapse(sep = "\n") -> yaml
 
-glue::glue("{{{{yaml}}}}\n{{{{body}}}}",
+glue::glue("{{{{yaml}}}}\n\n{{{{body}}}}",
                .open = "{{{{",
                .close = "}}}}") %>%
     writeLines(path, useBytes = TRUE)
