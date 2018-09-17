@@ -48,5 +48,6 @@ correct_post <- function(post_path){
   yaml_xml_list$body <- homogeneize(yaml_xml_list$body)
   tinkr::to_md(yaml_xml_list, path = post_path)
 }
-correct_post(all_posts[1])
+
+purrr::walk(all_posts, correct_post)
 
