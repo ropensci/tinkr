@@ -14,7 +14,7 @@
 to_xml <- function(path, encoding = "UTF-8"){
   content <- readLines(path, encoding = encoding)
 
-  splitted_content <- blogdown:::split_yaml_body(content)
+  splitted_content <- split_yaml_body(content)
 
   yaml <- splitted_content$yaml
 

@@ -14,3 +14,19 @@ split_yaml_body = function(x) {
   }
   res
 }
+
+# https://github.com/rstudio/blogdown/blob/9c7f7db5f11a481e1606031e88142b4a96139cce/R/utils.R#L407
+# anotate seq type values because both single value and list values are
+# converted to vector by default
+yaml_load = function(x) yaml::yaml.load(
+  x, handlers = list(
+    seq = function(x) {
+      # continue coerce into vector because many places of code already assume this
+      if (length(x) > 0) {
+        x = unlist(x, recursive = FALSE)
+        attr(x, 'yml_type') = 'seq'
+      }
+      x
+    }
+  )
+)
