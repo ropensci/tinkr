@@ -1,4 +1,6 @@
-#' Transform file to XML
+#' @importFrom magrittr %>%
+#'
+#' @title Transform file to XML
 #'
 #' @param path Path to the file.
 #' @param encoding Encoding to be used by readLines.

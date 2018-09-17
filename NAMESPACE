@@ -2,3 +2,4 @@
 
 export(to_md)
 export(to_xml)
+importFrom(magrittr,"%>%")
