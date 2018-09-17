@@ -13,15 +13,15 @@
 #' names(post_list)
 to_xml <- function(path, encoding = "UTF-8"){
   content <- readLines(path, encoding = encoding)
-  content <- clean_content(content)
 
   splitted_content <- blogdown:::split_yaml_body(content)
 
   yaml <- splitted_content$yaml
 
   splitted_content$body %>%
+    clean_content() %>%
     commonmark::markdown_xml(extensions = FALSE) %>%
-    xml2::read_xml() -> body
+    xml2::read_xml(encoding = encoding) -> body
 
   list(yaml = yaml,
        body = body)
