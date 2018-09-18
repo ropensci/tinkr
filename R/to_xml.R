@@ -13,6 +13,9 @@
 #' path <- system.file("extdata", "example1.md", package = "tinkr")
 #' post_list <- to_xml(path)
 #' names(post_list)
+#' path2 <- system.file("extdata", "example2.Rmd", package = "tinkr")
+#' post_list2 <- to_xml(path2)
+#' post_list2
 to_xml <- function(path, encoding = "UTF-8"){
   content <- readLines(path, encoding = encoding)
 
@@ -25,6 +28,17 @@ to_xml <- function(path, encoding = "UTF-8"){
     commonmark::markdown_xml(extensions = FALSE) %>%
     xml2::read_xml(encoding = encoding) -> body
 
+  if(stringr::str_detect(fs::path_ext(path), "[Rr]")){
+
+    code_blocks <- body %>%
+      xml2::xml_find_all(xpath = './/d1:code_block',
+                         xml2::xml_ns(.))
+
+    purrr::walk(code_blocks,
+                transform_block)
+
+  }
+
   list(yaml = yaml,
        body = body)
 }
@@ -35,4 +49,16 @@ clean_content <- function(content){
     stringr::str_replace_all("\u201C", '"') %>%
     stringr::str_replace_all("\u201D", '"') %>%
     stringr::str_replace_all("\u2019", "'")
+}
+
+
+transform_block <- function(code_block){
+  info <- xml2::xml_attr(code_block, "info")
+  info <- stringr::str_remove(info, "\\{")
+  info <- stringr::str_remove(info, "\\}")
+  info <- transform_params(info)
+
+  xml2::xml_set_attr(code_block, "info", NULL)
+  xml2::xml_set_attrs(code_block, unlist(info))
+  code_block
 }

@@ -30,3 +30,50 @@ yaml_load = function(x) yaml::yaml.load(
     }
   )
 )
+
+# from knitr via namer
+# https://github.com/lockedata/namer/blob/2d88c5cb200724f775631946fc8e08903ff110de/R/utils.R#L3
+transform_params <- function(params){
+  params_string <- try(eval(parse(text = paste('alist(', quote_label(params), ')'))),
+                       silent = TRUE)
+
+  if(inherits(params_string, "try-error")){
+    params <- stringr::str_replace(params, " ", ", ")
+    params_string <- eval(parse(text = paste('alist(', quote_label(params), ')')))
+  }
+
+  label <- parse_label(params_string[[1]])
+
+  c(label, params_string[-1])
+}
+
+
+parse_label <- function(label){
+  label %>%
+    stringr::str_replace(" ", "\\/") %>%
+    stringr::str_split("\\/",
+                       simplify = TRUE) -> language_name
+
+  if(ncol(language_name) == 1){
+    list(language = trimws(language_name[1, 1]),
+         name = "")
+  }else{
+    list(language = trimws(language_name[1, 1]),
+         name = trimws(language_name[1, 2]))
+  }
+}
+
+# from knitr
+# https://github.com/yihui/knitr/blob/2b3e617a700f6d236e22873cfff6cbc3568df568/R/parser.R#L148
+# quote the chunk label if necessary
+quote_label = function(x) {
+  x = gsub('^\\s*,?', '', x)
+  if (grepl('^\\s*[^\'"](,|\\s*$)', x)) {
+    # <<a,b=1>>= ---> <<'a',b=1>>=
+    x = gsub('^\\s*([^\'"])(,|\\s*$)', "'\\1'\\2", x)
+  } else if (grepl('^\\s*[^\'"](,|[^=]*(,|\\s*$))', x)) {
+    # <<abc,b=1>>= ---> <<'abc',b=1>>=
+    x = gsub('^\\s*([^\'"][^=]*)(,|\\s*$)', "'\\1'\\2", x)
+  }
+  x
+}

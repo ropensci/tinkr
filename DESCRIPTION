@@ -27,7 +27,8 @@ Imports:
     fs,
     yaml,
     stringr,
-    knitr
+    knitr,
+    purrr
 Suggests: 
     testthat,
     covr

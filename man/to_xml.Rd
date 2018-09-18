@@ -22,4 +22,7 @@ Transform file to XML
 path <- system.file("extdata", "example1.md", package = "tinkr")
 post_list <- to_xml(path)
 names(post_list)
+path2 <- system.file("extdata", "example2.Rmd", package = "tinkr")
+post_list2 <- to_xml(path2)
+post_list2
 }
