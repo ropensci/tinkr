@@ -35,8 +35,8 @@ test_that("to_md works for Rmd", {
   to_md(yaml_xml_list, "newmd.Rmd")
   expect_true(file.exists("newmd.Rmd"))
   expect_silent(to_xml("newmd.Rmd"))
-  expect_true(stringr::str_detect("julia",
-                                  readLines("newmd.Rmd")))
+  expect_true(stringr::str_detect(readLines("newmd.Rmd"),
+                                  "julia"))
   file.remove("newmd.Rmd")
 })
 
