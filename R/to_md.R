@@ -29,7 +29,11 @@ to_md <- function(yaml_xml_list, path){
   temp <- fs::file_temp(ext = ".xml")
   on.exit(file.remove(temp))
 
-yaml_xml_list$body %>%
+  body <- yaml_xml_list$body
+
+  transform_code_blocks(body)
+
+body  %>%
   xml2::write_xml(file = temp)
 
 xml2::read_xml(temp) %>%
@@ -41,4 +45,37 @@ yaml_xml_list$yaml %>%
 writeLines(c(yaml, body), con = path,
            useBytes = TRUE,
            sep =  "\n\n")
+}
+
+transform_code_blocks <- function(xml){
+  code_blocks <- xml %>%
+    xml2::xml_find_all(xpath = './/d1:code_block',
+                       xml2::xml_ns(.))
+  purrr::walk(code_blocks, to_info)
+}
+
+to_info <- function(code_block){
+ attrs <- xml2::xml_attrs(code_block)
+ options <- attrs[!names(attrs) %in%
+                    c("language", "name")]
+
+ if(length(options) > 0){
+   options <- glue::glue("{names(options)}={options}") %>%
+     glue::glue_collapse(sep = ", ")
+   options <- paste(",", options)
+ }else{
+   options <- ""
+ }
+
+
+ if(attrs["name"] != ""){
+   attrs["name"] <- paste0(" ", attrs["name"])
+ }
+
+ info <- glue::glue('{attrs["language"]}{attrs["name"]}{options}')
+ info <- paste0("{", info)
+ info <- paste0(info, "}")
+ names(info) <- "info"
+
+ xml2::xml_set_attrs(code_block, info)
 }
