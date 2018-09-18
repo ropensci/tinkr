@@ -4,7 +4,7 @@
 
 
 
-The goal of tinkr is to convert (R)Markdown files to XML and back to allow their editing with `xml2` (XPat!) instead of numerous complicated regular expressions. Possible applications are R scripts using this and XPat in `xml2` to:
+The goal of tinkr is to convert (R)Markdown files to XML and back to allow their editing with `xml2` (XPath!) instead of numerous complicated regular expressions. [If new to XPath refer to this great intro](https://www.w3schools.com/xml/xpath_intro.asp). Possible applications are R scripts using this and XPath in `xml2` to:
 
 * change levels of headers, cf [this script](inst/scripts/roweb2_headers.R) and [this pull request to roweb2](https://github.com/ropensci/roweb2/pull/279)
 
