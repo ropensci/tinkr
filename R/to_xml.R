@@ -30,12 +30,7 @@ to_xml <- function(path, encoding = "UTF-8"){
 
   if(stringr::str_detect(fs::path_ext(path), "[Rr]")){
 
-    code_blocks <- body %>%
-      xml2::xml_find_all(xpath = './/d1:code_block',
-                         xml2::xml_ns(.))
-
-    purrr::walk(code_blocks,
-                transform_block)
+    parse_rmd(body)
 
   }
 
@@ -61,4 +56,13 @@ transform_block <- function(code_block){
   xml2::xml_set_attr(code_block, "info", NULL)
   xml2::xml_set_attrs(code_block, unlist(info))
   code_block
+}
+
+parse_rmd <- function(body){
+  code_blocks <- body %>%
+    xml2::xml_find_all(xpath = './/d1:code_block',
+                       xml2::xml_ns(.))
+
+  purrr::walk(code_blocks,
+              transform_block)
 }
