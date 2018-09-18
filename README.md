@@ -8,25 +8,25 @@ The goal of tinkr is to convert (R)Markdown files to XML and back to allow their
 
 * change levels of headers, cf [this script](inst/scripts/roweb2_headers.R) and [this pull request to roweb2](https://github.com/ropensci/roweb2/pull/279)
 
-* change chunk labels and options, still [a project](https://github.com/ropenscilabs/tinkr/issues/1)
+* change chunk labels and options
 
-* etc.
+* your idea, feel free to suggest use cases!
 
-Only the body is cast to XML, using the Commonmark specification via the `commonmark` package. YAML metadata could be edited using the `yaml` package, which is not the goal of this package.
+Only the body of the (R) Markdown file is cast to XML, using the Commonmark specification via the `commonmark` package. YAML metadata could be edited using the `yaml` package, which is not the goal of this package.
 
 The current workflow I have in mind is
 
-1. use `to_xml`
+1. use `to_xml` to obtain XML from (R) Markdown (_based on `commonmark::markdown_xml` and `blogdown:::split_yaml_body`_).
 
-2. edit the XML using `xml2`
+2. edit the XML using `xml2`.
 
-3. use `to_md`
+3. use `to_md` to save back the resulting (R) Markdown (_this uses a XSLT stylesheet, and the `xslt` package_).
 
 Maybe there could be shortcuts functions for some operations in 2, maybe not.
 
 ## Installation
 
-Not recommended at the moment.
+Wanna try the package and tell me what doesn't work? 
 
 ``` r
 remotes::install_github("ropenscilabs/tinkr")
@@ -58,7 +58,7 @@ to_md(yaml_xml_list, "newmd.md")
 file.edit("newmd.md")
 ```
 
-For R Markdown files, to ease editing of chunk options, `to_xml` munges the chunk info into different attributes. E.g. below you see that `code_blocks` can have a `language`, `name`, `echo` attributes.
+For R Markdown files, to ease editing of chunk label and options, `to_xml` munges the chunk info into different attributes. E.g. below you see that `code_blocks` can have a `language`, `name`, `echo` attributes.
 
 ``` r
 path <- system.file("extdata", "example2.Rmd", package = "tinkr")
@@ -81,6 +81,8 @@ yaml_xml_list$body
 
 ## Details/notes
 
-* At the moment the XLST stylesheet used to cast XML back to Markdown doesn't support extensions (striked through text, tables) so when converting the Markdown files to XML the package uses `extensions=FALSE`.
+* The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy because of Markdown syntax redundancy. For instance lists can be created with either "+", "-" or "*". When using `tinkr`, the (R)md after editing will only use "-" for lists. Such losses make your (R)md different, and the git diff a bit harder to parse, but should _not_ change the documents your (R)md is rendered to. If it does, report a bug in the issue tracker!
+
+* At the moment the XLST stylesheet used to cast XML back to Markdown doesn't support extensions (striked through text, tables) so when converting the Markdown files to XML the package uses `extensions=FALSE`. This means tables in the XML are text, not easy to edit.
 
 
