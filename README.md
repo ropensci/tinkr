@@ -32,7 +32,7 @@ Not recommended at the moment.
 remotes::install_github("ropenscilabs/tinkr")
 ```
 
-## Example
+## Examples
 
 This is a basic example. We read "example1.md", change all headers 3 to headers 1, and save it back to md.
 
@@ -57,6 +57,27 @@ yaml_xml_list$body <- body
 to_md(yaml_xml_list, "newmd.md")
 file.edit("newmd.md")
 ```
+
+For R Markdown files, to ease editing of chunk options, `to_xml` munges the chunk info into different attributes. E.g. below you see that `code_blocks` can have a `language`, `name`, `echo` attributes.
+
+``` r
+path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+yaml_xml_list <- tinkr::to_xml(path)
+yaml_xml_list$body
+#> {xml_document}
+#> <document xmlns="http://commonmark.org/xml/1.0">
+#>  [1] <code_block language="r" name="setup" include="FALSE" eval="TRUE">k ...
+#>  [2] <heading level="2">\n  <text>R Markdown</text>\n</heading>
+#>  [3] <paragraph>\n  <text>This is an R Markdown document. Markdown is a  ...
+#>  [4] <paragraph>\n  <text>When you click the </text>\n  <strong>\n    <t ...
+#>  [5] <code_block language="r" name="" eval="TRUE" echo="TRUE">summary(ca ...
+#>  [6] <heading level="2">\n  <text>Including Plots</text>\n</heading>
+#>  [7] <paragraph>\n  <text>You can also embed plots, for example:</text>\ ...
+#>  [8] <code_block language="python" name="" echo="FALSE" eval="TRUE">plot ...
+#>  [9] <code_block language="python" name="">plot(pressure)\n</code_block>
+#> [10] <paragraph>\n  <text>Note that the </text>\n  <code>echo = FALSE</c ...
+```
+
 
 ## Details/notes
 
