@@ -24,7 +24,6 @@ test_that("to_md works for Rmd", {
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
   yaml_xml_list <- to_xml(path)
   library("magrittr")
-  # transform level 3 headers into level 1 headers
   body <- yaml_xml_list$body
   blocks <- body %>%
     xml2::xml_find_all(xpath = './/d1:code_block',

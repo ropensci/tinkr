@@ -23,7 +23,7 @@ summary(cars)
 
 You can also embed plots, for example:
 
-```{python, echo=FALSE, eval = TRUE}
+```{python, fig.cap = "pretty plot", echo=-c(1, 2), eval = TRUE}
 plot(pressure)
 ```
 

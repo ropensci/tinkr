@@ -44,7 +44,12 @@ transform_params <- function(params){
 
   label <- parse_label(params_string[[1]])
 
-  c(label, params_string[-1])
+  result <- unlist(c(label, params_string[-1]))
+  result[purrr::map_lgl(result, is.character)&
+           !names(result) %in% c("language", "name")] <- glue::glue('"{result[purrr::map_lgl(result, is.character)&
+           !names(result) %in% c("language", "name")]}"')
+
+   result
 }
 
 

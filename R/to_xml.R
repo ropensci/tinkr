@@ -54,7 +54,7 @@ transform_block <- function(code_block){
   info <- transform_params(info)
 
   xml2::xml_set_attr(code_block, "info", NULL)
-  xml2::xml_set_attrs(code_block, unlist(info))
+  xml2::xml_set_attrs(code_block, info)
   code_block
 }
 
