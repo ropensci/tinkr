@@ -51,7 +51,12 @@ transform_code_blocks <- function(xml){
   code_blocks <- xml %>%
     xml2::xml_find_all(xpath = './/d1:code_block',
                        xml2::xml_ns(.))
-  purrr::walk(code_blocks, to_info)
+
+  # transform to info string
+  # if it had been parsed
+  if(xml2::xml_has_attr(code_blocks[[1]], "language")){
+    purrr::walk(code_blocks, to_info)
+  }
 }
 
 to_info <- function(code_block){
