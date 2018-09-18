@@ -20,6 +20,6 @@ test_that("to_xml works for Rmd", {
                        xml2::xml_ns(.)) %>%
     .[xml2::xml_has_attr(., "language")]
 
-  expect_equal(length(blocks), 3)
+  expect_equal(length(blocks), 4)
 
 })
