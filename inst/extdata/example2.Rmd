@@ -33,3 +33,18 @@ plot(pressure)
 
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+| scientific\_name           | common\_name        |    n|
+|:---------------------------|:--------------------|----:|
+| Corvus corone              | Carrion Crow        |  288|
+| Turdus merula              | Eurasian Blackbird  |  285|
+| Anas platyrhynchos         | Mallard             |  273|
+| Fulica atra                | Eurasian Coot       |  268|
+| Parus major                | Great Tit           |  266|
+| Podiceps cristatus         | Great Crested Grebe |  254|
+| Ardea cinerea              | Gray Heron          |  236|
+| Cygnus olor                | Mute Swan           |  234|
+| Cyanistes caeruleus        | Eurasian Blue Tit   |  233|
+| Chroicocephalus ridibundus | Black-headed Gull   |  223|
+
+blabla
