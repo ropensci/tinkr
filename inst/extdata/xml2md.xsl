@@ -324,18 +324,22 @@ Example usage with xsltproc:
 </xsl:template>
 
 <xsl:template match="md:table_header">
-    <xsl:text>|</xsl:text>
+    <xsl:text>| </xsl:text>
     <xsl:apply-templates select="md:*"/>
+    <xsl:text>&#xa; | </xsl:text>
+     <xsl:for-each select="md:table_cell">
+     <xsl:text> --- |</xsl:text>
+     </xsl:for-each>
     <xsl:text>&#xa;</xsl:text>
 </xsl:template>
 
 <xsl:template match="md:table_cell">
     <xsl:apply-templates select="md:*"/>
-    <xsl:text>|</xsl:text>
+    <xsl:text>| </xsl:text>
 </xsl:template>
 
 <xsl:template match="md:table_row">
-    <xsl:text>|</xsl:text>
+    <xsl:text>| </xsl:text>
     <xsl:apply-templates select="md:*"/>
     <xsl:text>&#xa;</xsl:text>
 </xsl:template>
