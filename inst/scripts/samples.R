@@ -1,5 +1,3 @@
 library("magrittr")
-fs::dir_ls("inst/samples") %>%
-  purrr::map(readLines) %>%
-  unlist() %>%
-  writeLines("inst/extdata/bigsample.md")
+tinkr::to_xml("inst/extdata/bigsample.md") %>%
+  tinkr::to_md("inst/extdata/bigsample_after_loop.md")
