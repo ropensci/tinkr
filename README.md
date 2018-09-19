@@ -83,6 +83,6 @@ yaml_xml_list$body
 
 * The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy because of Markdown syntax redundancy. For instance 
     * lists can be created with either "+", "-" or "*". When using `tinkr`, the (R)md after editing will only use "-" for lists. 
-    * Tables are not pretty anymore (only three dashes for each cell cf [spec](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables)). Alignment of columns is lost.
+    * Tables are not pretty anymore (only three dashes for each cell cf [spec](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables)). Alignment of columns is lost, but this will be fixed soon.
     
   Such losses make your (R)md different, and the git diff a bit harder to parse, but should _not_ change the documents your (R)md is rendered to, apart from the tables alignment. If it does, report a bug in the issue tracker!
