@@ -345,4 +345,12 @@ Example usage with xsltproc:
 </xsl:template>
 
 
+<!-- Striked-through -->
+
+<xsl:template match="md:strikethrough">
+    <xsl:text>~~</xsl:text>
+    <xsl:apply-templates select="md:*"/>
+    <xsl:text>~~</xsl:text>
+</xsl:template>
+
 </xsl:stylesheet>
