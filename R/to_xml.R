@@ -25,7 +25,7 @@ to_xml <- function(path, encoding = "UTF-8"){
 
   splitted_content$body %>%
     clean_content() %>%
-    commonmark::markdown_xml(extensions = FALSE) %>%
+    commonmark::markdown_xml(extensions = TRUE) %>%
     xml2::read_xml(encoding = encoding) -> body
 
   if(stringr::str_detect(fs::path_ext(path), "[Rr]")){
