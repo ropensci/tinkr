@@ -87,6 +87,12 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy becau
 
  * lists can be created with either "+", "-" or "*". When using `tinkr`, the (R)md after editing will only use "-" for lists. 
  
+ * Links built like `[word][smallref]` and bottom `[smallref]: URL` become `[word](URL)`.
+ 
+ * Characters are escaped (e.g. "[" when not for a link).
+ 
+ * Block quotes lines all get ">" whereas in the input only the first could have a ">" at the beginning of the first line.
+ 
  * For tables see the next subsection.
     
   Such losses make your (R)md different, and the git diff a bit harder to parse, but should _not_ change the documents your (R)md is rendered to, apart from the tables alignment. If it does, report a bug in the issue tracker!
