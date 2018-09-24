@@ -104,3 +104,8 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy becau
 * The alignment of columns will soon not be lost anymore, as soon as a new `commonmark` version is released.
   
 * Tables are not pretty anymore (only three dashes for each cell cf [spec](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables)). If you're an XSL wizard, feel free to help us prettify Markdown tables i.e. make the number of dashes under headers dependent on the longest string in the column, see [this issue](https://github.com/ropenscilabs/tinkr/issues/9).
+
+
+## Meta
+
+Please note that the 'tinkr' project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By contributing to this project, you agree to abide by its terms.
