@@ -95,15 +95,13 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy becau
  
  * For tables see the next subsection.
     
-  Such losses make your (R)md different, and the git diff a bit harder to parse, but should _not_ change the documents your (R)md is rendered to, apart from the tables alignment. If it does, report a bug in the issue tracker!
+  Such losses make your (R)md different, and the git diff a bit harder to parse, but should _not_ change the documents your (R)md is rendered to. If it does, report a bug in the issue tracker!
   
   A solution to not loose your Markdown style, e.g. your preferring "*" over "-" for lists is to tweak [our XSL styleseet](inst/extdata/xml2md.xsl) and provide its filepath as `stylesheet_path` argument to `to_md`.
   
 ### The special case of tables
-
-* The alignment of columns will soon not be lost anymore, as soon as a new `commonmark` version is released.
   
-* Tables are not pretty anymore (only three dashes for each cell cf [spec](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables)). If you're an XSL wizard, feel free to help us prettify Markdown tables i.e. make the number of dashes under headers dependent on the longest string in the column, see [this issue](https://github.com/ropenscilabs/tinkr/issues/9).
+* Tables are not pretty anymore (only three dashes for each cell cf [spec](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables)) after a full loop `to_xml` + `to_md`. If you're an XSL wizard, feel free to help us prettify Markdown tables i.e. make the number of dashes under headers dependent on the longest string in the column, see [this issue](https://github.com/ropenscilabs/tinkr/issues/9).
 
 
 ## Meta
