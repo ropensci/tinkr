@@ -4,15 +4,25 @@
 \alias{to_md}
 \title{Write YAML and XML back to disk as (R)Markdown}
 \usage{
-to_md(yaml_xml_list, path)
+to_md(yaml_xml_list, path, stylesheet_path = system.file("extdata",
+  "xml2md.xsl", package = "tinkr"))
 }
 \arguments{
 \item{yaml_xml_list}{result from a call to \code{to_xml} and editing.}
 
 \item{path}{path of the new file}
+
+\item{stylesheet_path}{path to the XSL stylesheet}
 }
 \description{
 Write YAML and XML back to disk as (R)Markdown
+}
+\details{
+The stylesheet you use will decide whether lists
+are built using "*" or "-" for instance. If you're keen to
+ keep your own Markdown style when using \code{to_md} after
+ \code{to_xml}, you can tweak the XSL stylesheet a bit and provide
+ the path to your XSL stylesheet as argument.
 }
 \examples{
 path <- system.file("extdata", "example1.md", package = "tinkr")

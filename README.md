@@ -79,10 +79,22 @@ yaml_xml_list$body
 ```
 
 
-## Details/notes
+## Loss of Markdown style
 
-* The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy because of Markdown syntax redundancy. For instance 
-    * lists can be created with either "+", "-" or "*". When using `tinkr`, the (R)md after editing will only use "-" for lists. 
-    * Tables are not pretty anymore (only three dashes for each cell cf [spec](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables)). Alignment of columns is lost, but this will be fixed soon.
+### General principles and solution
+
+The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy because of Markdown syntax redundancy, so the loop from (R)md to R(md) via `to_xml` and `to_md` will be a bit lossy. For instance 
+
+ * lists can be created with either "+", "-" or "*". When using `tinkr`, the (R)md after editing will only use "-" for lists. 
+ 
+ * For tables see the next subsection.
     
   Such losses make your (R)md different, and the git diff a bit harder to parse, but should _not_ change the documents your (R)md is rendered to, apart from the tables alignment. If it does, report a bug in the issue tracker!
+  
+  A solution to not loose your Markdown style, e.g. your preferring "*" over "-" for lists is to tweak [our XSL styleseet](inst/extdata/xml2md.xsl) and provide its filepath as `stylesheet_path` argument to `to_md`.
+  
+### The special case of tables
+
+* The alignment of columns will soon not be lost anymore, as soon as a new `commonmark` version is released.
+  
+* Tables are not pretty anymore (only three dashes for each cell cf [spec](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables)). If you're an XSL wizard, feel free to help us prettify Markdown tables i.e. make the number of dashes under headers dependent on the longest string in the column, see [this issue](https://github.com/ropenscilabs/tinkr/issues/9).

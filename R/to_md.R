@@ -2,6 +2,13 @@
 #'
 #' @param yaml_xml_list result from a call to \code{to_xml} and editing.
 #' @param path path of the new file
+#' @param stylesheet_path path to the XSL stylesheet
+#'
+#' @details The stylesheet you use will decide whether lists
+#' are built using "*" or "-" for instance. If you're keen to
+#'  keep your own Markdown style when using \code{to_md} after
+#'  \code{to_xml}, you can tweak the XSL stylesheet a bit and provide
+#'  the path to your XSL stylesheet as argument.
 #'
 #' @export
 #'
@@ -22,8 +29,9 @@
 #' to_md(yaml_xml_list, "newmd.md")
 #' file.edit("newmd.md")
 #'
-to_md <- function(yaml_xml_list, path){
-  system.file("extdata", "xml2md.xsl", package = "tinkr") %>%
+to_md <- function(yaml_xml_list, path,
+                  stylesheet_path = system.file("extdata", "xml2md.xsl", package = "tinkr")){
+  stylesheet_path %>%
     xml2::read_xml() -> stylesheet
 
   temp <- fs::file_temp(ext = ".xml")
