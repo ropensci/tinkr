@@ -1,17 +1,13 @@
-table_path <- system.file("extdata", "xml_table.xml",
-                          package = "tinkr")
-
+input <- c("| a  | b  |  c  |  d |", "| :- | -- | :-: | -: |", "| l  | n  |  c  |  r |"
+)
 library("magrittr")
-body <- xml2::read_xml(table_path)
-
-xml2::read_xml("inst/extdata/xml2md.xsl") -> stylesheet
-
-temp <- fs::file_temp(ext = ".xml")
-on.exit(file.remove(temp))
-body  %>%
-  xml2::write_xml(file = temp)
+commonmark::markdown_xml(input, extensions = TRUE) %>%
+  xml2::read_xml() -> XML
 
 
-(xml2::read_xml(temp) %>%
-  xslt::xml_xslt(stylesheet = stylesheet))
+system.file("extdata", "xml2md.xsl",
+            package = "tinkr") %>%
+  xml2::read_xml() -> stylesheet
 
+xslt::xml_xslt(XML,
+               stylesheet = stylesheet)

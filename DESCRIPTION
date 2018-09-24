@@ -20,7 +20,7 @@ LazyData: true
 RoxygenNote: 6.1.0.9000
 Imports: 
     magrittr,
-    commonmark,
+    commonmark (>= 1.6),
     xslt,
     xml2,
     glue,
@@ -34,3 +34,5 @@ Suggests:
     covr
 URL: https://github.com/ropenscilabs/tinkr
 BugReports: https://github.com/ropenscilabs/tinkr/issues
+Remotes:
+  jeroen/commonmark
