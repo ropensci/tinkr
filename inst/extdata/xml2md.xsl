@@ -328,7 +328,20 @@ Example usage with xsltproc:
     <xsl:apply-templates select="md:*"/>
     <xsl:text>&#xa; | </xsl:text>
      <xsl:for-each select="md:table_cell">
+     <xsl:choose>
+     <xsl:when test="@align = 'right'">
+     <xsl:text> ---: |</xsl:text>
+     </xsl:when>
+     <xsl:when test="@align = 'left'">
+     <xsl:text> :--- |</xsl:text>
+     </xsl:when>
+     <xsl:when test="@align = 'center'">
+     <xsl:text> :---: |</xsl:text>
+     </xsl:when>
+     <xsl:otherwise>
      <xsl:text> --- |</xsl:text>
+     </xsl:otherwise>
+     </xsl:choose>
      </xsl:for-each>
     <xsl:text>&#xa;</xsl:text>
 </xsl:template>

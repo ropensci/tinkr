@@ -52,6 +52,10 @@ transform_code_blocks <- function(xml){
     xml2::xml_find_all(xpath = './/d1:code_block',
                        xml2::xml_ns(.))
 
+
+  if(length(code_blocks) == 0){
+    return(TRUE)
+  }
   # transform to info string
   # if it had been parsed
   if(xml2::xml_has_attr(code_blocks[[1]], "language")){
