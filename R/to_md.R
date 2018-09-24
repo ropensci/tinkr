@@ -27,7 +27,7 @@
 #' yaml_xml_list$body <- body
 #' # save back and have a look
 #' to_md(yaml_xml_list, "newmd.md")
-#' file.edit("newmd.md")
+#' # file.edit("newmd.md")
 #'
 to_md <- function(yaml_xml_list, path,
                   stylesheet_path = system.file("extdata", "xml2md.xsl", package = "tinkr")){

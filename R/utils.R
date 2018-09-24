@@ -3,7 +3,7 @@
 split_yaml_body = function(x) {
   i = grep('^---\\s*$', x)
   n = length(x)
-  res = if (n < 2 || length(i) < 2 || (i[1] > 1 && !knitr:::is_blank(x[seq(i[1] - 1)]))) {
+  res = if (n < 2 || length(i) < 2 || (i[1] > 1 && !is_blank(x[seq(i[1] - 1)]))) {
     list(yaml = character(), body = x)
   } else list(
     yaml = x[i[1]:i[2]], yaml_range = i[1:2],
@@ -82,3 +82,12 @@ quote_label = function(x) {
   }
   x
 }
+
+# from knitr
+# https://github.com/yihui/knitr/blob/5cb166d8ba82c3334927c69f82ddfefc929a8dd4/R/utils.R#L47
+is_blank = function(x) {
+  if (length(x)) all(grepl('^\\s*$', x)) else TRUE
+}
+
+# note
+globalVariables(".")

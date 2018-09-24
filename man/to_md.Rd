@@ -39,6 +39,6 @@ xml2::xml_set_attr(headers3, "level", 1)
 yaml_xml_list$body <- body
 # save back and have a look
 to_md(yaml_xml_list, "newmd.md")
-file.edit("newmd.md")
+# file.edit("newmd.md")
 
 }

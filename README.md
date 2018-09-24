@@ -12,7 +12,7 @@ The goal of tinkr is to convert (R)Markdown files to XML and back to allow their
 
 * your idea, feel free to suggest use cases!
 
-Only the body of the (R) Markdown file is cast to XML, using the Commonmark specification via the `commonmark` package. YAML metadata could be edited using the `yaml` package, which is not the goal of this package.
+Only the body of the (R) Markdown file is cast to XML, using the Commonmark specification via the [`commonmark` package](https://github.com/jeroen/commonmark). YAML metadata could be edited using the [`yaml` package](https://github.com/viking/r-yaml), which is not the goal of this package.
 
 The current workflow I have in mind is
 
@@ -20,7 +20,7 @@ The current workflow I have in mind is
 
 2. edit the XML using `xml2`.
 
-3. use `to_md` to save back the resulting (R) Markdown (_this uses a XSLT stylesheet, and the `xslt` package_).
+3. use `to_md` to save back the resulting (R) Markdown (_this uses a XSLT stylesheet, and [the `xslt` package](https://github.com/ropensci/xslt)_).
 
 Maybe there could be shortcuts functions for some operations in 2, maybe not.
 
