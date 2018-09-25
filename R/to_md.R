@@ -30,8 +30,9 @@
 #' # file.edit("newmd.md")
 #'
 to_md <- function(yaml_xml_list, path,
-                  stylesheet_path = system.file("extdata", "xml2md.xsl", package = "tinkr")){
-  stylesheet_path %>%
+                  stylesheet_path = system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")){
+
+   stylesheet_path %>%
     xml2::read_xml() -> stylesheet
 
   temp <- fs::file_temp(ext = ".xml")
