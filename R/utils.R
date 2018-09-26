@@ -49,6 +49,20 @@ transform_params <- function(params){
            !names(result) %in% c("language", "name")] <- glue::glue('"{result[purrr::map_lgl(result, is.character)&
            !names(result) %in% c("language", "name")]}"')
 
+  logical_options <- c("echo", "eval", "collapse", "warning",
+                       "error", "message", "split", "include",
+                       "strip.white", "prompt", "highlight", "cache",
+                       "autodep", "external", "sanitize", "purl")
+  if(any(names(result) %in% logical_options)){
+
+    result[names(result) %in% logical_options&
+             is.character(result)] <- stringr::str_remove_all(result[names(result) %in% logical_options&
+                                                                       is.character(result)],
+                                                                          "\\\"")
+
+
+  }
+
    result
 }
 
