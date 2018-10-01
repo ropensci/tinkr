@@ -37,5 +37,3 @@ Suggests:
     covr
 URL: https://github.com/ropenscilabs/tinkr
 BugReports: https://github.com/ropenscilabs/tinkr/issues
-Remotes:
-  jeroen/commonmark
