@@ -4,12 +4,16 @@
 \alias{to_xml}
 \title{Transform file to XML}
 \usage{
-to_xml(path, encoding = "UTF-8")
+to_xml(path, encoding = "UTF-8", sourcepos = FALSE)
 }
 \arguments{
 \item{path}{Path to the file.}
 
 \item{encoding}{Encoding to be used by readLines.}
+
+\item{sourcepos}{passed to [commonmark::markdown_xml()]. If `TRUE`, the
+source position of the file will be included as a "sourcepos" attribute.
+Defaults to `FALSE`.}
 }
 \value{
 A list containing the YAML of the file (yaml)
