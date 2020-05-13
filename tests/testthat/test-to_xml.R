@@ -23,3 +23,13 @@ test_that("to_xml works for Rmd", {
   expect_equal(length(blocks), 4)
 
 })
+
+test_that("to_xml works with sourcepos", {
+  path <- system.file("extdata", "example1.md", package = "tinkr")
+  post_list <- to_xml(path, sourcepos = TRUE)
+  expect_equal(names(post_list)[1], "yaml")
+  expect_equal(names(post_list)[2], "body")
+  expect_is(post_list[[2]], "xml_document")
+  expect_true(xml2::xml_has_attr(post_list[[2]], "sourcepos"))
+  expect_match(xml2::xml_attr(post_list[[2]], "sourcepos"), "^1:1-\\d+?:\\d+$")
+})

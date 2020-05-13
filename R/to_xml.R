@@ -4,6 +4,9 @@
 #'
 #' @param path Path to the file.
 #' @param encoding Encoding to be used by readLines.
+#' @param sourcepos passed to [commonmark::markdown_xml()]. If `TRUE`, the
+#'   source position of the file will be included as a "sourcepos" attribute.
+#'   Defaults to `FALSE`.
 #'
 #' @return A list containing the YAML of the file (yaml)
 #' and its body (body) as XML.
@@ -16,7 +19,7 @@
 #' path2 <- system.file("extdata", "example2.Rmd", package = "tinkr")
 #' post_list2 <- to_xml(path2)
 #' post_list2
-to_xml <- function(path, encoding = "UTF-8"){
+to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE){
   content <- readLines(path, encoding = encoding)
 
   splitted_content <- split_yaml_body(content)
@@ -25,7 +28,7 @@ to_xml <- function(path, encoding = "UTF-8"){
 
   splitted_content$body %>%
     clean_content() %>%
-    commonmark::markdown_xml(extensions = TRUE) %>%
+    commonmark::markdown_xml(extensions = TRUE, sourcepos = sourcepos) %>%
     xml2::read_xml(encoding = encoding) -> body
 
   if(stringr::str_detect(fs::path_ext(path), "[Rr]")){

@@ -4,8 +4,11 @@
 \alias{to_md}
 \title{Write YAML and XML back to disk as (R)Markdown}
 \usage{
-to_md(yaml_xml_list, path, stylesheet_path = system.file("extdata",
-  "xml2md_gfm.xsl", package = "tinkr"))
+to_md(
+  yaml_xml_list,
+  path,
+  stylesheet_path = system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")
+)
 }
 \arguments{
 \item{yaml_xml_list}{result from a call to \code{to_xml} and editing.}
