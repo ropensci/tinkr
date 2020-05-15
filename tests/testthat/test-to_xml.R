@@ -43,10 +43,12 @@ test_that("to_xml works with sourcepos for Rmd", {
   expect_true(xml2::xml_has_attr(post_list[[2]], "sourcepos"))
   expect_match(xml2::xml_attr(post_list[[2]], "sourcepos"), "^1:1-\\d+?:\\d+$")
   # code blocks retain their attributes
-  expect_true(
-    xml2::xml_has_attr(
-      xml2::xml_find_first(post_list[[2]], ".//d1:code_block"), 
-      "sourcepos"
-    )
-  )
+  first_block <- xml2::xml_find_first(post_list[[2]], ".//d1:code_block")
+
+  expect_match(xml2::xml_attr(first_block, "space"), "preserve")
+  expect_match(xml2::xml_attr(first_block, "sourcepos"), "^\\d+?:\\d+?-\\d+?:\\d+$")
+  expect_match(xml2::xml_attr(first_block, "language"), "r")
+  expect_match(xml2::xml_attr(first_block, "name"), "setup")
+  expect_match(xml2::xml_attr(first_block, "include"), "FALSE")
+  expect_match(xml2::xml_attr(first_block, "eval"), "TRUE")
 })
