@@ -57,7 +57,12 @@ transform_block <- function(code_block){
   info <- transform_params(info)
 
   xml2::xml_set_attr(code_block, "info", NULL)
-  xml2::xml_set_attrs(code_block, info)
+  # preserve the original non-info attributes (e.g. sourcepos)
+  attrs <- xml2::xml_attrs(code_block)
+  # the space parameter seems to be persistant, so it's not needed
+  attrs <- attrs[names(attrs) != "space"]
+  # set the attributes for both info and attrs
+  xml2::xml_set_attrs(code_block, c(info, attrs))
   code_block
 }
 
