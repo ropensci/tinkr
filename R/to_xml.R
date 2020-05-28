@@ -52,9 +52,17 @@ clean_content <- function(content){
 
 transform_block <- function(code_block){
   info <- xml2::xml_attr(code_block, "info")
+
+  if (is.na(info) || !stringr::str_detect(info, "^\\{.+?\\}$")) {
+    # no transformation needed for non-evaluated blocks
+    xml2::xml_set_attr(code_block, "name", "")
+    return(code_block)
+  }
   info <- stringr::str_remove(info, "\\{")
   info <- stringr::str_remove(info, "\\}")
   info <- transform_params(info)
+  # This prevents partial code blocks that are still apparently valid: ```{r, }
+  info <- info[names(info) != ""]
 
   xml2::xml_set_attr(code_block, "info", NULL)
   # preserve the original non-info attributes (e.g. sourcepos)

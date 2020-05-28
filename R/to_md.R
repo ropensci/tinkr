@@ -42,34 +42,33 @@ to_md <- function(yaml_xml_list, path,
 
   transform_code_blocks(body)
 
-body  %>%
-  xml2::write_xml(file = temp)
+  body  %>%
+    xml2::write_xml(file = temp)
 
-xml2::read_xml(temp) %>%
-    xslt::xml_xslt(stylesheet = stylesheet) -> body
+  xml2::read_xml(temp) %>%
+      xslt::xml_xslt(stylesheet = stylesheet) -> body
 
-yaml_xml_list$yaml %>%
-  glue::glue_collapse(sep = "\n") -> yaml
+  yaml_xml_list$yaml %>%
+    glue::glue_collapse(sep = "\n") -> yaml
 
-writeLines(c(yaml, body), con = path,
-           useBytes = TRUE,
-           sep =  "\n\n")
+  writeLines(c(yaml, body), con = path,
+             useBytes = TRUE,
+             sep =  "\n\n")
 }
 
 transform_code_blocks <- function(xml){
+  # Find all code blocks with a language attribute (those without it are not processed)
   code_blocks <- xml %>%
-    xml2::xml_find_all(xpath = './/d1:code_block',
+    xml2::xml_find_all(xpath = './/d1:code_block[@language]',
                        xml2::xml_ns(.))
-
 
   if(length(code_blocks) == 0){
     return(TRUE)
   }
+
   # transform to info string
   # if it had been parsed
-  if(xml2::xml_has_attr(code_blocks[[1]], "language")){
-    purrr::walk(code_blocks, to_info)
-  }
+  purrr::walk(code_blocks, to_info)
 }
 
 to_info <- function(code_block){
@@ -85,8 +84,7 @@ to_info <- function(code_block){
    options <- ""
  }
 
-
- if(attrs["name"] != ""){
+ if (attrs["name"] != ""){
    attrs["name"] <- paste0(" ", attrs["name"])
  }
 
