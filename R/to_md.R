@@ -26,8 +26,10 @@
 #' xml2::xml_set_attr(headers3, "level", 1)
 #' yaml_xml_list$body <- body
 #' # save back and have a look
-#' to_md(yaml_xml_list, "newmd.md")
+#' newmd <- tempfile("newmd", fileext = ".md")
+#' to_md(yaml_xml_list, newmd)
 #' # file.edit("newmd.md")
+#' file.remove(newmd)
 #'
 to_md <- function(yaml_xml_list, path,
                   stylesheet_path = system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")){
