@@ -47,6 +47,11 @@ test_that("to_md works for Rmd", {
   # save back and have a look
   to_md(yaml_xml_list, newmd)
   expect_true(file.exists(newmd))
+
+  # Still one block with info after writing (the process has not clobbered things)
+  info_attr <- xml2::xml_attr(blocks, "info")
+  expect_equal(sum(!is.na(info_attr)), 1)
+
   expect_silent(to_xml(newmd))
   expect_true(stringr::str_detect(toString(readLines(newmd)),
                                   "julia"))

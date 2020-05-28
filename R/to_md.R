@@ -34,21 +34,15 @@
 to_md <- function(yaml_xml_list, path,
                   stylesheet_path = system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")){
 
-   stylesheet_path %>%
+  stylesheet_path %>%
     xml2::read_xml() -> stylesheet
 
-  temp <- fs::file_temp(ext = ".xml")
-  on.exit(file.remove(temp))
-
-  body <- yaml_xml_list$body
+  # duplicate document to avoid overwriting
+  body <- copy_xml(yaml_xml_list$body)
 
   transform_code_blocks(body)
 
-  body  %>%
-    xml2::write_xml(file = temp)
-
-  xml2::read_xml(temp) %>%
-      xslt::xml_xslt(stylesheet = stylesheet) -> body
+  body <- xslt::xml_xslt(body, stylesheet = stylesheet)
 
   yaml_xml_list$yaml %>%
     glue::glue_collapse(sep = "\n") -> yaml
@@ -56,6 +50,23 @@ to_md <- function(yaml_xml_list, path,
   writeLines(c(yaml, body), con = path,
              useBytes = TRUE,
              sep =  "\n\n")
+}
+
+copy_xml <- function(xml) {
+  # The new root always seems to insert an extra namespace attribtue to
+  # the nodes. This process finds those attributes and removes them.
+  new <- xml2::xml_new_root(xml, .copy = TRUE)
+
+  old_text  <- xml2::xml_find_all(xml, ".//node()")
+  old_attrs <- unique(unlist(lapply(xml2::xml_attrs(old_text), names)))
+
+  new_text  <- xml2::xml_find_all(new, ".//node()")
+  new_attrs <- unique(unlist(lapply(xml2::xml_attrs(new_text), names)))
+
+  dff <- setdiff(new_attrs, old_attrs)
+  xml2::xml_set_attr(new_text, dff, NULL)
+
+  new
 }
 
 transform_code_blocks <- function(xml){
