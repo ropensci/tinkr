@@ -26,56 +26,68 @@
 #' xml2::xml_set_attr(headers3, "level", 1)
 #' yaml_xml_list$body <- body
 #' # save back and have a look
-#' to_md(yaml_xml_list, "newmd.md")
+#' newmd <- tempfile("newmd", fileext = ".md")
+#' to_md(yaml_xml_list, newmd)
 #' # file.edit("newmd.md")
+#' file.remove(newmd)
 #'
 to_md <- function(yaml_xml_list, path,
                   stylesheet_path = system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")){
 
-   stylesheet_path %>%
+  stylesheet_path %>%
     xml2::read_xml() -> stylesheet
 
-  temp <- fs::file_temp(ext = ".xml")
-  on.exit(file.remove(temp))
-
-  body <- yaml_xml_list$body
+  # duplicate document to avoid overwriting
+  body <- copy_xml(yaml_xml_list$body)
 
   transform_code_blocks(body)
 
-body  %>%
-  xml2::write_xml(file = temp)
+  body <- xslt::xml_xslt(body, stylesheet = stylesheet)
 
-xml2::read_xml(temp) %>%
-    xslt::xml_xslt(stylesheet = stylesheet) -> body
+  yaml_xml_list$yaml %>%
+    glue::glue_collapse(sep = "\n") -> yaml
 
-yaml_xml_list$yaml %>%
-  glue::glue_collapse(sep = "\n") -> yaml
+  writeLines(c(yaml, body), con = path,
+             useBytes = TRUE,
+             sep =  "\n\n")
+}
 
-writeLines(c(yaml, body), con = path,
-           useBytes = TRUE,
-           sep =  "\n\n")
+copy_xml <- function(xml) {
+  # The new root always seems to insert an extra namespace attribtue to
+  # the nodes. This process finds those attributes and removes them.
+  new <- xml2::xml_new_root(xml, .copy = TRUE)
+
+  old_text  <- xml2::xml_find_all(xml, ".//node()")
+  old_attrs <- unique(unlist(lapply(xml2::xml_attrs(old_text), names)))
+
+  new_text  <- xml2::xml_find_all(new, ".//node()")
+  new_attrs <- unique(unlist(lapply(xml2::xml_attrs(new_text), names)))
+
+  dff <- setdiff(new_attrs, old_attrs)
+  xml2::xml_set_attr(new_text, dff, NULL)
+
+  new
 }
 
 transform_code_blocks <- function(xml){
+  # Find all code blocks with a language attribute (those without it are not processed)
   code_blocks <- xml %>%
-    xml2::xml_find_all(xpath = './/d1:code_block',
+    xml2::xml_find_all(xpath = './/d1:code_block[@language]',
                        xml2::xml_ns(.))
-
 
   if(length(code_blocks) == 0){
     return(TRUE)
   }
+
   # transform to info string
   # if it had been parsed
-  if(xml2::xml_has_attr(code_blocks[[1]], "language")){
-    purrr::walk(code_blocks, to_info)
-  }
+  purrr::walk(code_blocks, to_info)
 }
 
 to_info <- function(code_block){
  attrs <- xml2::xml_attrs(code_block)
  options <- attrs[!names(attrs) %in%
-                    c("language", "name", "space")]
+                  c("language", "name", "space", "sourcepos")]
 
  if(length(options) > 0){
    options <- glue::glue("{names(options)}={options}") %>%
@@ -85,8 +97,7 @@ to_info <- function(code_block){
    options <- ""
  }
 
-
- if(attrs["name"] != ""){
+ if (attrs["name"] != ""){
    attrs["name"] <- paste0(" ", attrs["name"])
  }
 
