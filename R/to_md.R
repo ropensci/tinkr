@@ -64,7 +64,10 @@ copy_xml <- function(xml) {
   new_attrs <- unique(unlist(lapply(xml2::xml_attrs(new_text), names)))
 
   dff <- setdiff(new_attrs, old_attrs)
-  xml2::xml_set_attr(new_text, dff, NULL)
+
+  if (length(dff) > 0) {
+    xml2::xml_set_attr(new_text, dff, NULL)
+  }
 
   new
 }
