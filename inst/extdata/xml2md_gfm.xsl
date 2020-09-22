@@ -17,7 +17,7 @@
 <xsl:output method="text" encoding="utf-8"/>
 
 
-    <!-- Table -->
+  <!-- Table -->
 
     <xsl:template match="md:table">
         <xsl:value-of select="$maxLength"/>
@@ -103,7 +103,16 @@
         <xsl:text>&#xa;</xsl:text>
     </xsl:template>
 
+<xsl:template match="md:table_cell">
+    <xsl:apply-templates select="md:*"/>
+    <xsl:text>| </xsl:text>
+</xsl:template>
 
+<xsl:template match="md:table_row">
+    <xsl:text>| </xsl:text>
+    <xsl:apply-templates select="md:*"/>
+    <xsl:text>&#xa;</xsl:text>
+</xsl:template>
 <!-- Striked-through -->
 
 <xsl:template match="md:strikethrough">
