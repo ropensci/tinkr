@@ -101,8 +101,7 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy becau
   
 ### The special case of tables
   
-* Tables are not pretty anymore (only three dashes for each cell cf [spec](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables)) after a full loop `to_xml` + `to_md`. If you're an XSL wizard, feel free to help us prettify Markdown tables i.e. make the number of dashes under headers dependent on the longest string in the column, see [this issue](https://github.com/ropenscilabs/tinkr/issues/9).
-
+* Tables are supposed to remain/become pretty after a full loop `to_xml` + `to_md`. If you notice something amiss, e.g. too much space compared to what you were expecting, please open an issue.
 
 ## Meta
 

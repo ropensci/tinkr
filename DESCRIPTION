@@ -8,10 +8,10 @@ Authors@R:
              email = "maelle.salmon@yahoo.se"),
       person(given = "Jeroen",
              family = "Ooms",
-             role = c("aut")),
+             role = "aut"),
       person(given = "Zhian N.",
              family = "Kamvar",
-             role = c("aut"),
+             role = "aut",
              email = "zkamvar@gmail.com",
              comment = c(ORCID = "0000-0003-1458-7108")),
       person(given = "Nick",
@@ -20,7 +20,10 @@ Authors@R:
              comment = "Nick Wellnhofer wrote the XSLT stylesheet."),
       person(given = "rOpenSci",
              role = "fnd",
-             comment = "https://ropensci.org/"))
+             comment = "https://ropensci.org/"),
+      person(given = "Peter",
+             family = "Daengeli",
+             role = "ctb"))
 Description: Casts (R)Markdown files to XML and back to allow their editing via XPat.
 License: GPL-3
 Encoding: UTF-8
@@ -38,7 +41,10 @@ Imports:
     knitr,
     purrr
 Suggests: 
-    testthat,
+    testthat (>= 2.99.0.9000),
     covr
+Remotes:
+    r-lib/testthat
 URL: https://github.com/ropenscilabs/tinkr
 BugReports: https://github.com/ropenscilabs/tinkr/issues
+Config/testthat/edition: 3
