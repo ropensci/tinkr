@@ -145,6 +145,12 @@
         <xsl:text>&#xa;</xsl:text>
     </xsl:template>
 
+    <xsl:template match="md:table_row">
+    <xsl:text>| </xsl:text>
+    <xsl:apply-templates select="md:*"/>
+    <xsl:text>&#xa;</xsl:text>
+</xsl:template>
+
 
     <!-- Striked-through -->
 

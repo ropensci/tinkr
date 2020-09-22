@@ -10,6 +10,7 @@ title: "What have these birds been studied for? Querying science outputs with R"
 | aaaaaaaa | a              | a              |  |  | 
 |          |                |                |  |  | 
 
+
 | a | b | c | d |
 | : | - | :: | : |
 | l | n | c | r |
