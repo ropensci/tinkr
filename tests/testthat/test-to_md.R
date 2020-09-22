@@ -1,5 +1,3 @@
-context("test-to_md")
-
 test_that("to_md works", {
   path <- system.file("extdata", "example1.md", package = "tinkr")
   newmd <- tempfile(pattern = "newmd", fileext = ".Rmd")
@@ -57,4 +55,16 @@ test_that("to_md works for Rmd", {
                                   "julia"))
   expect_false(stringr::str_detect(toString(readLines(newmd)),
                                    "sourcepos"))
+})
+
+test_that("to_md does not break tables", {
+  path <- system.file("extdata", "table.md", package = "tinkr")
+  tmpdir <- tempdir()
+  dir.create(tmpdir)
+  newmd <- file.path(tmpdir, "table.md")
+  on.exit(file.remove(newmd))
+
+  yaml_xml_list <- to_xml(path)
+  to_md(yaml_xml_list, newmd)
+  testthat::expect_snapshot_file(newmd)
 })
