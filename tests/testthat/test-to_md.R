@@ -68,3 +68,26 @@ test_that("to_md does not break tables", {
   to_md(yaml_xml_list, newmd)
   testthat::expect_snapshot_file(newmd)
 })
+
+test_that("code chunks can be inserted on round trip", {
+
+  path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+  tmpdir <- tempdir()
+  suppressWarnings(dir.create(tmpdir))
+  newmd <- file.path(tmpdir, "ex.Rmd")
+  on.exit(file.remove(newmd))
+
+  yaml_xml_list <- to_xml(path)
+  cc <- "<code_block language='r' name='cody' xmlns='http://commonmark.org/xml/1.0'></code_block>"
+  xcc <- xml2::read_xml(cc)
+  xml2::xml_text(xcc) <- "a <- 1:10"
+  # add code block after setup chunk
+  xml2::xml_add_child(yaml_xml_list$body, xcc, .where = 1L)
+  expect_length(xml2::xml_find_all(yaml_xml_list$body, ".//d1:code_block[@name='cody']"), 1L)
+  expect_equal(xml2::xml_text(xml2::xml_find_all(yaml_xml_list$body, ".//d1:code_block[@name='cody']")), "a <- 1:10")
+  to_md(yaml_xml_list, newmd)
+  # The code block should still exist and the embedded code should still be there
+  expect_length(xml2::xml_find_all(to_xml(newmd)$body, ".//d1:code_block[@name='cody']"), 1L)
+  expect_equal(xml2::xml_text(xml2::xml_find_all(to_xml(newmd)$body, ".//d1:code_block[@name='cody']")), "a <- 1:10")
+
+})

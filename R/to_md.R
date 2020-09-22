@@ -90,7 +90,7 @@ transform_code_blocks <- function(xml){
 to_info <- function(code_block){
  attrs <- xml2::xml_attrs(code_block)
  options <- attrs[!names(attrs) %in%
-                  c("language", "name", "space", "sourcepos")]
+                  c("language", "name", "space", "sourcepos", "xmlns")]
 
  if(length(options) > 0){
    options <- glue::glue("{names(options)}={options}") %>%
@@ -101,6 +101,7 @@ to_info <- function(code_block){
  }
 
  if (attrs["name"] != ""){
+   # if (attrs["name"] == "cody") browser()
    attrs["name"] <- paste0(" ", attrs["name"])
  }
 
@@ -109,5 +110,5 @@ to_info <- function(code_block){
  info <- paste0(info, "}")
  names(info) <- "info"
 
- xml2::xml_set_attrs(code_block, info)
+ xml2::xml_set_attr(code_block, "info", info)
 }
