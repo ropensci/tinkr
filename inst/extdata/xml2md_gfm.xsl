@@ -5,19 +5,19 @@
     xmlns:md="http://commonmark.org/xml/1.0">
 
 
-<!-- Import commonmark XSL -->
+    <!-- Import commonmark XSL -->
 
-<xsl:import href="xml2md.xsl"/>
-<xsl:template match="/">
-  <xsl:apply-imports/>
-</xsl:template>
+    <xsl:import href="xml2md.xsl"/>
+    <xsl:template match="/">
+        <xsl:apply-imports/>
+    </xsl:template>
 
-<!-- params -->
+    <!-- params -->
 
-<xsl:output method="text" encoding="utf-8"/>
+    <xsl:output method="text" encoding="utf-8"/>
 
 
-  <!-- Table -->
+    <!-- Table -->
 
     <xsl:template match="md:table">
         <xsl:apply-templates select="." mode="indent-block"/>
@@ -58,39 +58,40 @@
     <xsl:template match="md:table_header">
         <xsl:text>| </xsl:text>
         <xsl:apply-templates select="md:*"/>
-        <xsl:text>&#xa; | </xsl:text>
+        <xsl:text>&#xa;| </xsl:text>
         <xsl:for-each select="md:table_cell">
             <!-- helper variable for the lookup -->
             <xsl:variable name="cell" select="concat('CELL',position())"/>
             <!-- length of longest value in col -->
             <xsl:variable name="fill" select="number(substring-before(substring-after($maxLength,concat($cell,':')),'|'))"/>
+            <xsl:if test="position() != 1">
+                <xsl:text> </xsl:text>
+            </xsl:if>
             <xsl:choose>
                 <xsl:when test="@align = 'right'">
-                    <xsl:text> </xsl:text>
                     <xsl:call-template name="n-times">
-                        <xsl:with-param name="n" select="$fill"/>
+                        <xsl:with-param name="n" select="$fill -1"/>
                         <xsl:with-param name="char" select="'-'"/>
                     </xsl:call-template>
                     <xsl:text>: |</xsl:text>
                 </xsl:when>
                 <xsl:when test="@align = 'left'">
-                    <xsl:text> :</xsl:text>
+                    <xsl:text>:</xsl:text>
                     <xsl:call-template name="n-times">
-                        <xsl:with-param name="n" select="$fill"/>
+                        <xsl:with-param name="n" select="$fill -1"/>
                         <xsl:with-param name="char" select="'-'"/>
                     </xsl:call-template>
                     <xsl:text> |</xsl:text>
                 </xsl:when>
                 <xsl:when test="@align = 'center'">
-                    <xsl:text> :</xsl:text>
+                    <xsl:text>:</xsl:text>
                     <xsl:call-template name="n-times">
-                        <xsl:with-param name="n" select="$fill"/>
+                        <xsl:with-param name="n" select="$fill -2"/>
                         <xsl:with-param name="char" select="'-'"/>
                     </xsl:call-template>
                     <xsl:text>: |</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:text> </xsl:text>
                     <xsl:call-template name="n-times">
                         <xsl:with-param name="n" select="$fill"/>
                         <xsl:with-param name="char" select="'-'"/>
@@ -102,22 +103,39 @@
         <xsl:text>&#xa;</xsl:text>
     </xsl:template>
 
-<xsl:template match="md:table_cell">
-    <xsl:apply-templates select="md:*"/>
-    <xsl:text>| </xsl:text>
-</xsl:template>
+    <xsl:template match="md:table_cell">
+        <xsl:variable name="cell" select="concat('CELL',position())"/>
+        <!-- length of longest value in col -->
+        <xsl:variable name="fill">
+            <xsl:choose>
+                <xsl:when test="string-length(md:text)=number(substring-before(substring-after($maxLength,concat($cell,':')),'|'))">0</xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="number(substring-before(substring-after($maxLength,concat($cell,':')),'|')) -1"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
 
-<xsl:template match="md:table_row">
-    <xsl:text>| </xsl:text>
-    <xsl:apply-templates select="md:*"/>
-    <xsl:text>&#xa;</xsl:text>
-</xsl:template>
-<!-- Striked-through -->
+        <xsl:apply-templates select="md:*"/>
+        <xsl:call-template name="n-times">
+            <xsl:with-param name="n" select="$fill"/>
+            <xsl:with-param name="char" select="' '"/>
+        </xsl:call-template>
+        <xsl:text> | </xsl:text>
+    </xsl:template>
 
-<xsl:template match="md:strikethrough">
-    <xsl:text>~~</xsl:text>
-    <xsl:apply-templates select="md:*"/>
-    <xsl:text>~~</xsl:text>
-</xsl:template>
+    <xsl:template match="md:table_row">
+        <xsl:text>| </xsl:text>
+        <xsl:apply-templates select="md:*"/>
+        <xsl:text>&#xa;</xsl:text>
+    </xsl:template>
+
+
+    <!-- Striked-through -->
+
+    <xsl:template match="md:strikethrough">
+        <xsl:text>~~</xsl:text>
+        <xsl:apply-templates select="md:*"/>
+        <xsl:text>~~</xsl:text>
+    </xsl:template>
 
 </xsl:stylesheet>
