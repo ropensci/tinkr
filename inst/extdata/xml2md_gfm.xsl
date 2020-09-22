@@ -126,7 +126,7 @@
                 </xsl:when>
                 <xsl:when test="string-length(md:text)=$maxFill">0</xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="$maxFill -1"/>
+                    <xsl:value-of select="$maxFill - string-length(md:text)"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -139,7 +139,7 @@
         <xsl:text> | </xsl:text>
     </xsl:template>
 
-    <xsl:template match="md:table_row[.//md:text]">
+    <xsl:template match="md:table_row">
         <xsl:text>| </xsl:text>
         <xsl:apply-templates select="md:*"/>
         <xsl:text>&#xa;</xsl:text>
