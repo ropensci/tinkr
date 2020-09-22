@@ -68,3 +68,15 @@ test_that("to_md does not break tables", {
   to_md(yaml_xml_list, newmd)
   testthat::expect_snapshot_file(newmd)
 })
+
+test_that("to_md does not break checkboxes", {
+  path <- system.file("extdata", "checkboxes.md", package = "tinkr")
+  tmpdir <- tempdir()
+  dir.create(tmpdir)
+  newmd <- file.path(tmpdir, "checkboxes.md")
+  on.exit(file.remove(newmd))
+
+  yaml_xml_list <- to_xml(path)
+  to_md(yaml_xml_list, newmd)
+  testthat::expect_snapshot_file(newmd)
+})
