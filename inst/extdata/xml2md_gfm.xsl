@@ -24,6 +24,8 @@
         <xsl:apply-templates select="md:*"/>
     </xsl:template>
 
+    <xsl:variable name="minLength">3</xsl:variable>
+
     <xsl:variable name="maxLength">
         <xsl:for-each select="//md:table_header/md:table_cell">
             <xsl:variable name="pos" select="position()"/>
@@ -63,7 +65,17 @@
             <!-- helper variable for the lookup -->
             <xsl:variable name="cell" select="concat('CELL',position())"/>
             <!-- length of longest value in col -->
-            <xsl:variable name="fill" select="number(substring-before(substring-after($maxLength,concat($cell,':')),'|'))"/>
+            <xsl:variable name="maxFill" select="number(substring-before(substring-after($maxLength,concat($cell,':')),'|'))"/>
+            <xsl:variable name="fill">
+                <xsl:choose>
+                    <xsl:when test="$maxFill &lt; $minLength">
+                        <xsl:value-of select="$minLength"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$maxFill"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
             <xsl:if test="position() != 1">
                 <xsl:text> </xsl:text>
             </xsl:if>
@@ -106,11 +118,15 @@
     <xsl:template match="md:table_cell">
         <xsl:variable name="cell" select="concat('CELL',position())"/>
         <!-- length of longest value in col -->
+        <xsl:variable name="maxFill" select="number(substring-before(substring-after($maxLength,concat($cell,':')),'|'))"/>
         <xsl:variable name="fill">
             <xsl:choose>
-                <xsl:when test="string-length(md:text)=number(substring-before(substring-after($maxLength,concat($cell,':')),'|'))">0</xsl:when>
+                <xsl:when test="$maxFill &lt; $minLength">
+                    <xsl:value-of select="$minLength - string-length(md:text)"/>
+                </xsl:when>
+                <xsl:when test="string-length(md:text)=$maxFill">0</xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="number(substring-before(substring-after($maxLength,concat($cell,':')),'|')) -1"/>
+                    <xsl:value-of select="$maxFill -1"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -123,7 +139,7 @@
         <xsl:text> | </xsl:text>
     </xsl:template>
 
-    <xsl:template match="md:table_row">
+    <xsl:template match="md:table_row[.//md:text]">
         <xsl:text>| </xsl:text>
         <xsl:apply-templates select="md:*"/>
         <xsl:text>&#xa;</xsl:text>
