@@ -1,6 +1,10 @@
 # tinkr
 
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip) [![Travis build status](https://travis-ci.org/ropenscilabs/tinkr.svg?branch=master)](https://travis-ci.org/ropenscilabs/tinkr) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/maelle/tinkr?branch=master&svg=true)](https://ci.appveyor.com/project/maelle/tinkr) [![Coverage status](https://codecov.io/gh/ropenscilabs/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropenscilabs/tinkr?branch=master)
+<!-- badges: start -->
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip) 
+  [![R build status](https://github.com/ropenscilabs/tinkr/workflows/R-CMD-check/badge.svg)](https://github.com/ropenscilabs/tinkr/actions)
+ [![Coverage status](https://codecov.io/gh/ropenscilabs/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropenscilabs/tinkr?branch=master)
+  <!-- badges: end -->
 
 
 
