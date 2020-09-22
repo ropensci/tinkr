@@ -20,7 +20,6 @@
   <!-- Table -->
 
     <xsl:template match="md:table">
-        <xsl:value-of select="$maxLength"/>
         <xsl:apply-templates select="." mode="indent-block"/>
         <xsl:apply-templates select="md:*"/>
     </xsl:template>
