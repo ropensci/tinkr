@@ -76,18 +76,34 @@ test_that("code chunks can be inserted on round trip", {
   suppressWarnings(dir.create(tmpdir))
   newmd <- file.path(tmpdir, "ex.Rmd")
   on.exit(file.remove(newmd))
-
+  
+  # read in document
   yaml_xml_list <- to_xml(path)
+
+  # set up new code block
   cc <- "<code_block language='r' name='cody' xmlns='http://commonmark.org/xml/1.0'></code_block>"
   xcc <- xml2::read_xml(cc)
-  xml2::xml_text(xcc) <- "a <- 1:10"
+
+  # NOTE: code elements MUST have a newline character at the end to be
+  # processed by the stylesheet and I'm not sure why.
+  txt <- "# assign a sequence of 10 to 'a'\na <- 1:10\n"
+  xml2::xml_set_text(xcc, txt)
+
   # add code block after setup chunk
+  cody_block <- ".//d1:code_block[@name='cody']"
   xml2::xml_add_child(yaml_xml_list$body, xcc, .where = 1L)
-  expect_length(xml2::xml_find_all(yaml_xml_list$body, ".//d1:code_block[@name='cody']"), 1L)
-  expect_equal(xml2::xml_text(xml2::xml_find_all(yaml_xml_list$body, ".//d1:code_block[@name='cody']")), "a <- 1:10")
+
+  # Check that our code block exists and that it contains the same code
+  our_block <- xml2::xml_find_all(yaml_xml_list$body, cody_block)
+  expect_length(our_block, 1L)
+  expect_named(xml2::xml_attrs(our_block)[[1]], c("language", "name", "xmlns"))
+  expect_equal(xml2::xml_text(our_block)[1], txt)
+
+  # Convert to markdown and re-test
   to_md(yaml_xml_list, newmd)
-  # The code block should still exist and the embedded code should still be there
-  expect_length(xml2::xml_find_all(to_xml(newmd)$body, ".//d1:code_block[@name='cody']"), 1L)
-  expect_equal(xml2::xml_text(xml2::xml_find_all(to_xml(newmd)$body, ".//d1:code_block[@name='cody']")), "a <- 1:10")
+  our_block <- xml2::xml_find_all(to_xml(newmd)$body, cody_block)
+  expect_length(our_block, 1L)
+  expect_named(xml2::xml_attrs(our_block)[[1]], c("space", "language", "name"))
+  expect_equal(xml2::xml_text(our_block)[1], txt)
 
 })

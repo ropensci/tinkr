@@ -38,6 +38,8 @@ remotes::install_github("ropenscilabs/tinkr")
 
 ## Examples
 
+### Markdown
+
 This is a basic example. We read "example1.md", change all headers 3 to headers 1, and save it back to md.
 
 ``` r
@@ -62,6 +64,8 @@ to_md(yaml_xml_list, "newmd.md")
 file.edit("newmd.md")
 ```
 
+### RMarkdown
+
 For R Markdown files, to ease editing of chunk label and options, `to_xml` munges the chunk info into different attributes. E.g. below you see that `code_blocks` can have a `language`, `name`, `echo` attributes.
 
 ``` r
@@ -82,7 +86,56 @@ yaml_xml_list$body
 #> [10] <paragraph>\n  <text>Note that the </text>\n  <code>echo = FALSE</c ...
 ```
 
+### Inserting new elements
 
+You can insert new elements into the document via {xml2}, but you should make
+sure that the namespace matches that of your xml document. For example, let's
+say we wanted to add a new R code chunk after the setup chunk:
+
+> NOTE: Inserting new code MUST have a newline character at the end of the
+> chunk or else the last line will be lost.
+
+````r
+path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+yaml_xml_list <- tinkr::to_xml(path)
+
+# Namespace comes from commonmark-  xml2::xml_ns(yaml_xml_list$body)
+#> d1 <-> http://commonmark.org/xml/1.0
+
+new_chunk <- xml2::read_xml("<code_block language='r' name='xml-block'></code_block>")
+
+# set the namespace of the new chunk
+xml2::xml_set_attr(new_chunk, "xmlns", xml2::xml_ns(yaml_xml_list$body))
+
+# add code in the new chunk
+# NOTE: code MUST end in a newline character
+xml2::xml_set_text(new_chunk, "cat('this is a new chunk from {tinkr}')\n")
+#> {xml_document}
+#> <code_block language="r" name="xml-block" xmlns="http://commonmark.org/xml/1.0">
+
+# Add chunk into document
+xml2::xml_add_child(yaml_xml_list$body, new_chunk, .where = 1L)
+
+newfile <- tempfile(fileext = ".Rmd")
+tinkr::to_md(yaml_xml_list, newfile)
+cat(readLines(newfile, 16), sep = "\n")
+#> ---
+#> title: "Untitled"
+#> author: "M. Salmon"
+#> date: "September 6, 2018"
+#> output: html_document
+#> ---
+#> 
+#> ```{r setup, include=FALSE, eval=TRUE}
+#> knitr::opts_chunk$set(echo = TRUE)
+#> ```
+#> 
+#> ```{r xml-block}
+#> cat('this is a new chunk from {tinkr}')
+#> ```
+#> 
+#> ## R Markdown
+````
 ## Loss of Markdown style
 
 ### General principles and solution
