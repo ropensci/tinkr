@@ -101,7 +101,6 @@ to_info <- function(code_block){
  }
 
  if (attrs["name"] != ""){
-   # if (attrs["name"] == "cody") browser()
    attrs["name"] <- paste0(" ", attrs["name"])
  }
 
