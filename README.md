@@ -64,7 +64,7 @@ to_md(yaml_xml_list, "newmd.md")
 file.edit("newmd.md")
 ```
 
-### RMarkdown
+### R Markdown
 
 For R Markdown files, to ease editing of chunk label and options, `to_xml` munges the chunk info into different attributes. E.g. below you see that `code_blocks` can have a `language`, `name`, `echo` attributes.
 
