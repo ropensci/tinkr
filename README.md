@@ -95,47 +95,41 @@ say we wanted to add a new R code chunk after the setup chunk:
 > NOTE: Inserting new code MUST have a newline character at the end of the
 > chunk or else the last line will be lost.
 
-````r
+``` r
 path <- system.file("extdata", "example2.Rmd", package = "tinkr")
 yaml_xml_list <- tinkr::to_xml(path)
-
-# Namespace comes from commonmark-  xml2::xml_ns(yaml_xml_list$body)
-#> d1 <-> http://commonmark.org/xml/1.0
-
-new_chunk <- xml2::read_xml("<code_block language='r' name='xml-block'></code_block>")
-
-# set the namespace of the new chunk
-xml2::xml_set_attr(new_chunk, "xmlns", xml2::xml_ns(yaml_xml_list$body))
-
-# add code in the new chunk
-# NOTE: code MUST end in a newline character
-xml2::xml_set_text(new_chunk, "cat('this is a new chunk from {tinkr}')\n")
-#> {xml_document}
-#> <code_block language="r" name="xml-block" xmlns="http://commonmark.org/xml/1.0">
-
 # Add chunk into document
-xml2::xml_add_child(yaml_xml_list$body, new_chunk, .where = 1L)
+xml2::xml_add_child(yaml_xml_list$body, 
+                    "code_block",
+                    "message(\"this is a new chunk from {tinkr}\")\n",
+                    language='r', 
+                    name='xml-block', 
+                    xmlns=xml2::xml_ns(yaml_xml_list$body)[[1]],
+                    .where = 1L)
+out <- tempfile(fileext = ".Rmd")
+tinkr::to_md(yaml_xml_list, out)
+file.edit(out)
+```
 
-newfile <- tempfile(fileext = ".Rmd")
-tinkr::to_md(yaml_xml_list, newfile)
-cat(readLines(newfile, 16), sep = "\n")
-#> ---
-#> title: "Untitled"
-#> author: "M. Salmon"
-#> date: "September 6, 2018"
-#> output: html_document
-#> ---
-#> 
-#> ```{r setup, include=FALSE, eval=TRUE}
-#> knitr::opts_chunk$set(echo = TRUE)
-#> ```
-#> 
-#> ```{r xml-block}
-#> cat('this is a new chunk from {tinkr}')
-#> ```
-#> 
-#> ## R Markdown
+````markdown
+---
+title: "Untitled"
+author: "M. Salmon"
+date: "September 6, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE, eval=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r xml-block}
+message("this is a new chunk from {tinkr}")
+```
+
+## R Markdown
 ````
+
 ## Loss of Markdown style
 
 ### General principles and solution
