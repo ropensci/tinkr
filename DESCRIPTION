@@ -45,6 +45,6 @@ Suggests:
     covr
 Remotes:
     r-lib/testthat
-URL: https://github.com/ropenscilabs/tinkr
-BugReports: https://github.com/ropenscilabs/tinkr/issues
+URL: https://docs.ropensci.org/tinkr/, https://github.com/ropensci/tinkr
+BugReports: https://github.com/ropensci/tinkr/issues
 Config/testthat/edition: 3
