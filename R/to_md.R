@@ -90,7 +90,7 @@ transform_code_blocks <- function(xml){
 to_info <- function(code_block){
  attrs <- xml2::xml_attrs(code_block)
  options <- attrs[!names(attrs) %in%
-                  c("language", "name", "space", "sourcepos", "xmlns")]
+                  c("language", "name", "space", "sourcepos", "xmlns", "xmlns:xml")]
 
  if(length(options) > 0){
    options <- glue::glue("{names(options)}={options}") %>%
