@@ -53,23 +53,7 @@ to_md <- function(yaml_xml_list, path,
 }
 
 copy_xml <- function(xml) {
-  # The new root always seems to insert an extra namespace attribtue to
-  # the nodes. This process finds those attributes and removes them.
-  new <- xml2::xml_new_root(xml, .copy = TRUE)
-
-  old_text  <- xml2::xml_find_all(xml, ".//node()")
-  old_attrs <- unique(unlist(lapply(xml2::xml_attrs(old_text), names)))
-
-  new_text  <- xml2::xml_find_all(new, ".//node()")
-  new_attrs <- unique(unlist(lapply(xml2::xml_attrs(new_text), names)))
-
-  dff <- setdiff(new_attrs, old_attrs)
-
-  if (length(dff) > 0) {
-    xml2::xml_set_attr(new_text, dff, NULL)
-  }
-
-  new
+  xml2::read_xml(as.character(xml))
 }
 
 transform_code_blocks <- function(xml){
