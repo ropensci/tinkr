@@ -1,5 +1,5 @@
 Package: tinkr
-Title: Casts (R)Markdown files to XML and back
+Title: Casts (R)Markdown Files to XML and Back Again
 Version: 0.0.0.9000
 Authors@R: 
     c(person(given = "Maëlle",
@@ -24,7 +24,7 @@ Authors@R:
       person(given = "Peter",
              family = "Daengeli",
              role = "ctb"))
-Description: Casts (R)Markdown files to XML and back to allow their editing via XPat.
+Description: Casts (R)Markdown files to XML and back to allow their editing via XPath.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -39,12 +39,11 @@ Imports:
     yaml,
     stringr,
     knitr,
-    purrr
+    purrr,
+    R6
 Suggests: 
-    testthat (>= 2.99.0.9000),
+    testthat (>= 3.0.0),
     covr
-Remotes:
-    r-lib/testthat
 URL: https://docs.ropensci.org/tinkr/, https://github.com/ropensci/tinkr
 BugReports: https://github.com/ropensci/tinkr/issues
 Config/testthat/edition: 3
