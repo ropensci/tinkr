@@ -28,7 +28,7 @@ Description: Casts (R)Markdown files to XML and back to allow their editing via 
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.1.9000
 Imports: 
     magrittr,
     commonmark (>= 1.6),
@@ -48,3 +48,4 @@ Suggests:
 URL: https://docs.ropensci.org/tinkr/, https://github.com/ropensci/tinkr
 BugReports: https://github.com/ropensci/tinkr/issues
 Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)

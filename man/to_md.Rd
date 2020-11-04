@@ -23,9 +23,9 @@ Write YAML and XML back to disk as (R)Markdown
 \details{
 The stylesheet you use will decide whether lists
 are built using "*" or "-" for instance. If you're keen to
- keep your own Markdown style when using \code{to_md} after
- \code{to_xml}, you can tweak the XSL stylesheet a bit and provide
- the path to your XSL stylesheet as argument.
+keep your own Markdown style when using \code{to_md} after
+\code{to_xml}, you can tweak the XSL stylesheet a bit and provide
+the path to your XSL stylesheet as argument.
 }
 \examples{
 path <- system.file("extdata", "example1.md", package = "tinkr")

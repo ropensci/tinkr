@@ -8,7 +8,7 @@ Wrapper around an XML representation of a Markdown document. It contains four
 publicly accessible slots: path, yaml, body, and ns.
 }
 \details{
-This class is a fancy wrapper around the results of [tinkr::to_xml()] and
+This class is a fancy wrapper around the results of \code{\link[=to_xml]{to_xml()}} and
 has methods that make it easier to add, analyze, remove, or write elements
 of your markdown document.
 }
@@ -77,13 +77,13 @@ readLines(tmp, n = 20)
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{path}}{\[`character`\] path to file on disk}
+\item{\code{path}}{[\code{character}] path to file on disk}
 
-\item{\code{yaml}}{\[`character`\] text block at head of file}
+\item{\code{yaml}}{[\code{character}] text block at head of file}
 
-\item{\code{body}}{\[`xml_document`\] an xml document of the (R)Markdown file.}
+\item{\code{body}}{[\code{xml_document}] an xml document of the (R)Markdown file.}
 
-\item{\code{ns}}{\[`xml_document`\] an xml namespace object definining "md" to
+\item{\code{ns}}{[\code{xml_document}] an xml namespace object definining "md" to
 commonmark.}
 }
 \if{html}{\out{</div>}}
@@ -110,18 +110,18 @@ Create a new yarn document
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{path}}{\[`character`\] path to a markdown episode file on disk}
+\item{\code{path}}{[\code{character}] path to a markdown episode file on disk}
 
-\item{\code{encoding}}{\[`character`\] encoding passed to [readLines()]}
+\item{\code{encoding}}{[\code{character}] encoding passed to \code{\link[=readLines]{readLines()}}}
 
-\item{\code{sourcepos}}{passed to [commonmark::markdown_xml()]. If `TRUE`, the
+\item{\code{sourcepos}}{passed to \code{\link[commonmark:commonmark]{commonmark::markdown_xml()}}. If \code{TRUE}, the
 source position of the file will be included as a "sourcepos" attribute.
-Defaults to `FALSE`.}
+Defaults to \code{FALSE}.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A new yarn object containing an XML representation of a 
+A new yarn object containing an XML representation of a
 (R)Markdown file.
 }
 \subsection{Examples}{
@@ -215,7 +215,7 @@ add an arbitrary markdown element to the document
 \item{\code{md}}{a string of markdown formatted text.}
 
 \item{\code{where}}{the location in the document to add your markdown text.
-This is passed on to [xml2::xml_add_child()]. Defaults to 0, which
+This is passed on to \code{\link[xml2:xml_replace]{xml2::xml_add_child()}}. Defaults to 0, which
 indicates the very top of the document.}
 }
 \if{html}{\out{</div>}}

@@ -11,9 +11,9 @@ to_xml(path, encoding = "UTF-8", sourcepos = FALSE)
 
 \item{encoding}{Encoding to be used by readLines.}
 
-\item{sourcepos}{passed to [commonmark::markdown_xml()]. If `TRUE`, the
+\item{sourcepos}{passed to \code{\link[commonmark:commonmark]{commonmark::markdown_xml()}}. If \code{TRUE}, the
 source position of the file will be included as a "sourcepos" attribute.
-Defaults to `FALSE`.}
+Defaults to \code{FALSE}.}
 }
 \value{
 A list containing the YAML of the file (yaml)
