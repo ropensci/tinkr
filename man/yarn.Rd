@@ -167,7 +167,7 @@ ex1$body
 \if{html}{\out{<a id="method-write"></a>}}
 \if{latex}{\out{\hypertarget{method-write}{}}}
 \subsection{Method \code{write()}}{
-Write a yarn document to markdown/Rmarkdown
+Write a yarn document to Markdown/R Markdown
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{yarn$write(
   path = NULL,
@@ -204,7 +204,7 @@ unlink(tmp)
 \if{html}{\out{<a id="method-add_md"></a>}}
 \if{latex}{\out{\hypertarget{method-add_md}{}}}
 \subsection{Method \code{add_md()}}{
-add an arbitrary markdown element to the document
+add an arbitrary Markdown element to the document
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{yarn$add_md(md, where = 0L)}\if{html}{\out{</div>}}
 }

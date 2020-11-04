@@ -6,16 +6,21 @@
 \usage{
 to_md(
   yaml_xml_list,
-  path,
+  path = NULL,
   stylesheet_path = system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")
 )
 }
 \arguments{
-\item{yaml_xml_list}{result from a call to \code{to_xml} and editing.}
+\item{yaml_xml_list}{result from a call to \code{\link[=to_xml]{to_xml()}} and editing.}
 
-\item{path}{path of the new file}
+\item{path}{path of the new file. Defaults to \code{NULL}, which will not write
+any file, but will still produce the conversion and pass the output as
+a character vector.}
 
 \item{stylesheet_path}{path to the XSL stylesheet}
+}
+\value{
+the converted document, invisibly.
 }
 \description{
 Write YAML and XML back to disk as (R)Markdown
@@ -23,8 +28,8 @@ Write YAML and XML back to disk as (R)Markdown
 \details{
 The stylesheet you use will decide whether lists
 are built using "*" or "-" for instance. If you're keen to
-keep your own Markdown style when using \code{to_md} after
-\code{to_xml}, you can tweak the XSL stylesheet a bit and provide
+keep your own Markdown style when using \code{\link[=to_md]{to_md()}} after
+\code{\link[=to_xml]{to_xml()}}, you can tweak the XSL stylesheet a bit and provide
 the path to your XSL stylesheet as argument.
 }
 \examples{
