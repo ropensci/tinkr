@@ -71,7 +71,7 @@ yarn <- R6::R6Class("yarn",
       invisible(self)
     },
 
-    #' @description Write a yarn document to markdown/Rmarkdown
+    #' @description Write a yarn document to Markdown/R Markdown
     #'
     #' @param path path to the file you want to write
     #' @param stylesheet_path path to the xsl stylesheet to convert XML to markdown.
@@ -93,7 +93,7 @@ yarn <- R6::R6Class("yarn",
       invisible(self)
     },
     
-    #' @description add an arbitrary markdown element to the document
+    #' @description add an arbitrary Markdown element to the document
     #'
     #' @param md a string of markdown formatted text.
     #' @param where the location in the document to add your markdown text.
