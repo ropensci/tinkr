@@ -1,7 +1,9 @@
+tmpdir <- withr::local_file("newdir")
+dir.create(tmpdir)
+
 test_that("to_md works", {
+  newmd  <- withr::local_file("to_md-newmd.md")
   path <- system.file("extdata", "example1.md", package = "tinkr")
-  newmd <- tempfile(pattern = "newmd", fileext = ".Rmd")
-  on.exit(file.remove(newmd))
 
   yaml_xml_list <- to_xml(path)
   library("magrittr")
@@ -13,17 +15,29 @@ test_that("to_md works", {
     .[xml2::xml_attr(., "level") == "3"] -> headers3
   xml2::xml_set_attr(headers3, "level", 1)
   yaml_xml_list$body <- body
+
   # save back and have a look
   to_md(yaml_xml_list, newmd)
-  expect_true(file.exists(newmd))
-  expect_silent(to_xml(newmd))
+  expect_snapshot_file(newmd)
+  expect_silent(loop <- to_xml(newmd))
+
+  # text is the same
+  expect_equal(
+    xml2::xml_text(loop$body),
+    xml2::xml_text(yaml_xml_list$body)
+  )
+
+  # elements are the same
+  expect_equal(
+    xml2::xml_name(loop$body),
+    xml2::xml_name(yaml_xml_list$body)
+  )
 })
 
 
 test_that("to_md works for Rmd", {
+  newmd <- withr::local_file("to_md-newmd.Rmd")
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
-  newmd <- tempfile(pattern = "newmd", fileext = ".Rmd")
-  on.exit(file.remove(newmd))
 
   yaml_xml_list <- to_xml(path, sourcepos = TRUE)
   library("magrittr")
@@ -44,38 +58,39 @@ test_that("to_md works for Rmd", {
 
   # save back and have a look
   to_md(yaml_xml_list, newmd)
-  expect_true(file.exists(newmd))
+  expect_snapshot_file(newmd)
 
   # Still one block with info after writing (the process has not clobbered things)
   info_attr <- xml2::xml_attr(blocks, "info")
   expect_equal(sum(!is.na(info_attr)), 1)
 
-  expect_silent(to_xml(newmd))
-  expect_true(stringr::str_detect(toString(readLines(newmd)),
-                                  "julia"))
-  expect_false(stringr::str_detect(toString(readLines(newmd)),
-                                   "sourcepos"))
+  expect_silent(loop <- to_xml(newmd))
+  # text is the same
+  expect_equal(
+    xml2::xml_text(loop$body),
+    xml2::xml_text(yaml_xml_list$body)
+  )
+
+  # elements are the same
+  expect_equal(
+    xml2::xml_name(loop$body),
+    xml2::xml_name(yaml_xml_list$body)
+  )
 })
 
 test_that("to_md does not break tables", {
   path <- system.file("extdata", "table.md", package = "tinkr")
-  tmpdir <- tempdir()
-  dir.create(tmpdir)
-  newmd <- file.path(tmpdir, "table.md")
-  on.exit(file.remove(newmd))
+  newtable <- file.path(tmpdir, "table.md")
 
   yaml_xml_list <- to_xml(path)
-  to_md(yaml_xml_list, newmd)
-  testthat::expect_snapshot_file(newmd)
+  to_md(yaml_xml_list, newtable)
+  expect_snapshot_file(newtable)
 })
 
 test_that("code chunks can be inserted on round trip", {
 
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
-  tmpdir <- tempdir()
-  suppressWarnings(dir.create(tmpdir))
-  newmd <- file.path(tmpdir, "ex.Rmd")
-  on.exit(file.remove(newmd))
+  newmd <- file.path(tmpdir, "new-code-chunk.Rmd")
   
   # read in document
   yaml_xml_list <- to_xml(path)
@@ -101,9 +116,5 @@ test_that("code chunks can be inserted on round trip", {
 
   # Convert to markdown and re-test
   to_md(yaml_xml_list, newmd)
-  our_block <- xml2::xml_find_all(to_xml(newmd)$body, cody_block)
-  expect_length(our_block, 1L)
-  expect_named(xml2::xml_attrs(our_block)[[1]], c("space", "language", "name"))
-  expect_equal(xml2::xml_text(our_block)[1], txt)
-
+  expect_snapshot_file(newmd)
 })

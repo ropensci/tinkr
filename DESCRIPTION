@@ -43,7 +43,8 @@ Imports:
     R6
 Suggests: 
     testthat (>= 3.0.0),
-    covr
+    covr,
+    withr
 URL: https://docs.ropensci.org/tinkr/, https://github.com/ropensci/tinkr
 BugReports: https://github.com/ropensci/tinkr/issues
 Config/testthat/edition: 3
