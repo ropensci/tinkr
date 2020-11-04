@@ -26,6 +26,19 @@ ex2 <- tinkr::yarn$new(path2)
 ex2
 
 ## ------------------------------------------------
+## Method `yarn$reset`
+## ------------------------------------------------
+
+
+path <- system.file("extdata", "example1.md", package = "tinkr")
+ex1 <- tinkr::yarn$new(path)
+# OH NO
+ex1$body
+ex1$body <- xml2::xml_missing()
+ex1$reset()
+ex1$body
+
+## ------------------------------------------------
 ## Method `yarn$write`
 ## ------------------------------------------------
 
@@ -37,6 +50,29 @@ try(readLines(tmp)) # nothing in the file
 ex1$write(tmp)
 head(readLines(tmp)) # now a markdown file
 unlink(tmp)
+
+## ------------------------------------------------
+## Method `yarn$add_md`
+## ------------------------------------------------
+
+path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+# two headings, no lists
+xml2::xml_find_all(ex$body, "md:heading", ex$ns)
+xml2::xml_find_all(ex$body, "md:list", ex$ns)
+ex$add_md(
+  "# Hello\n\nThis is *new* formatted text from `{tinkr}`!",
+  where = 1L
+)$add_md(
+  " - This\n - is\n - a new list",
+  where = 2L
+)
+# three headings
+xml2::xml_find_all(ex$body, "md:heading", ex$ns)
+xml2::xml_find_all(ex$body, "md:list", ex$ns)
+tmp <- tempfile()
+ex$write(tmp)
+readLines(tmp, n = 20) 
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -56,7 +92,9 @@ commonmark.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{yarn$new()}}
+\item \href{#method-reset}{\code{yarn$reset()}}
 \item \href{#method-write}{\code{yarn$write()}}
+\item \href{#method-add_md}{\code{yarn$add_md()}}
 \item \href{#method-clone}{\code{yarn$clone()}}
 }
 }
@@ -101,6 +139,31 @@ ex2
 
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-reset"></a>}}
+\if{latex}{\out{\hypertarget{method-reset}{}}}
+\subsection{Method \code{reset()}}{
+reset a yarn document from the original file
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$reset()}\if{html}{\out{</div>}}
+}
+
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{
+path <- system.file("extdata", "example1.md", package = "tinkr")
+ex1 <- tinkr::yarn$new(path)
+# OH NO
+ex1$body
+ex1$body <- xml2::xml_missing()
+ex1$reset()
+ex1$body
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-write"></a>}}
 \if{latex}{\out{\hypertarget{method-write}{}}}
 \subsection{Method \code{write()}}{
@@ -131,6 +194,52 @@ try(readLines(tmp)) # nothing in the file
 ex1$write(tmp)
 head(readLines(tmp)) # now a markdown file
 unlink(tmp)
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_md"></a>}}
+\if{latex}{\out{\hypertarget{method-add_md}{}}}
+\subsection{Method \code{add_md()}}{
+add an arbitrary markdown element to the document
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$add_md(md, where = 0L)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{md}}{a string of markdown formatted text.}
+
+\item{\code{where}}{the location in the document to add your markdown text.
+This is passed on to [xml2::xml_add_child()]. Defaults to 0, which
+indicates the very top of the document.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+# two headings, no lists
+xml2::xml_find_all(ex$body, "md:heading", ex$ns)
+xml2::xml_find_all(ex$body, "md:list", ex$ns)
+ex$add_md(
+  "# Hello\n\nThis is *new* formatted text from `{tinkr}`!",
+  where = 1L
+)$add_md(
+  " - This\n - is\n - a new list",
+  where = 2L
+)
+# three headings
+xml2::xml_find_all(ex$body, "md:heading", ex$ns)
+xml2::xml_find_all(ex$body, "md:list", ex$ns)
+tmp <- tempfile()
+ex$write(tmp)
+readLines(tmp, n = 20) 
 }
 \if{html}{\out{</div>}}
 

@@ -54,6 +54,23 @@ yarn <- R6::R6Class("yarn",
       invisible(self)
     },
 
+    #' @description reset a yarn document from the original file
+    #' @examples
+    #'
+    #' path <- system.file("extdata", "example1.md", package = "tinkr")
+    #' ex1 <- tinkr::yarn$new(path)
+    #' # OH NO
+    #' ex1$body
+    #' ex1$body <- xml2::xml_missing()
+    #' ex1$reset()
+    #' ex1$body
+    reset = function() {
+      x <- to_xml(self$path)
+      self$body <- x$body
+      self$yaml <- x$yaml
+      invisible(self)
+    },
+
     #' @description Write a yarn document to markdown/Rmarkdown
     #'
     #' @param path path to the file you want to write
@@ -74,6 +91,44 @@ yarn <- R6::R6Class("yarn",
       }
       to_md(self, path, stylesheet_path)
       invisible(self)
+    },
+    
+    #' @description add an arbitrary markdown element to the document
+    #'
+    #' @param md a string of markdown formatted text.
+    #' @param where the location in the document to add your markdown text.
+    #'   This is passed on to [xml2::xml_add_child()]. Defaults to 0, which
+    #'   indicates the very top of the document.
+    #' @examples
+    #' path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+    #' ex <- tinkr::yarn$new(path)
+    #' # two headings, no lists
+    #' xml2::xml_find_all(ex$body, "md:heading", ex$ns)
+    #' xml2::xml_find_all(ex$body, "md:list", ex$ns)
+    #' ex$add_md(
+    #'   "# Hello\n\nThis is *new* formatted text from `{tinkr}`!",
+    #'   where = 1L
+    #' )$add_md(
+    #'   " - This\n - is\n - a new list",
+    #'   where = 2L
+    #' )
+    #' # three headings
+    #' xml2::xml_find_all(ex$body, "md:heading", ex$ns)
+    #' xml2::xml_find_all(ex$body, "md:list", ex$ns)
+    #' tmp <- tempfile()
+    #' ex$write(tmp)
+    #' readLines(tmp, n = 20) 
+    add_md = function(md, where = 0L) {
+      b <- self$body
+      new <- clean_content(md)
+      new <- commonmark::markdown_xml(new, extensions = TRUE)
+      new <- xml2::xml_ns_strip(xml2::read_xml(new))
+      new <- xml2::xml_children(new)
+      for (child in rev(new)) {
+        xml2::xml_add_child(b, child, .where = where)
+      }
+      self$body <- copy_xml(b)
+      invisible(self)
     }
-  )
+  ),
 )
