@@ -54,21 +54,21 @@ You can perform XPath queries using the `$body` and `$ns` elements:
 library("tinkr")
 library("xml2")
 path <- system.file("extdata", "example1.md", package = "tinkr")
-ex1 <- yarn$new(path)
+ex1 <- tinkr::yarn$new(path)
 # find all ropensci.org blog links
 xml_find_all(
   x = ex1$body, 
   xpath = ".//md:link[contains(@destination,'ropensci.org/blog')]", 
   ns = ex1$ns
 )
-#> {xml_nodeset (7)}
-#> [1] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/" title="" ...
-#> [2] <link destination="https://ropensci.org/blog/2018/09/04/birds-taxo-traits/" title=" ...
-#> [3] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/" title="" ...
-#> [4] <link destination="https://ropensci.org/blog/2018/08/14/where-to-bird/" title="">\n ...
-#> [5] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/" title="" ...
-#> [6] <link destination="https://ropensci.org/blog/2018/08/28/birds-ocr/" title="">\n  <t ...
-#> [7] <link destination="https://ropensci.org/blog/2018/09/04/birds-taxo-traits/" title=" ...
+#| {xml_nodeset (7)}
+#| [1] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/" title="" ...
+#| [2] <link destination="https://ropensci.org/blog/2018/09/04/birds-taxo-traits/" title=" ...
+#| [3] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/" title="" ...
+#| [4] <link destination="https://ropensci.org/blog/2018/08/14/where-to-bird/" title="">\n ...
+#| [5] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/" title="" ...
+#| [6] <link destination="https://ropensci.org/blog/2018/08/28/birds-ocr/" title="">\n  <t ...
+#| [7] <link destination="https://ropensci.org/blog/2018/09/04/birds-taxo-traits/" title=" ...
 ```
 
 ## Installation
@@ -95,14 +95,14 @@ library("tinkr")
 # From Markdown to XML
 path <- system.file("extdata", "example1.md", package = "tinkr")
 # Level 3 header example:
-tail(readLines(path, 40))
-#> [1] "### Getting a list of 50 species from occurrence data"                  
-#> [2] ""                                                                       
-#> [3] "For more details about the following code, refer to the [previous post" 
-#> [4] "of the series](https://ropensci.org/blog/2018/08/21/birds-radolfzell/)."
-#> [5] "The single difference is our adding a step to keep only data for the"   
-#> [6] "most recent years."
-ex1  <- yarn$new(path)
+cat(tail(readLines(path, 40)), sep = "\n")
+#| ### Getting a list of 50 species from occurrence data
+#| 
+#| For more details about the following code, refer to the [previous post
+#| of the series](https://ropensci.org/blog/2018/08/21/birds-radolfzell/).
+#| The single difference is our adding a step to keep only data for the
+#| most recent years.
+ex1  <- tinkr::yarn$new(path)
 # transform level 3 headers into level 1 headers
 ex1$body %>%
   xml2::xml_find_all(xpath = ".//md:heading[@level='3']", ex1$ns) %>% 
@@ -112,13 +112,13 @@ ex1$body %>%
 tmp <- tempfile(fileext = "md")
 ex1$write(tmp)
 # Level three headers are now Level one:
-tail(readLines(tmp, 40))
-#> [1] "# Getting a list of 50 species from occurrence data"                    
-#> [2] ""                                                                       
-#> [3] "For more details about the following code, refer to the [previous post" 
-#> [4] "of the series](https://ropensci.org/blog/2018/08/21/birds-radolfzell/)."
-#> [5] "The single difference is our adding a step to keep only data for the"   
-#> [6] "most recent years."
+cat(tail(readLines(tmp, 40)), sep = "\n")
+#| # Getting a list of 50 species from occurrence data
+#| 
+#| For more details about the following code, refer to the [previous post
+#| of the series](https://ropensci.org/blog/2018/08/21/birds-radolfzell/).
+#| The single difference is our adding a step to keep only data for the
+#| most recent years.
 unlink(tmp)
 ```
 
@@ -130,25 +130,25 @@ see that `code_blocks` can have a `language`, `name`, `echo` attributes.
 
 ``` r
 path <- system.file("extdata", "example2.Rmd", package = "tinkr")
-rmd <- yarn$new(path)
+rmd <- tinkr::yarn$new(path)
 rmd$body
-#> {xml_document}
-#> <document xmlns="http://commonmark.org/xml/1.0">
-#>  [1] <code_block xml:space="preserve" language="r" name="setup" include="FALSE" eval="T ...
-#>  [2] <heading level="2">\n  <text xml:space="preserve">R Markdown</text>\n</heading>
-#>  [3] <paragraph>\n  <text xml:space="preserve">This is an </text>\n  <strikethrough>\n  ...
-#>  [4] <paragraph>\n  <text xml:space="preserve">When you click the </text>\n  <strong>\n ...
-#>  [5] <code_block xml:space="preserve" language="r" name="" eval="TRUE" echo="TRUE">summ ...
-#>  [6] <heading level="2">\n  <text xml:space="preserve">Including Plots</text>\n</heading>
-#>  [7] <paragraph>\n  <text xml:space="preserve">You can also embed plots, for example:</ ...
-#>  [8] <code_block xml:space="preserve" language="python" name="" fig.cap="&quot;pretty p ...
-#>  [9] <code_block xml:space="preserve" language="python" name="">plot(pressure)\n</code_ ...
-#> [10] <paragraph>\n  <text xml:space="preserve">Non-RMarkdown blocks are also considered ...
-#> [11] <code_block info="bash" xml:space="preserve" name="">echo "this is an unevaluted b ...
-#> [12] <code_block xml:space="preserve" name="">This is an ambiguous code block\n</code_b ...
-#> [13] <paragraph>\n  <text xml:space="preserve">Note that the </text>\n  <code xml:space ...
-#> [14] <table>\n  <table_header>\n    <table_cell align="left">\n      <text xml:space="p ...
-#> [15] <paragraph>\n  <text xml:space="preserve">blabla</text>\n</paragraph>
+#| {xml_document}
+#| <document xmlns="http://commonmark.org/xml/1.0">
+#|  [1] <code_block xml:space="preserve" language="r" name="setup" include="FALSE" eval="T ...
+#|  [2] <heading level="2">\n  <text xml:space="preserve">R Markdown</text>\n</heading>
+#|  [3] <paragraph>\n  <text xml:space="preserve">This is an </text>\n  <strikethrough>\n  ...
+#|  [4] <paragraph>\n  <text xml:space="preserve">When you click the </text>\n  <strong>\n ...
+#|  [5] <code_block xml:space="preserve" language="r" name="" eval="TRUE" echo="TRUE">summ ...
+#|  [6] <heading level="2">\n  <text xml:space="preserve">Including Plots</text>\n</heading>
+#|  [7] <paragraph>\n  <text xml:space="preserve">You can also embed plots, for example:</ ...
+#|  [8] <code_block xml:space="preserve" language="python" name="" fig.cap="&quot;pretty p ...
+#|  [9] <code_block xml:space="preserve" language="python" name="">plot(pressure)\n</code_ ...
+#| [10] <paragraph>\n  <text xml:space="preserve">Non-RMarkdown blocks are also considered ...
+#| [11] <code_block info="bash" xml:space="preserve" name="">echo "this is an unevaluted b ...
+#| [12] <code_block xml:space="preserve" name="">This is an ambiguous code block\n</code_b ...
+#| [13] <paragraph>\n  <text xml:space="preserve">Note that the </text>\n  <code xml:space ...
+#| [14] <table>\n  <table_header>\n    <table_cell align="left">\n      <text xml:space="p ...
+#| [15] <paragraph>\n  <text xml:space="preserve">blabla</text>\n</paragraph>
 ```
 
 ### Inserting new markdown elements
@@ -161,34 +161,46 @@ block:
 
 ```` r
 path <- system.file("extdata", "example2.Rmd", package = "tinkr")
-rmd <- yarn$new(path)
+rmd <- tinkr::yarn$new(path)
 xml_find_first(rmd$body, ".//md:code_block", rmd$ns)
-#> {xml_node}
-#> <code_block space="preserve" language="r" name="setup" include="FALSE" eval="TRUE">
+#| {xml_node}
+#| <code_block space="preserve" language="r" name="setup" include="FALSE" eval="TRUE">
 new_code <- c(
   "```{r xml-block, message = TRUE}",
   "message(\"this is a new chunk from {tinkr}\")",
   "```")
+new_table <- data.frame(
+  package = c("xml2", "xslt", "commonmark", "tinkr"),
+  cool = TRUE
+)
 # Add chunk into document after the first chunk
 rmd$add_md(new_code, where = 1L)
+# Add a table after the second chunk:
+rmd$add_md(knitr::kable(new_table), where = 2L)
 tmp <- tempfile(fileext = ".Rmd")
 rmd$write(tmp)
-readLines(tmp, 15)
-#>  [1] "---"                                          
-#>  [2] "title: \"Untitled\""                          
-#>  [3] "author: \"M. Salmon\""                        
-#>  [4] "date: \"September 6, 2018\""                  
-#>  [5] "output: html_document"                        
-#>  [6] "---"                                          
-#>  [7] ""                                             
-#>  [8] "```{r setup, include=FALSE, eval=TRUE}"       
-#>  [9] "knitr::opts_chunk$set(echo = TRUE)"           
-#> [10] "```"                                          
-#> [11] ""                                             
-#> [12] "```{r xml-block, message = TRUE}"             
-#> [13] "message(\"this is a new chunk from {tinkr}\")"
-#> [14] "```"                                          
-#> [15] ""
+cat(readLines(tmp, 21), sep = "\n")
+#| ---
+#| title: "Untitled"
+#| author: "M. Salmon"
+#| date: "September 6, 2018"
+#| output: html_document
+#| ---
+#| 
+#| ```{r setup, include=FALSE, eval=TRUE}
+#| knitr::opts_chunk$set(echo = TRUE)
+#| ```
+#| 
+#| ```{r xml-block, message = TRUE}
+#| message("this is a new chunk from {tinkr}")
+#| ```
+#| 
+#| | package                    | cool                | 
+#| | :------------------------- | :------------------ |
+#| | xml2                       | TRUE                | 
+#| | xslt                       | TRUE                | 
+#| | commonmark                 | TRUE                | 
+#| | tinkr                      | TRUE                |
 ````
 
 ## Loss of Markdown style
