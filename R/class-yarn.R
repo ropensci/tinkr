@@ -42,11 +42,10 @@ yarn <- R6::R6Class("yarn",
     #' ex2
     initialize = function(path = NULL, encoding = "UTF-8", sourcepos = FALSE) {
       if (is.null(path)) {
-        xml <- list(yaml = NULL, body = NULL)
+        return(self)
       } else {
         xml <- to_xml(path, encoding, sourcepos)
       }
-
       self$path <- path
       self$yaml <- xml$yaml
       self$body <- xml$body
