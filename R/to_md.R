@@ -59,14 +59,6 @@ to_md <- function(yaml_xml_list, path = NULL,
 
 # convert body and yaml to markdown text given a stylesheet
 transform_to_md <- function(body, yaml, stylesheet) {
-  if (!is_stylesheet(stylesheet)) {
-    stop(glue::glue(
-      "stylesheet should be an object of class 'xml_document' ",
-      "where the top-level element is a <stylesheet>, ", 
-      "not an object of class ",
-      "'{glue::glue_collapse(class(stylesheet), sep = ', ')}'"
-    ))
-  }
   body <- xslt::xml_xslt(body, stylesheet = stylesheet)
 
   yaml <- glue::glue_collapse(yaml, sep = "\n")

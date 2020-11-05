@@ -25,7 +25,7 @@ read_stylesheet <- function(stylesheet_path) {
   if (is_stylesheet(out)) {
     return(out)
   } else {
-    stop(glue::glue('{stylesheet_path} is not a valid stylesheet'))
+    stop(glue::glue("'{stylesheet_path}' is not a valid stylesheet"))
   }
   
 }
