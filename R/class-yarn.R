@@ -8,7 +8,7 @@
 #' has methods that make it easier to add, analyze, remove, or write elements
 #' of your markdown document.
 #' @export
-yarn <- R6::R6Class("yarn", 
+yarn <- R6::R6Class("yarn",
   portable = TRUE,
   public = list(
     #' @field path \[`character`\] path to file on disk
@@ -17,20 +17,20 @@ yarn <- R6::R6Class("yarn",
     #' @field yaml \[`character`\] text block at head of file
     yaml = NULL,
 
-    #' @field body \[`xml_document`\] an xml document of the (R)Markdown file. 
+    #' @field body \[`xml_document`\] an xml document of the (R)Markdown file.
     body = NULL,
 
     #' @field ns \[`xml_document`\] an xml namespace object definining "md" to
     #'   commonmark.
     ns = NULL,
-    #' @description Create a new yarn document 
-    #' 
+    #' @description Create a new yarn document
+    #'
     #' @param path \[`character`\] path to a markdown episode file on disk
     #' @param encoding \[`character`\] encoding passed to [readLines()]
     #' @param sourcepos passed to [commonmark::markdown_xml()]. If `TRUE`, the
     #'   source position of the file will be included as a "sourcepos" attribute.
     #'   Defaults to `FALSE`.
-    #' @return A new yarn object containing an XML representation of a 
+    #' @return A new yarn object containing an XML representation of a
     #' (R)Markdown file.
     #'
     #' @examples
@@ -84,15 +84,18 @@ yarn <- R6::R6Class("yarn",
     #' ex1$write(tmp)
     #' head(readLines(tmp)) # now a markdown file
     #' unlink(tmp)
-    write = function(path = NULL, 
+    write = function(path = NULL,
       stylesheet_path = system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")){
+
+      output <- to_md(self, path, stylesheet_path)
+
       if (is.null(path)) {
-        stop("Please provide a file path", call. = FALSE)
+        cat(output)
       }
-      to_md(self, path, stylesheet_path)
-      invisible(self)
+
+      invisible(output)
     },
-    
+
     #' @description add an arbitrary Markdown element to the document
     #'
     #' @param md a string of markdown formatted text.
@@ -117,7 +120,7 @@ yarn <- R6::R6Class("yarn",
     #' xml2::xml_find_all(ex$body, "md:list", ex$ns)
     #' tmp <- tempfile()
     #' ex$write(tmp)
-    #' readLines(tmp, n = 20) 
+    #' readLines(tmp, n = 20)
     add_md = function(md, where = 0L) {
       b <- self$body
       new <- clean_content(md)
