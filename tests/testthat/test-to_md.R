@@ -1,20 +1,67 @@
 tmpdir <- withr::local_file("newdir")
 dir.create(tmpdir)
+`%<%` <- magrittr::`%>%`
+
+test_that("to_md works without a file", {
+
+  path <- system.file("extdata", "table.md", package = "tinkr")
+  stys <- system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")
+  stys <- xml2::read_xml(stys)
+
+  yaml_xml_list <- to_xml(path)
+  res <- to_md(yaml_xml_list)
+  # an XML stylsheet object can be provided
+  expect_equal(res, to_md(yaml_xml_list, stylesheet_path = stys))
+  expect_length(res, 2)
+  f <- textConnection(res)
+
+  fin  <- trimws(readLines(path, 3))
+  fout <- trimws(readLines(f, 3))
+  expect_equal(fin, fout)
+  expect_match(res[[2]], "aaaaaaaaaa")
+
+})
+
+test_that("to_md fails if the stylesheet is not correct", {
+  
+  tmp  <- withr::local_file("dummy.xml")
+  path <- system.file("extdata", "table.md", package = "tinkr")
+  yaml_xml_list <- to_xml(path)
+  xml2::write_xml(yaml_xml_list$body, tmp)
+  # NULL for stylesheet
+  expect_error(to_md(yaml_xml_list, stylesheet_path = NULL), 
+    "'stylesheet_path' must be a path to an XSL stylesheet")
+  # NA for stylesheet
+  expect_error(to_md(yaml_xml_list, stylesheet_path = NA), 
+    "'stylesheet_path' must be a path to an XSL stylesheet")
+  # multi-element vector
+  expect_error(to_md(yaml_xml_list, stylesheet_path = letters), 
+    "'stylesheet_path' must be a path to an XSL stylesheet")
+  # zero-element vector
+  expect_error(to_md(yaml_xml_list, stylesheet_path = character(0)), 
+    "'stylesheet_path' must be a path to an XSL stylesheet")
+  # xml document that is not a stylesheet
+  expect_error(to_md(yaml_xml_list, stylesheet_path = tmp), 
+    "'dummy.xml' is not a valid stylesheet")
+  # file that doesn't exist
+  expect_error(to_md(yaml_xml_list, stylesheet_path = "path/to/stylesheet.xsl"), 
+    "The file 'path/to/stylesheet.xsl' does not exist.")
+  # xml object
+  expect_error(to_md(yaml_xml_list, stylesheet_path = yaml_xml_list$body), 
+    "'stylesheet_path' must be a path to an XSL stylesheet")
+
+})
 
 test_that("to_md works", {
   newmd  <- withr::local_file("to_md-newmd.md")
   path <- system.file("extdata", "example1.md", package = "tinkr")
 
   yaml_xml_list <- to_xml(path)
-  library("magrittr")
   # transform level 3 headers into level 1 headers
-  body <- yaml_xml_list$body
-  body %>%
-    xml2::xml_find_all(xpath = './/d1:heading',
+  yaml_xml_list$body %>%
+    xml2::xml_find_all(xpath = './/d1:heading[@level="3"]',
                        xml2::xml_ns(.)) %>%
-    .[xml2::xml_attr(., "level") == "3"] -> headers3
-  xml2::xml_set_attr(headers3, "level", 1)
-  yaml_xml_list$body <- body
+    xml2::xml_set_attr("level", 1)
 
   # save back and have a look
   to_md(yaml_xml_list, newmd)
@@ -40,7 +87,6 @@ test_that("to_md works for Rmd", {
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
 
   yaml_xml_list <- to_xml(path, sourcepos = TRUE)
-  library("magrittr")
   body <- yaml_xml_list$body
   blocks <- yaml_xml_list$body %>%
     xml2::xml_find_all(xpath = './/d1:code_block',

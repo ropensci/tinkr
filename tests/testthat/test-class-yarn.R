@@ -1,6 +1,15 @@
 pathmd  <- system.file("extdata", "example1.md", package = "tinkr")
 pathrmd <- system.file("extdata", "example2.Rmd", package = "tinkr")
 
+test_that("an empty yarn object can be created", {
+  y1 <- yarn$new()
+  expect_s3_class(y1, "yarn")
+  expect_null(y1$body)
+  expect_null(y1$yaml)
+  expect_null(y1$ns)
+  expect_null(y1$path)
+})
+
 test_that("yarn can be created from markdown", {
   y1 <- yarn$new(pathmd)
   t1 <- to_xml(pathmd)
@@ -17,6 +26,10 @@ test_that("yarn can be created from Rmarkdown", {
   expect_s3_class(y1$body, "xml_document")
   expect_named(y1$ns, "md")
   expect_match(y1$ns, "commonmark")
+})
+
+test_that("the write method needs a filename", {
+  expect_error(yarn$new(pathmd)$write(), "Please provide a file path")
 })
 
 test_that("a yarn object can be written back to markdown", {

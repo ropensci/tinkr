@@ -22,6 +22,15 @@ test_that("to_xml works for Rmd", {
 
 })
 
+test_that("to_xml works with text connection", {
+
+  path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+  txt  <- readLines(path)
+  con  <- textConnection(txt)
+  expect_equal(to_xml(path)$yaml, to_xml(con)$yaml)
+
+})
+
 test_that("to_xml works with sourcepos", {
   path <- system.file("extdata", "example1.md", package = "tinkr")
   post_list <- to_xml(path, sourcepos = TRUE)
