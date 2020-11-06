@@ -93,7 +93,7 @@ yarn <- R6::R6Class("yarn",
         cat(output)
       }
 
-      invisible(output)
+      invisible(self)
     },
 
     #' @description add an arbitrary Markdown element to the document
