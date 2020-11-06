@@ -91,6 +91,11 @@ manipulating them does not require reassignment.
 
 ``` r
 library("magrittr")
+#| 
+#| Attaching package: 'magrittr'
+#| The following objects are masked from 'package:testthat':
+#| 
+#|     equals, is_less_than, not
 library("tinkr")
 # From Markdown to XML
 path <- system.file("extdata", "example1.md", package = "tinkr")
@@ -151,6 +156,9 @@ rmd$body
 #| [15] <paragraph>\n  <text xml:space="preserve">blabla</text>\n</paragraph>
 ```
 
+Note that all of the features in {tinkr} work for both Markdown and R
+Markdown.
+
 ### Inserting new markdown elements
 
 Inserting new nodes into the AST is surprisingly difficult if there is a
@@ -162,7 +170,7 @@ block:
 ```` r
 path <- system.file("extdata", "example2.Rmd", package = "tinkr")
 rmd <- tinkr::yarn$new(path)
-xml_find_first(rmd$body, ".//md:code_block", rmd$ns)
+xml2::xml_find_first(rmd$body, ".//md:code_block", rmd$ns)
 #| {xml_node}
 #| <code_block space="preserve" language="r" name="setup" include="FALSE" eval="TRUE">
 new_code <- c(
@@ -177,9 +185,8 @@ new_table <- data.frame(
 rmd$add_md(new_code, where = 1L)
 # Add a table after the second chunk:
 rmd$add_md(knitr::kable(new_table), where = 2L)
-tmp <- tempfile(fileext = ".Rmd")
-rmd$write(tmp)
-cat(readLines(tmp, 21), sep = "\n")
+# show the first 21 lines of modified document
+rmd$head(21)
 #| ---
 #| title: "Untitled"
 #| author: "M. Salmon"

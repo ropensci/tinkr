@@ -91,6 +91,41 @@ yarn <- R6::R6Class("yarn",
       to_md(self, path, stylesheet_path)
       invisible(self)
     },
+
+    #' @description show the markdown contents on the screen
+    #'
+    #' @return a character vector with one line for each line in the output
+    #' @examples
+    #' path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+    #' ex2 <- tinkr::yarn$new(path)
+    #' ex2$head(5)
+    #' ex2$tail(5)
+    #' ex2$show()
+    show = function() {
+      cat(out <- private$md_lines(), sep = "\n")
+      invisible(out)
+    },
+
+    #' @description show the head of the markdown contents on the screen
+    #'
+    #' @param n the number of elements to show from the top. Negative numbers
+    #' exclude lines from the bottom
+    #' @return a character vector with `n` elements
+    head = function(n = 6L) {
+      cat(out <- head(private$md_lines(), n), sep = "\n")
+      invisible(out)
+    },
+
+    #' @description show the tail of the markdown contents on the screen
+    #'
+    #' @param n the number of elements to show from the bottom. Negative numbers
+    #' exclude lines from the top
+    #' 
+    #' @return a character vector with `n` elements
+    tail = function(n = 6L) {
+      cat(out <- tail(private$md_lines(), n), sep = "\n")
+      invisible(out)
+    },
     
     #' @description add an arbitrary Markdown element to the document
     #'
@@ -130,4 +165,17 @@ yarn <- R6::R6Class("yarn",
       invisible(self)
     }
   ),
+  private = list(
+    # converts the document to markdown and separates the output into lines
+    md_lines = function() {
+      md <- to_md(self)
+      # Make sure that the yaml is not sitting on top of the first markdown line
+      if (length(md) == 2) {
+        md[1] <- paste0(md[1], "\n")
+      }
+      f  <- textConnection(md)
+      on.exit(close(f))
+      readLines(f)
+    }
+  )
 )

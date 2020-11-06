@@ -1,5 +1,6 @@
 pathmd  <- system.file("extdata", "example1.md", package = "tinkr")
 pathrmd <- system.file("extdata", "example2.Rmd", package = "tinkr")
+`%<%` <- magrittr::`%>%`
 
 test_that("an empty yarn object can be created", {
   y1 <- yarn$new()
@@ -10,6 +11,7 @@ test_that("an empty yarn object can be created", {
   expect_null(y1$path)
 })
 
+
 test_that("yarn can be created from markdown", {
   y1 <- yarn$new(pathmd)
   t1 <- to_xml(pathmd)
@@ -17,6 +19,22 @@ test_that("yarn can be created from markdown", {
   expect_s3_class(y1$body, "xml_document")
   expect_named(y1$ns, "md")
   expect_match(y1$ns, "commonmark")
+})
+
+test_that("yarn show, head, and tail methods work", {
+
+  y1 <- yarn$new(pathrmd)
+  expect_type(y1$show(), "character") %>% 
+    expect_snapshot_output()
+
+  expect_length(y1$head(10), 10) %>%
+    expect_type("character") %>%
+    expect_snapshot_output()
+
+  expect_length(y1$tail(10), 10) %>%
+    expect_type("character") %>%
+    expect_snapshot_output()
+
 })
 
 test_that("yarn can be created from Rmarkdown", {

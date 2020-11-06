@@ -52,6 +52,16 @@ head(readLines(tmp)) # now a markdown file
 unlink(tmp)
 
 ## ------------------------------------------------
+## Method `yarn$show`
+## ------------------------------------------------
+
+path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+ex2 <- tinkr::yarn$new(path)
+ex2$head(5)
+ex2$tail(5)
+ex2$show()
+
+## ------------------------------------------------
 ## Method `yarn$add_md`
 ## ------------------------------------------------
 
@@ -94,6 +104,9 @@ commonmark.}
 \item \href{#method-new}{\code{yarn$new()}}
 \item \href{#method-reset}{\code{yarn$reset()}}
 \item \href{#method-write}{\code{yarn$write()}}
+\item \href{#method-show}{\code{yarn$show()}}
+\item \href{#method-head}{\code{yarn$head()}}
+\item \href{#method-tail}{\code{yarn$tail()}}
 \item \href{#method-add_md}{\code{yarn$add_md()}}
 \item \href{#method-clone}{\code{yarn$clone()}}
 }
@@ -199,6 +212,73 @@ unlink(tmp)
 
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-show"></a>}}
+\if{latex}{\out{\hypertarget{method-show}{}}}
+\subsection{Method \code{show()}}{
+show the markdown contents on the screen
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$show()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+a character vector with one line for each line in the output
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+ex2 <- tinkr::yarn$new(path)
+ex2$head(5)
+ex2$tail(5)
+ex2$show()
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-head"></a>}}
+\if{latex}{\out{\hypertarget{method-head}{}}}
+\subsection{Method \code{head()}}{
+show the head of the markdown contents on the screen
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$head(n = 6L)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{n}}{the number of elements to show from the top. Negative numbers
+exclude lines from the bottom}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+a character vector with \code{n} elements
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-tail"></a>}}
+\if{latex}{\out{\hypertarget{method-tail}{}}}
+\subsection{Method \code{tail()}}{
+show the tail of the markdown contents on the screen
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$tail(n = 6L)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{n}}{the number of elements to show from the bottom. Negative numbers
+exclude lines from the top}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+a character vector with \code{n} elements
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-add_md"></a>}}
