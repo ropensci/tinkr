@@ -31,11 +31,7 @@ to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE){
     commonmark::markdown_xml(extensions = TRUE, sourcepos = sourcepos) %>%
     xml2::read_xml(encoding = encoding) -> body
 
-  if(stringr::str_detect(fs::path_ext(path), "[Rr]")){
-
-    parse_rmd(body)
-
-  }
+  parse_rmd(body)
 
   list(yaml = yaml,
        body = body)

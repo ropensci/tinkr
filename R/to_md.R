@@ -1,14 +1,19 @@
 #' Write YAML and XML back to disk as (R)Markdown
 #'
-#' @param yaml_xml_list result from a call to \code{to_xml} and editing.
-#' @param path path of the new file
+#' @param yaml_xml_list result from a call to [to_xml()] and editing.
+#' @param path path of the new file. Defaults to `NULL`, which will not write
+#'   any file, but will still produce the conversion and pass the output as
+#'   a character vector.
 #' @param stylesheet_path path to the XSL stylesheet
 #'
 #' @details The stylesheet you use will decide whether lists
 #' are built using "*" or "-" for instance. If you're keen to
-#'  keep your own Markdown style when using \code{to_md} after
-#'  \code{to_xml}, you can tweak the XSL stylesheet a bit and provide
-#'  the path to your XSL stylesheet as argument.
+#' keep your own Markdown style when using [to_md()] after
+#' [to_xml()], you can tweak the XSL stylesheet a bit and provide
+#' the path to your XSL stylesheet as argument.
+#'
+#'
+#' @return the converted document, invisibly. 
 #'
 #' @export
 #'
@@ -31,25 +36,34 @@
 #' # file.edit("newmd.md")
 #' file.remove(newmd)
 #'
-to_md <- function(yaml_xml_list, path,
+to_md <- function(yaml_xml_list, path = NULL,
                   stylesheet_path = system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")){
-
-  stylesheet_path %>%
-    xml2::read_xml() -> stylesheet
 
   # duplicate document to avoid overwriting
   body <- copy_xml(yaml_xml_list$body)
+  yaml <- yaml_xml_list$yaml
+
+  # read stylesheet and fail early if it doesn't exist
+  stylesheet <- read_stylesheet(stylesheet_path)
 
   transform_code_blocks(body)
 
+  md_out <- transform_to_md(body, yaml, stylesheet)
+
+  if (!is.null(path)) {
+    writeLines(md_out, con = path, useBytes = TRUE, sep =  "\n\n")
+  }
+
+  invisible(md_out)
+}
+
+# convert body and yaml to markdown text given a stylesheet
+transform_to_md <- function(body, yaml, stylesheet) {
   body <- xslt::xml_xslt(body, stylesheet = stylesheet)
 
-  yaml_xml_list$yaml %>%
-    glue::glue_collapse(sep = "\n") -> yaml
+  yaml <- glue::glue_collapse(yaml, sep = "\n")
 
-  writeLines(c(yaml, body), con = path,
-             useBytes = TRUE,
-             sep =  "\n\n")
+  c(yaml, body)
 }
 
 copy_xml <- function(xml) {

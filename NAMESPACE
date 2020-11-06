@@ -2,4 +2,5 @@
 
 export(to_md)
 export(to_xml)
+export(yarn)
 importFrom(magrittr,"%>%")
