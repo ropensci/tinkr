@@ -16,6 +16,12 @@
 
     <xsl:output method="text" encoding="utf-8"/>
 
+      <!-- Text that needs to be preserved (e.g. math/checkboxes) -->
+
+    <xsl:template match="md:text[@asis='true']">
+      <xsl:value-of select='string(.)'/>
+    </xsl:template>
+
 
     <!-- Table -->
 

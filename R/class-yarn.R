@@ -163,6 +163,17 @@ yarn <- R6::R6Class("yarn",
       }
       self$body <- copy_xml(b)
       invisible(self)
+    },
+    #' @description Protect math blocks from being escaped
+    #' 
+    #' @examples
+    #' path <- system.file("extdata", "math-example.Rmd", package = "tinkr")
+    #' ex <- tinkr::yarn$new(path)
+    #' ex$tail() # math blocks are escaped :(
+    #' ex$protect_math()$tail() # math blocks are no longer escaped :)
+    protect_math = function() {
+      protect_block_math(self$body, self$ns)
+      invisible(self)
     }
   ),
   private = list(

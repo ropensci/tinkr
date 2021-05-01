@@ -83,6 +83,15 @@ xml2::xml_find_all(ex$body, "md:list", ex$ns)
 tmp <- tempfile()
 ex$write(tmp)
 readLines(tmp, n = 20) 
+
+## ------------------------------------------------
+## Method `yarn$protect_math`
+## ------------------------------------------------
+
+path <- system.file("extdata", "math-example.Rmd", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+ex$tail() # math blocks are escaped :(
+ex$protect_math()$tail() # math blocks are no longer escaped :)
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -108,6 +117,7 @@ commonmark.}
 \item \href{#method-head}{\code{yarn$head()}}
 \item \href{#method-tail}{\code{yarn$tail()}}
 \item \href{#method-add_md}{\code{yarn$add_md()}}
+\item \href{#method-protect_math}{\code{yarn$protect_math()}}
 \item \href{#method-clone}{\code{yarn$clone()}}
 }
 }
@@ -320,6 +330,27 @@ xml2::xml_find_all(ex$body, "md:list", ex$ns)
 tmp <- tempfile()
 ex$write(tmp)
 readLines(tmp, n = 20) 
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-protect_math"></a>}}
+\if{latex}{\out{\hypertarget{method-protect_math}{}}}
+\subsection{Method \code{protect_math()}}{
+Protect math blocks from being escaped
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$protect_math()}\if{html}{\out{</div>}}
+}
+
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "math-example.Rmd", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+ex$tail() # math blocks are escaped :(
+ex$protect_math()$tail() # math blocks are no longer escaped :)
 }
 \if{html}{\out{</div>}}
 
