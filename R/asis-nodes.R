@@ -14,7 +14,16 @@ find_block_math <- function(body, ns, tag = "md:text[contains(text(), '$$')]") {
 
 protect_block_math <- function(body, ns) {
   bm <- find_block_math(body, ns)
-  xml2::xml_set_attr(bm, "asis", "true")
+  # set attribute for top nodes in block
+  set_asis(bm)
+  # set attribute for children
+  if (length(cbm <- xml2::xml_children(bm))) {
+    set_asis(cbm)
+  }
+}
+
+set_asis <- function(nodes) {
+  xml2::xml_set_attr(nodes[xml2::xml_name(nodes) != "softbreak"], "asis", "true")
 }
 
 tick_check <- function(body, ns) {
@@ -25,5 +34,4 @@ tick_check <- function(body, ns) {
 
 fix_tickboxes <- function(body, ns) {
   ticks <- tick_check(body, ns)
-  
 }
