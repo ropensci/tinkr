@@ -167,7 +167,7 @@ yarn <- R6::R6Class("yarn",
     #' @description Protect math blocks from being escaped
     #' 
     #' @examples
-    #' path <- system.file("extdata", "math-example.Rmd", package = "tinkr")
+    #' path <- system.file("extdata", "math-example.md", package = "tinkr")
     #' ex <- tinkr::yarn$new(path)
     #' ex$tail() # math blocks are escaped :(
     #' ex$protect_math()$tail() # math blocks are no longer escaped :)
