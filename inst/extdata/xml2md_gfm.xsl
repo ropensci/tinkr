@@ -18,6 +18,13 @@
 
       <!-- Text that needs to be preserved (e.g. math/checkboxes) -->
 
+    <xsl:template match="md:emph[@asis='true']">
+      <!-- Handles situation where there are multiple subscripts (common) -->
+      <xsl:text>_</xsl:text>
+      <xsl:apply-templates select="md:text[@asis='true']"/>
+      <xsl:text>_</xsl:text>
+    </xsl:template>
+
     <xsl:template match="md:text[@asis='true']">
       <xsl:value-of select='string(.)'/>
     </xsl:template>
