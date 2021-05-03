@@ -1,7 +1,7 @@
 # yarn show, head, and tail methods work
 
     Code
-      y1$show()
+      show_user(res <- y1$show(), TRUE)
     Output
       ---
       title: "Untitled"
@@ -67,7 +67,7 @@
 ---
 
     Code
-      y1$head(10)
+      show_user(res <- y1$head(10), TRUE)
     Output
       ---
       title: "Untitled"
@@ -83,8 +83,9 @@
 ---
 
     Code
-      y1$tail(10)
+      show_user(res <- y1$tail(11), TRUE)
     Output
+      | Anas platyrhynchos         | Mallard             | 273 | 
       | Fulica atra                | Eurasian Coot       | 268 | 
       | Parus major                | Great Tit           | 266 | 
       | Podiceps cristatus         | Great Crested Grebe | 254 | 

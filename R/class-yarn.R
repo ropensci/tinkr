@@ -102,8 +102,7 @@ yarn <- R6::R6Class("yarn",
     #' ex2$tail(5)
     #' ex2$show()
     show = function() {
-      cat(out <- private$md_lines(), sep = "\n")
-      invisible(out)
+      show_user(private$md_lines())
     },
 
     #' @description show the head of the markdown contents on the screen
@@ -112,8 +111,7 @@ yarn <- R6::R6Class("yarn",
     #' exclude lines from the bottom
     #' @return a character vector with `n` elements
     head = function(n = 6L) {
-      cat(out <- head(private$md_lines(), n), sep = "\n")
-      invisible(out)
+      show_user(head(private$md_lines(), n))
     },
 
     #' @description show the tail of the markdown contents on the screen
@@ -123,8 +121,7 @@ yarn <- R6::R6Class("yarn",
     #' 
     #' @return a character vector with `n` elements
     tail = function(n = 6L) {
-      cat(out <- tail(private$md_lines(), n), sep = "\n")
-      invisible(out)
+      show_user(tail(private$md_lines(), n))
     },
     
     #' @description add an arbitrary Markdown element to the document
@@ -153,15 +150,7 @@ yarn <- R6::R6Class("yarn",
     #' ex$write(tmp)
     #' readLines(tmp, n = 20) 
     add_md = function(md, where = 0L) {
-      b <- self$body
-      new <- clean_content(md)
-      new <- commonmark::markdown_xml(new, extensions = TRUE)
-      new <- xml2::xml_ns_strip(xml2::read_xml(new))
-      new <- xml2::xml_children(new)
-      for (child in rev(new)) {
-        xml2::xml_add_child(b, child, .where = where)
-      }
-      self$body <- copy_xml(b)
+      self$body <- add_md(self$body, md, where)
       invisible(self)
     },
     #' @description Protect math blocks from being escaped

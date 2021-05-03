@@ -1,7 +1,7 @@
 # block math can be protected
 
     Code
-      m$protect_math()$tail(48)
+      show_user(m$protect_math()$tail(48), force = TRUE)
     Output
       ```latex
       $$

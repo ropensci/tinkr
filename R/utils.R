@@ -1,3 +1,7 @@
+show_user <- function(out, force = FALSE) {
+  if (force || !identical(Sys.getenv("TESTTHAT"), "true")) cat(out, sep = "\n")
+  invisible(out)
+}
 # from blogdown
 # https://github.com/rstudio/blogdown/blob/9c7f7db5f11a481e1606031e88142b4a96139cce/R/utils.R#L391
 split_yaml_body = function(x) {

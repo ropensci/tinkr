@@ -24,15 +24,15 @@ test_that("yarn can be created from markdown", {
 test_that("yarn show, head, and tail methods work", {
 
   y1 <- yarn$new(pathrmd)
-  expect_snapshot(y1$show()) # I have no clue how to suppress the output for this test
-  expect_type(y1$show(), "character") 
+  expect_snapshot(show_user(res <- y1$show(), TRUE))
+  expect_type(res, "character") 
 
-  expect_snapshot(y1$head(10))
-  expect_length(y1$head(10), 10) %>%
+  expect_snapshot(show_user(res <- y1$head(10), TRUE))
+  expect_length(res, 10) %>%
     expect_type("character")
 
-  expect_snapshot(y1$tail(10))
-  expect_length(y1$tail(10), 10) %>%
+  expect_snapshot(show_user(res <- y1$tail(11), TRUE))
+  expect_length(res, 11) %>%
     expect_type("character")
 
 })
