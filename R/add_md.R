@@ -7,10 +7,24 @@
 #' @return a copy of the XML object with the markdown inserted.
 add_md <- function(body, md, where = 0L) {
   new <- md_to_xml(md)
-  for (child in rev(new)) {
+  add_node_children(body, new, where)
+}
+
+# Adds children to a specific location and then copies the xml of the full
+# document. 
+add_node_children <- function(body, nodes, where = 0L) {
+  for (child in rev(nodes)) {
     xml2::xml_add_child(body, child, .where = where)
   }
   copy_xml(body)
+}
+
+add_node_siblings <- function(node, nodes, where = "after", remove = TRUE) {
+  body <- xml2::xml_find_first(node, ".//ancestor::d1:document")
+  for(sib in rev(nodes)) {
+    xml2::xml_add_sibling(node, sib, .where = where)
+  }
+  if (remove) xml2::xml_remove(node)
 }
 
 #' Convert markdown to XML

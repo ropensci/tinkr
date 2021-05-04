@@ -4,7 +4,7 @@ title: An example with math elements
 
 
 This example has $\LaTeX$ elements embedded in the
-text. It is intended to demonstrate that m$\alpha\tau$h
+text. It is intended to demonstrate that m $\alpha_\tau$ h
 mode can work with tinkr. $y = 
 mx + b$
 
