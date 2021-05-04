@@ -50,6 +50,8 @@ yarn <- R6::R6Class("yarn",
       self$yaml <- xml$yaml
       self$body <- xml$body
       self$ns   <- xml2::xml_ns_rename(xml2::xml_ns(xml$body), d1 = "md")
+      private$sourcepos <- sourcepos
+      private$encoding  <- encoding
       invisible(self)
     },
 
@@ -64,7 +66,7 @@ yarn <- R6::R6Class("yarn",
     #' ex1$reset()
     #' ex1$body
     reset = function() {
-      x <- to_xml(self$path)
+      x <- to_xml(self$path, encoding = private$encoding, sourcepos = private$sourcepos)
       self$body <- x$body
       self$yaml <- x$yaml
       invisible(self)
@@ -166,6 +168,8 @@ yarn <- R6::R6Class("yarn",
     }
   ),
   private = list(
+    sourcepos = FALSE,
+    encoding  = "UTF-8",
     # converts the document to markdown and separates the output into lines
     md_lines = function() {
       md <- to_md(self)
