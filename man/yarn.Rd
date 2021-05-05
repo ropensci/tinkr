@@ -88,7 +88,7 @@ readLines(tmp, n = 20)
 ## Method `yarn$protect_math`
 ## ------------------------------------------------
 
-path <- system.file("extdata", "math-example.Rmd", package = "tinkr")
+path <- system.file("extdata", "math-example.md", package = "tinkr")
 ex <- tinkr::yarn$new(path)
 ex$tail() # math blocks are escaped :(
 ex$protect_math()$tail() # math blocks are no longer escaped :)
@@ -347,7 +347,7 @@ Protect math blocks from being escaped
 
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{path <- system.file("extdata", "math-example.Rmd", package = "tinkr")
+\preformatted{path <- system.file("extdata", "math-example.md", package = "tinkr")
 ex <- tinkr::yarn$new(path)
 ex$tail() # math blocks are escaped :(
 ex$protect_math()$tail() # math blocks are no longer escaped :)

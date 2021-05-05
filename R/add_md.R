@@ -31,8 +31,9 @@ add_node_siblings <- function(node, nodes, where = "after", remove = TRUE) {
 #'
 #' @param md a character vector of markdown text
 #' @return an XML nodeset of the markdown text
+#' @keywords internal
 #' @examples
-#' md_to_xml(c(
+#' tinkr:::md_to_xml(c(
 #'   "## This is a new section of markdown",
 #'   "",
 #'   "Each new element",
