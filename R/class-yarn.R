@@ -163,7 +163,10 @@ yarn <- R6::R6Class("yarn",
     #' ex$tail() # math blocks are escaped :(
     #' ex$protect_math()$tail() # math blocks are no longer escaped :)
     protect_math = function() {
+      # block math adds attributes, done in memory
       protect_block_math(self$body, self$ns)
+      # inline math adds _nodes_, which means a new document
+      self$body <- protect_inline_math(self$body, self$ns)
       invisible(self)
     }
   ),
