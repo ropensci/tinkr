@@ -64,7 +64,7 @@ fix_fully_inline <- function(math) {
 }
 
 char_to_nodelist <- function(txt) {
-  doc <- glue::glue(commonmark::markdown_xml("{paste(res, collapse = '\n')}")) 
+  doc <- glue::glue(commonmark::markdown_xml("{paste(txt, collapse = '\n')}")) 
   doc <- xml2::read_xml(doc)
   nodes <- xml2::xml_children(xml2::xml_children(doc))
   nodes[xml2::xml_name(nodes) != "softbreak"]

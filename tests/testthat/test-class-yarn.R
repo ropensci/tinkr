@@ -66,8 +66,8 @@ test_that("a yarn object can be reset", {
   scarf1 <- withr::local_file("yarn-write.md")
   y1 <- yarn$new(pathmd, sourcepos = TRUE, encoding = "utf-8")
 
-  expect_equal(m$.__enclos_env__$private$encoding, "utf-8")
-  expect_true(m$.__enclos_env__$private$sourcepos)
+  expect_equal(y1$.__enclos_env__$private$encoding, "utf-8")
+  expect_true(y1$.__enclos_env__$private$sourcepos)
   expect_s3_class(y1$body, "xml_document")
   expect_false(is.na(xml2::xml_attr(y1$body, "sourcepos")))
 
@@ -76,8 +76,8 @@ test_that("a yarn object can be reset", {
 
   y1$reset()
   expect_s3_class(y1$body, "xml_document")
-  expect_equal(m$.__enclos_env__$private$encoding, "utf-8")
-  expect_true(m$.__enclos_env__$private$sourcepos)
+  expect_equal(y1$.__enclos_env__$private$encoding, "utf-8")
+  expect_true(y1$.__enclos_env__$private$sourcepos)
   expect_false(is.na(xml2::xml_attr(y1$body, "sourcepos")))
 
 })
