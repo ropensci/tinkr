@@ -15,7 +15,7 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
   switch(type,
     start = start,
     stop = stop,
-    full = glue::glue('{start}.+?{stop}')
+    full = glue::glue('({start}.+?{stop})')
   )
 }
 
