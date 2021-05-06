@@ -4,14 +4,28 @@ set_asis <- function(nodes) {
 
 # INLINE MATH ------------------------------------------------------------------
 
+# finding inline math consists of searching for $ and excluding $$
 find_inline_math <- function(body, ns) {
-   i <- ".//md:*[contains(text(), '$') and not(contains(text(), '$$'))]"
+   i <- ".//md:text[not(@asis) and contains(text(), '$') and not(contains(text(), '$$'))]"
    xml2::xml_find_all(body, i, ns = ns)
 }
 
+# Helper function to return the proper regex for inline math.
+# Having the start and stop type individually allows me to invert the
+# union between them to find the incomplete cases.
 inline_dollars_regex <- function(type = c("start", "stop", "full")) {
-  start <- "(^|[[:space:][:punct:]])[$]?[$][^ $]"
-  stop  <- "[^ $][$][$]?([[:space:][:punct:]]|$)"
+  # any space
+  ace   <- "[:space:]"
+  punks <- glue::glue("[{ace}[:punct:]]")
+  # Note about this regex: the first part is a lookahead (?=...) that searches 
+  # for the line start, space, or punctuation. Importantly about lookaheads,
+  # they do not consume the string 
+  # (https://junli.netlify.app/en/overlapping-regular-expression-in-python/)
+  # 
+  # The rest of the regex looks for a dollar sign that does not butt up against
+  # a space or another dollar. 
+  start <- glue::glue("(?=^|{punks})[$]?[$][^{ace}$]")
+  stop  <- glue::glue("[^{ace}$][$][$]?(?={punks}|$)")
   switch(type,
     start = start,
     stop = stop,
@@ -19,10 +33,11 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
   )
 }
 
+# Find incomplete cases for inline math
 find_broken_math <- function(math) {
   txt <- xml2::xml_text(math)
-  start <- grepl(inline_dollars_regex("start"), txt)
-  stop  <- grepl(inline_dollars_regex("stop"), txt)
+  start <- grepl(inline_dollars_regex("start"), txt, perl = TRUE)
+  stop  <- grepl(inline_dollars_regex("stop"), txt, perl = TRUE)
   incomplete <- !(start & stop)
   list(
     no_end = start & incomplete, 
