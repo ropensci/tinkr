@@ -37,7 +37,7 @@
       $$
       
       Below is an example from [https://github.com/ropensci/tinkr/issues/38](https://github.com/ropensci/tinkr/issues/38)
-      $\frac{\sum _{i=N-n}^{N}Q_i} {\sum_{i=N-n}^{N}Q_i} {\sum{j=N-n}^{N}{(\frac{C_j+C_{j-1}}2)}}$
+      $\frac{\sum _{i=N-n}^{N}Q_i} {\sum_{j=N-n}^{N}{(\frac{C_j+C_{j-1}}2)}}$
       
       ```latex
       $$
