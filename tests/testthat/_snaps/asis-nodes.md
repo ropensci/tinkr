@@ -3,7 +3,6 @@
     Code
       show_user(m$protect_math()$tail(48), force = TRUE)
     Output
-      ```latex
       $$
       \begin{align} % This mode aligns the equations to the '&=' signs
       \begin{split} % This mode groups the equations into one.
@@ -38,6 +37,7 @@
       $$
       
       Below is an example from [https://github.com/ropensci/tinkr/issues/38](https://github.com/ropensci/tinkr/issues/38)
+      $\frac{\sum _{i=N-n}^{N}Q_i} {\sum_{i=N-n}^{N}Q_i} {\sum{j=N-n}^{N}{(\frac{C_j+C_{j-1}}2)}}$
       
       ```latex
       $$
