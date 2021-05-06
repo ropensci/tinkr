@@ -177,6 +177,7 @@ protect_block_math <- function(body, ns) {
 }
 
 # TICK BOXES -------------------------------------------------------------------
+#nocov start
 
 tick_check <- function(body, ns) {
   predicate <- "starts-with(text(), '[ ]') or starts-with(text(), '[x]')"
@@ -187,3 +188,4 @@ tick_check <- function(body, ns) {
 fix_tickboxes <- function(body, ns) {
   ticks <- tick_check(body, ns)
 }
+#nocov end
