@@ -105,8 +105,7 @@ protect_inline_math <- function(body, ns) {
 
 fix_partial_inline <- function(tag, body, ns) {
   # find everything between the tagged pair
-  to_find <- "md:text[@latex-pair='{tag}']"
-  math_lines <- find_block_math(body, ns, glue::glue(to_find), include = TRUE)
+  math_lines <- find_between_inlines(body, ns, tag)
   # make sure everything between the tagged pair is labeled as 'asis'
   filling <- math_lines[is.na(xml2::xml_attr(math_lines, "latex-pair"))]
   set_asis(filling)
@@ -161,19 +160,19 @@ char_to_nodelist <- function(txt) {
 
 # BLOCK MATH ------------------------------------------------------------------
 
-find_block_math <- function(body, ns, tag = "md:text[contains(text(), '$$')]", include = FALSE) {
-  after  <- "following-sibling::"
-  before <- "preceding-sibling::"
-  after_first_tag <- glue::glue("{after}{tag}")
-  before_last_tag <- glue::glue("{before}md:*[{before}{tag}]")
-  prefix <- if (include) glue::glue(".//{tag} | .//") else ".//"
-  xpath <- glue::glue("{prefix}{after_first_tag}/{before_last_tag}")
-  bm <- xml2::xml_find_all(body, xpath, ns = ns)
-  xml2::xml_find_all(bm, ".//descendant-or-self::md:*", ns = ns)
+find_block_math <- function(body, ns) {
+  find_between(body, ns, pattern = "md:text[contains(text(), '$$')]", include = FALSE)
+}
+
+find_between_inlines <- function(body, ns, tag) {
+  to_find <- "md:text[@latex-pair='{tag}']"
+  find_between(body, ns, pattern = glue::glue(to_find), include = TRUE)
 }
 
 protect_block_math <- function(body, ns) {
   bm <- find_block_math(body, ns)
+  # get all of the internal nodes
+  bm <- xml2::xml_find_all(bm, ".//descendant-or-self::md:*", ns = ns)
   set_asis(bm) 
 }
 
