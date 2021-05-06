@@ -73,12 +73,13 @@ char_to_nodelist <- function(txt) {
 
 # BLOCK MATH ------------------------------------------------------------------
 
-find_block_math <- function(body, ns, tag = "md:text[contains(text(), '$$')]") {
+find_block_math <- function(body, ns, tag = "md:text[contains(text(), '$$')]", include = FALSE) {
   after  <- "following-sibling::"
   before <- "preceding-sibling::"
   after_first_tag <- glue::glue("{after}{tag}")
   before_last_tag <- glue::glue("{before}md:*[{before}{tag}]")
-  xpath <- glue::glue(".//{after_first_tag}/{before_last_tag}")
+  prefix <- if (include) glue::glue(".//{tag} | .//") else ".//"
+  xpath <- glue::glue("{prefix}{after_first_tag}/{before_last_tag}")
   bm <- xml2::xml_find_all(body, xpath, ns = ns)
   xml2::xml_find_all(bm, ".//descendant-or-self::md:*", ns = ns)
 }
