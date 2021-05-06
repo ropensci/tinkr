@@ -63,6 +63,9 @@ find_broken_math <- function(math) {
 protect_inline_math <- function(body, ns) {
   body  <- copy_xml(body)
   math  <- find_inline_math(body, ns)
+  if (length(math) == 0) {
+    return(body)
+  }
   broke <- find_broken_math(math)
 
   bespoke  <- !(broke$no_end | broke$no_beginning)
@@ -73,24 +76,28 @@ protect_inline_math <- function(body, ns) {
   bmath   <- math[!bespoke]
 
   # protect math that is strictly inline
-  new_nodes <- lapply(fix_fully_inline(imath), xml2::xml_children)
+  if (length(imath)) {
+    new_nodes <- lapply(fix_fully_inline(imath), xml2::xml_children)
 
-  # since we split up the nodes, we have to do this node by node
-  for (i in seq(new_nodes)) {
-    add_node_siblings(math[bespoke][[i]], new_nodes[[i]], remove = TRUE)
+    # since we split up the nodes, we have to do this node by node
+    for (i in seq(new_nodes)) {
+      add_node_siblings(math[bespoke][[i]], new_nodes[[i]], remove = TRUE)
+    }
   }
 
   # protect math that is broken across lines
-  if (length(bmath[endless]) != length(bmath[headless])) {
-    stop("Uneven math elements")
-  }
+  if (length(bmath)) {
+    if (length(bmath[endless]) != length(bmath[headless])) {
+      stop("Uneven math elements")
+    }
 
-  # assign sequential tags to the pairs of inline math elements
-  tags <- seq(length(bmath[endless]))  
-  xml2::xml_set_attr(bmath[endless], "latex-pair", tags)
-  xml2::xml_set_attr(bmath[headless], "latex-pair", tags)
-  for (i in tags) {
-    fix_partial_inline(i, body, ns)
+    # assign sequential tags to the pairs of inline math elements
+    tags <- seq(length(bmath[endless]))  
+    xml2::xml_set_attr(bmath[endless], "latex-pair", tags)
+    xml2::xml_set_attr(bmath[headless], "latex-pair", tags)
+    for (i in tags) {
+      fix_partial_inline(i, body, ns)
+    }
   }
   
   copy_xml(body)
