@@ -82,8 +82,8 @@
       mode can work with tinkr. $y =
       mx + b$
       
-      - \[ \] This is an empty checkbox
-      - \[x\] This is a checked checkbox
+      - [ ] This is an empty checkbox
+      - [x] This is a checked checkbox
       - [This is a link](https://ropensci.org)
       - \[this is an example\]
 

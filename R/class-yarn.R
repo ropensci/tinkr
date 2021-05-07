@@ -50,6 +50,7 @@ yarn <- R6::R6Class("yarn",
       self$yaml <- xml$yaml
       self$body <- xml$body
       self$ns   <- xml2::xml_ns_rename(xml2::xml_ns(xml$body), d1 = "md")
+      self$body <- protect_tickbox(self$body, self$ns)
       private$sourcepos <- sourcepos
       private$encoding  <- encoding
       invisible(self)
