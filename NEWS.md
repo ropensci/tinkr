@@ -5,6 +5,9 @@
 * Tables are now pretty after a full loop `to_xml()` + `to_md()` (@pdaengeli, #9)
 * 2021-05-04: yarn objects remember the `sourcepos` and `encoding` options 
   when resetting.
+* 2021-05-06: LaTeX math (dollar notation) is now protected (@zkamvar, #39)
+* 2021-05-06: GitHub-flavored markdown tick/checkboxes are now protected 
+  (@zkamvar, #39)
 
 # tinkr 0.0.0.9000
 

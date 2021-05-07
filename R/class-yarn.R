@@ -168,6 +168,18 @@ yarn <- R6::R6Class("yarn",
       # inline math adds _nodes_, which means a new document
       self$body <- protect_inline_math(self$body, self$ns)
       invisible(self)
+    },
+    #' @description Protect github-flavored markdown tick boxes
+    #' 
+    #' @examples
+    #' path <- system.file("extdata", "math-example.md", package = "tinkr")
+    #' ex <- tinkr::yarn$new(path)
+    #' ex$tail() # tick boxes :(
+    #' ex$protect_tickbox()$head(13) # tick boxes are no longer escaped :)
+    protect_tickbox = function() {
+      # inline math adds _nodes_, which means a new document
+      self$body <- protect_tickbox(self$body, self$ns)
+      invisible(self)
     }
   ),
   private = list(

@@ -118,7 +118,6 @@ fix_partial_inline <- function(tag, body, ns) {
   char[[n]] <- sub("[<]text ", "<text asis='true' ", char[[n]])
   nodes <- paste(char, collapse = "")
   nodes <- xml2::xml_children(set_default_space(nodes))
-  # nodes <- xml2::xml_children(fix_fully_inline(one_line))
   # add the new nodes to the bottom of the existing math lines 
   last_line <- math_lines[n]
   to_remove <- math_lines[-n]
@@ -177,7 +176,6 @@ protect_block_math <- function(body, ns) {
 }
 
 # TICK BOXES -------------------------------------------------------------------
-#nocov start
 
 tick_check <- function(body, ns) {
   predicate <- "starts-with(text(), '[ ]') or starts-with(text(), '[x]')"
@@ -185,7 +183,17 @@ tick_check <- function(body, ns) {
   xml2::xml_find_all(body, cascade, ns = ns)
 }
 
-fix_tickboxes <- function(body, ns) {
+protect_tickbox <- function(body, ns) {
+  body <- copy_xml(body)
   ticks <- tick_check(body, ns)
+  # set the tickbox asis
+  set_asis(ticks)
+  char <- as.character(ticks)
+  char <- sub("(\\[.\\])", "\\1</text><text>", char, perl = TRUE)
+  new_nodes <- lapply(set_default_space(char), xml2::xml_children)
+  # since we split up the nodes, we have to do this node by node
+  for (i in seq(new_nodes)) {
+    add_node_siblings(ticks[[i]], new_nodes[[i]], remove = TRUE)
+  }
+  copy_xml(body)
 }
-#nocov end

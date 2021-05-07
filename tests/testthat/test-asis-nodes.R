@@ -1,8 +1,12 @@
 pathmath <- system.file("extdata", "math-example.md", package = "tinkr")
+m <- yarn$new(pathmath)
 
 test_that("block math can be protected", {
-  m <- yarn$new(pathmath)
   expect_snapshot(show_user(m$protect_math()$tail(48), force = TRUE))
+})
+
+test_that("tick boxes can be protected", {
+  expect_snapshot(show_user(m$protect_tickbox()$head(13), force = TRUE))
 })
 
 test_that("documents with no math do no harm", {
@@ -15,3 +19,4 @@ test_that("documents with no math do no harm", {
   # inline math does nothing
   expect_equal(as.character(protect_inline_math(x, ns)), x1)
 })
+

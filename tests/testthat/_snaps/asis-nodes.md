@@ -52,3 +52,22 @@
       $$
       
 
+# tick boxes can be protected
+
+    Code
+      show_user(m$protect_tickbox()$head(13), force = TRUE)
+    Output
+      ---
+      title: An example with math elements
+      ---
+      
+      This example has $\LaTeX$ elements embedded in the
+      text. It is intended to demonstrate that m $\alpha_\tau$ h
+      mode can work with tinkr. $y =
+      mx + b$
+      
+      - [ ] This is an empty checkbox
+      - [x] This is a checked checkbox
+      - [This is a link](https://ropensci.org)
+      - \[this is an example\]
+
