@@ -81,14 +81,30 @@ protect_inline_math <- function(body, ns) {
 
     # since we split up the nodes, we have to do this node by node
     for (i in seq(new_nodes)) {
-      add_node_siblings(math[bespoke][[i]], new_nodes[[i]], remove = TRUE)
+      add_node_siblings(imath[[i]], new_nodes[[i]], remove = TRUE)
     }
   }
 
   # protect math that is broken across lines
   if (length(bmath)) {
-    if (length(bmath[endless]) != length(bmath[headless])) {
-      stop("Uneven math elements")
+    if ((le <- length(bmath[endless])) != (lh <- length(bmath[headless]))) {
+      no_end <- xml2::xml_text(bmath[endless])
+      no_beginning <- xml2::xml_text(bmath[headless])
+      msg <- glue::glue("
+        Inline math delimiters are not balanced.
+
+        HINT: If you are writing BASIC code, make sure you wrap variable
+              names and code in backtics like so: `INKEY$`. 
+
+        Below are the pairs that were found:"
+      )
+      l <- seq(max(le, lh))
+      no_end <- ifelse(is.na(no_end[l]), "", no_end[l])
+      no_beginning <- ifelse(is.na(no_beginning[l]), "", no_beginning[l])
+      no_end <- format(c("start", "-----", no_end), justify = "right")
+      pairs <- glue::glue("{no_end}...{c('end', '---', no_beginning)}")
+      msg <- glue::glue_collapse(c(msg, pairs), sep = "\n")
+      stop(msg, call. = FALSE)
     }
 
     # assign sequential tags to the pairs of inline math elements
@@ -99,7 +115,6 @@ protect_inline_math <- function(body, ns) {
       fix_partial_inline(i, body, ns)
     }
   }
-  
   copy_xml(body)
 }
 
