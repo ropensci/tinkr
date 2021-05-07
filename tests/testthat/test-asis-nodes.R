@@ -1,5 +1,11 @@
 pathmath <- system.file("extdata", "math-example.md", package = "tinkr")
+patherr  <- system.file("extdata", "basic-math.md", package = "tinkr")
 m <- yarn$new(pathmath)
+me <- yarn$new(patherr)
+
+test_that("mal-formed inline math throws an informative error", {
+  expect_snapshot_error(me$protect_math())  
+})
 
 test_that("block math can be protected", {
   expect_snapshot(show_user(m$protect_math()$tail(48), force = TRUE))
