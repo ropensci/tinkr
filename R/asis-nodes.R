@@ -201,6 +201,9 @@ tick_check <- function(body, ns) {
 protect_tickbox <- function(body, ns) {
   body <- copy_xml(body)
   ticks <- tick_check(body, ns)
+  if (length(ticks) == 0) {
+    return(body)
+  }
   # set the tickbox asis
   set_asis(ticks)
   char <- as.character(ticks)
