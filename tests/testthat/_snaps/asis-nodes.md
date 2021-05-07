@@ -55,11 +55,13 @@
 # tick boxes can be protected
 
     Code
-      show_user(m$protect_tickbox()$head(13), force = TRUE)
+      show_user(m$protect_tickbox()$head(15), force = TRUE)
     Output
       ---
       title: An example with math elements
       ---
+      
+      This is cheap, it only costs 10$!
       
       This example has $\LaTeX$ elements embedded in the
       text. It is intended to demonstrate that m $\alpha_\tau$ h
