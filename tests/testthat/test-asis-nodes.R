@@ -11,8 +11,8 @@ test_that("block math can be protected", {
   expect_snapshot(show_user(m$protect_math()$tail(48), force = TRUE))
 })
 
-test_that("tick boxes can be protected", {
-  expect_snapshot(show_user(m$protect_tickbox()$head(15), force = TRUE))
+test_that("tick boxes are protected by default", {
+  expect_snapshot(show_user(m$head(15), force = TRUE))
 })
 
 test_that("documents with no math do no harm", {

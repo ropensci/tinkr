@@ -90,7 +90,7 @@ yarn <- R6::R6Class("yarn",
       if (is.null(path)) {
         stop("Please provide a file path", call. = FALSE)
       }
-      to_md(self, path, stylesheet_path)
+      private$md_lines(path, stylesheet_path)
       invisible(self)
     },
 
@@ -168,26 +168,21 @@ yarn <- R6::R6Class("yarn",
       # inline math adds _nodes_, which means a new document
       self$body <- protect_inline_math(self$body, self$ns)
       invisible(self)
-    },
-    #' @description Protect github-flavored markdown tick boxes
-    #' 
-    #' @examples
-    #' path <- system.file("extdata", "math-example.md", package = "tinkr")
-    #' ex <- tinkr::yarn$new(path)
-    #' ex$tail() # tick boxes :(
-    #' ex$protect_tickbox()$head(13) # tick boxes are no longer escaped :)
-    protect_tickbox = function() {
-      # inline math adds _nodes_, which means a new document
-      self$body <- protect_tickbox(self$body, self$ns)
-      invisible(self)
     }
   ),
   private = list(
     sourcepos = FALSE,
     encoding  = "UTF-8",
     # converts the document to markdown and separates the output into lines
-    md_lines = function() {
-      md <- to_md(self)
+    md_lines = function(path = NULL, stylesheet = NULL) {
+      if (is.null(stylesheet)) {
+        md <- to_md(self, path)
+      } else {
+        md <- to_md(self, path, stylesheet)
+      }
+      if (!is.null(path) && !is.null(stylesheet)) {
+        return(md)
+      }
       # Make sure that the yaml is not sitting on top of the first markdown line
       if (length(md) == 2) {
         md[1] <- paste0(md[1], "\n")
