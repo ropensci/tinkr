@@ -11,7 +11,7 @@ add_md(body, md, where = 0L)
 
 \item{md}{a string of new markdown to insert}
 
-\item{where}{the location in the markdown document to insert the new markdown}
+\item{where}{the position in the markdown document to insert the new markdown}
 }
 \value{
 a copy of the XML object with the markdown inserted.
@@ -19,3 +19,4 @@ a copy of the XML object with the markdown inserted.
 \description{
 Add markdown content to an XML object
 }
+\keyword{internal}
