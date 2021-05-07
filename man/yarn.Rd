@@ -92,6 +92,15 @@ path <- system.file("extdata", "math-example.md", package = "tinkr")
 ex <- tinkr::yarn$new(path)
 ex$tail() # math blocks are escaped :(
 ex$protect_math()$tail() # math blocks are no longer escaped :)
+
+## ------------------------------------------------
+## Method `yarn$protect_tickbox`
+## ------------------------------------------------
+
+path <- system.file("extdata", "math-example.md", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+ex$tail() # tick boxes :(
+ex$protect_tickbox()$head(13) # tick boxes are no longer escaped :)
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -118,6 +127,7 @@ commonmark.}
 \item \href{#method-tail}{\code{yarn$tail()}}
 \item \href{#method-add_md}{\code{yarn$add_md()}}
 \item \href{#method-protect_math}{\code{yarn$protect_math()}}
+\item \href{#method-protect_tickbox}{\code{yarn$protect_tickbox()}}
 \item \href{#method-clone}{\code{yarn$clone()}}
 }
 }
@@ -351,6 +361,27 @@ Protect math blocks from being escaped
 ex <- tinkr::yarn$new(path)
 ex$tail() # math blocks are escaped :(
 ex$protect_math()$tail() # math blocks are no longer escaped :)
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-protect_tickbox"></a>}}
+\if{latex}{\out{\hypertarget{method-protect_tickbox}{}}}
+\subsection{Method \code{protect_tickbox()}}{
+Protect github-flavored markdown tick boxes
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$protect_tickbox()}\if{html}{\out{</div>}}
+}
+
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "math-example.md", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+ex$tail() # tick boxes :(
+ex$protect_tickbox()$head(13) # tick boxes are no longer escaped :)
 }
 \if{html}{\out{</div>}}
 
