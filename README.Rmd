@@ -144,6 +144,8 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy becau
  * Links built like `[word][smallref]` and bottom `[smallref]: URL` become `[word](URL)`.
  
  * Characters are escaped (e.g. "[" when not for a link).
+
+ * [x] GitHub tickboxes are preserved (only for `yarn` objects)
  
  * Block quotes lines all get ">" whereas in the input only the first could have a ">" at the beginning of the first line.
  
@@ -156,6 +158,39 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy becau
 ### The special case of tables
   
 * Tables are supposed to remain/become pretty after a full loop `to_xml` + `to_md`. If you notice something amiss, e.g. too much space compared to what you were expecting, please open an issue.
+
+### LaTeX equations
+
+While markdown parsers like pandoc know what LaTeX is, commonmark does not, and
+that means LaTeX equations will end up with extra markup due to commonmark's
+desire to escape characters.
+
+For users of the `yarn` object, if you have LaTeX equations that use either `$`
+or `$$` to delimit them, you can protect them from formatting changes with the `$protect_math()` method:
+
+```{r protect-math}
+path <- system.file("extdata", "math-example.md", package = "tinkr")
+math <- tinkr::yarn$new(path)
+math$tail() # malformed
+math$protect_math()$tail() # success!
+```
+
+Note, however, that there are a few caveats for this:
+
+1. The dollar notation for inline math must be adjacent to the text. E.G. 
+   `$\alpha$` is valid, but `$ \alpha$` and `$\alpha $` are not valid.
+2. We do not currently have support for bracket notation
+3. If you use a postfix dollar sign in your prose (e.g. BASIC commands or a 
+   Burroughs-Wheeler Transformation demonstration), you must be sure to either
+   use punctuation after the trailing dollar sign OR format the text as code.
+   (i.e. `` `INKEY$` `` is good, but `INKEY$` by itself is not good and will be 
+   interepreted as LaTeX code, throwing an error:
+    ```{r, basic, error = TRUE}
+    path <- system.file("extdata", "basic-math.md", package = "tinkr")
+    math <- tinkr::yarn$new(path)
+    math$head(15) # malformed
+    math$protect_math() #error
+    ```
 
 ## Meta
 
