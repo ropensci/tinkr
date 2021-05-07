@@ -2,7 +2,7 @@
 #'
 #' @param body an XML object generated via {tinkr}
 #' @param md a string of new markdown to insert
-#' @param where the location in the markdown document to insert the new markdown
+#' @param where the position in the markdown document to insert the new markdown
 #'
 #' @return a copy of the XML object with the markdown inserted.
 add_md <- function(body, md, where = 0L) {
@@ -10,7 +10,7 @@ add_md <- function(body, md, where = 0L) {
   add_node_children(body, new, where)
 }
 
-# Adds children to a specific location and then copies the xml of the full
+# Add children to a specific location and then copies the xml of the full
 # document. 
 add_node_children <- function(body, nodes, where = 0L) {
   for (child in rev(nodes)) {
@@ -20,7 +20,7 @@ add_node_children <- function(body, nodes, where = 0L) {
 }
 
 add_node_siblings <- function(node, nodes, where = "after", remove = TRUE) {
-  for(sib in rev(nodes)) {
+  for (sib in rev(nodes)) {
     xml2::xml_add_sibling(node, sib, .where = where)
   }
   if (remove) xml2::xml_remove(node)
