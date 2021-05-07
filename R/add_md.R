@@ -20,7 +20,6 @@ add_node_children <- function(body, nodes, where = 0L) {
 }
 
 add_node_siblings <- function(node, nodes, where = "after", remove = TRUE) {
-  body <- xml2::xml_find_first(node, ".//ancestor::d1:document")
   for(sib in rev(nodes)) {
     xml2::xml_add_sibling(node, sib, .where = where)
   }
