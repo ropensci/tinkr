@@ -1,3 +1,33 @@
+#' Protect math elements from commonmark's character escape
+#'
+#' @param body an XML object
+#' @param ns an XML namespace object (defaults: [md_ns()]).
+#' @return a copy of the modified XML object
+#' @details Commonmark does not know what LaTeX is and will LaTeX equations as
+#' normal text. This means that content surrounded by underscores are 
+#' interpreted as `<emph>` elements and all backslashes are escaped by default.
+#' This function protects inline and block math elements that use `$` and `$$`
+#' for delimiters, respectively. 
+#' 
+#' @note this function is also a method in the [tinkr::yarn] object.
+#' 
+#' @export
+#' @examples
+#' m <- tinkr::to_xml(system.file("extdata", "math-example.md", package = "tinkr"))
+#' txt <- textConnection(tinkr::to_md(m))
+#' cat(tail(readLines(txt)), sep = "\n") # broken math
+#' close(txt)
+#' m$body <- protect_math(m$body)
+#' txt <- textConnection(tinkr::to_md(m))
+#' cat(tail(readLines(txt)), sep = "\n") # fixed math
+#' close(txt)
+protect_math <- function(body, ns = md_ns()) {
+  # block math adds attributes, done in memory
+  protect_block_math(body, ns)
+  # inline math adds _nodes_, which means a new document
+  protect_inline_math(body, ns)
+}
+
 set_asis <- function(nodes) {
   xml2::xml_set_attr(nodes[xml2::xml_name(nodes) != "softbreak"], "asis", "true")
 }
@@ -57,7 +87,7 @@ find_broken_math <- function(math) {
 #' )
 #' txt <- xml2::read_xml(txt)
 #' cat(to_md(list(body = txt, yaml = "")), sep = "\n")
-#' ns  <- xml2::xml_ns_rename(xml2::xml_ns(txt), d1 = "md")
+#' ns  <- tinkr::md_ns()
 #' protxt <- tinkr:::protect_inline_math(txt, ns)
 #' cat(to_md(list(body = protxt, yaml = "")), sep = "\n")
 protect_inline_math <- function(body, ns) {
@@ -77,36 +107,23 @@ protect_inline_math <- function(body, ns) {
 
   # protect math that is strictly inline
   if (length(imath)) {
-    new_nodes <- lapply(fix_fully_inline(imath), xml2::xml_children)
-
+    new_nodes <- lapply(
+      fix_fully_inline(imath), 
+      FUN = function(n) xml2::xml_ns_strip(xml2::xml_children(n))
+    )
     # since we split up the nodes, we have to do this node by node
     for (i in seq(new_nodes)) {
       add_node_siblings(imath[[i]], new_nodes[[i]], remove = TRUE)
     }
   }
 
-  # protect math that is broken across lines
+  # protect math that is broken across lines or markdown elements
   if (length(bmath)) {
+    # If the lengths of the beginning and ending tags don't match, we throw
+    # an error.
     if ((le <- length(bmath[endless])) != (lh <- length(bmath[headless]))) {
-      no_end <- xml2::xml_text(bmath[endless])
-      no_beginning <- xml2::xml_text(bmath[headless])
-      msg <- glue::glue("
-        Inline math delimiters are not balanced.
-
-        HINT: If you are writing BASIC code, make sure you wrap variable
-              names and code in backtics like so: `INKEY$`. 
-
-        Below are the pairs that were found:"
-      )
-      l <- seq(max(le, lh))
-      no_end <- ifelse(is.na(no_end[l]), "", no_end[l])
-      no_beginning <- ifelse(is.na(no_beginning[l]), "", no_beginning[l])
-      no_end <- format(c("start", "-----", no_end), justify = "right")
-      pairs <- glue::glue("{no_end}...{c('end', '---', no_beginning)}")
-      msg <- glue::glue_collapse(c(msg, pairs), sep = "\n")
-      stop(msg, call. = FALSE)
+      unbalanced_math_error(bmath, endless, headless, le, lh) 
     }
-
     # assign sequential tags to the pairs of inline math elements
     tags <- seq(length(bmath[endless]))  
     xml2::xml_set_attr(bmath[endless], "latex-pair", tags)
@@ -118,6 +135,15 @@ protect_inline_math <- function(body, ns) {
   copy_xml(body)
 }
 
+# Partial inline math are math elements that are not entirely embedded in a 
+# single `<text>` element. There are two reasons for this: 
+#
+# 1. Math is split across separate lines in the markdown document
+# 2. There are elements like `_` that are interpreted as markdown elements.
+#
+# To use this function, an inline pair needs to be first tagged with a 
+# `latex-pair` attribute that uniquely identifies that pair of tags. It assumes
+# that all of the content between that pair of tags belongs to the math element.
 fix_partial_inline <- function(tag, body, ns) {
   # find everything between the tagged pair
   math_lines <- find_between_inlines(body, ns, tag)
@@ -133,6 +159,7 @@ fix_partial_inline <- function(tag, body, ns) {
   char[[n]] <- sub("[<]text ", "<text asis='true' ", char[[n]])
   nodes <- paste(char, collapse = "")
   nodes <- xml2::xml_children(set_default_space(nodes))
+  nodes <- xml2::xml_ns_strip(nodes)
   # add the new nodes to the bottom of the existing math lines 
   last_line <- math_lines[n]
   to_remove <- math_lines[-n]
@@ -208,7 +235,10 @@ protect_tickbox <- function(body, ns) {
   set_asis(ticks)
   char <- as.character(ticks)
   char <- sub("(\\[.\\])", "\\1</text><text>", char, perl = TRUE)
-  new_nodes <- lapply(set_default_space(char), xml2::xml_children)
+  new_nodes <- lapply(
+    set_default_space(char), 
+    function(n) xml2::xml_ns_strip(xml2::xml_children(n))
+  )
   # since we split up the nodes, we have to do this node by node
   for (i in seq(new_nodes)) {
     add_node_siblings(ticks[[i]], new_nodes[[i]], remove = TRUE)

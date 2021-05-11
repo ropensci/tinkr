@@ -6,7 +6,7 @@
 #' @details
 #' This class is a fancy wrapper around the results of [tinkr::to_xml()] and
 #' has methods that make it easier to add, analyze, remove, or write elements
-#' of your markdown document.
+#' of your markdown document. 
 #' @export
 yarn <- R6::R6Class("yarn", 
   portable = TRUE,
@@ -49,8 +49,7 @@ yarn <- R6::R6Class("yarn",
       self$path <- path
       self$yaml <- xml$yaml
       self$body <- xml$body
-      self$ns   <- xml2::xml_ns_rename(xml2::xml_ns(xml$body), d1 = "md")
-      self$body <- protect_tickbox(self$body, self$ns)
+      self$ns   <- tinkr::md_ns()
       private$sourcepos <- sourcepos
       private$encoding  <- encoding
       invisible(self)
@@ -164,10 +163,7 @@ yarn <- R6::R6Class("yarn",
     #' ex$tail() # math blocks are escaped :(
     #' ex$protect_math()$tail() # math blocks are no longer escaped :)
     protect_math = function() {
-      # block math adds attributes, done in memory
-      protect_block_math(self$body, self$ns)
-      # inline math adds _nodes_, which means a new document
-      self$body <- protect_inline_math(self$body, self$ns)
+      self$body <- protect_math(self$body, self$ns)
       invisible(self)
     }
   ),

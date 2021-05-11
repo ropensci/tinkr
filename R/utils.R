@@ -2,6 +2,26 @@ show_user <- function(out, force = FALSE) {
   if (force || !identical(Sys.getenv("TESTTHAT"), "true")) cat(out, sep = "\n")
   invisible(out)
 }
+
+unbalanced_math_error <- function(bmath, endless, headless, le, lh) {
+  no_end <- xml2::xml_text(bmath[endless])
+  no_beginning <- xml2::xml_text(bmath[headless])
+  msg <- glue::glue("
+    Inline math delimiters are not balanced.
+
+    HINT: If you are writing BASIC code, make sure you wrap variable
+          names and code in backtics like so: `INKEY$`. 
+
+    Below are the pairs that were found:"
+  )
+  l <- seq(max(le, lh))
+  no_end <- ifelse(is.na(no_end[l]), "", no_end[l])
+  no_beginning <- ifelse(is.na(no_beginning[l]), "", no_beginning[l])
+  no_end <- format(c("start", "-----", no_end), justify = "right")
+  pairs <- glue::glue("{no_end}...{c('end', '---', no_beginning)}")
+  msg <- glue::glue_collapse(c(msg, pairs), sep = "\n")
+  stop(msg, call. = FALSE)
+}
 # from blogdown
 # https://github.com/rstudio/blogdown/blob/9c7f7db5f11a481e1606031e88142b4a96139cce/R/utils.R#L391
 split_yaml_body = function(x) {

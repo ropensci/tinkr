@@ -22,6 +22,15 @@ and its body (body) as XML.
 \description{
 Transform file to XML
 }
+\details{
+This function will take a (R)markdown file, split the yaml header
+from the body, and read in the body through \code{\link[commonmark:commonmark]{commonmark::markdown_xml()}}.
+Any RMarkdown code fences will be parsed to expose the chunk options in
+XML and tickboxes (aka checkboxes) in GitHub-flavored markdown will be
+preserved (both modifications from the commonmark standard).
+
+Math elements
+}
 \examples{
 path <- system.file("extdata", "example1.md", package = "tinkr")
 post_list <- to_xml(path)

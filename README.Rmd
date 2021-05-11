@@ -165,8 +165,10 @@ While markdown parsers like pandoc know what LaTeX is, commonmark does not, and
 that means LaTeX equations will end up with extra markup due to commonmark's
 desire to escape characters.
 
-For users of the `yarn` object, if you have LaTeX equations that use either `$`
-or `$$` to delimit them, you can protect them from formatting changes with the `$protect_math()` method:
+If you have LaTeX equations that use either `$` or `$$` to delimit them, you
+can protect them from formatting changes with the `$protect_math()` method (for
+users of the `yarn` object) or the `protect_math()` funciton (for those using
+the output of `to_xml()`). Below is a demonstration using the `yarn` object:
 
 ```{r protect-math}
 path <- system.file("extdata", "math-example.md", package = "tinkr")

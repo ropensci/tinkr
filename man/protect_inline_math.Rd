@@ -23,7 +23,7 @@ txt <- commonmark::markdown_xml(
 )
 txt <- xml2::read_xml(txt)
 cat(to_md(list(body = txt, yaml = "")), sep = "\n")
-ns  <- xml2::xml_ns_rename(xml2::xml_ns(txt), d1 = "md")
+ns  <- tinkr::md_ns()
 protxt <- tinkr:::protect_inline_math(txt, ns)
 cat(to_md(list(body = protxt, yaml = "")), sep = "\n")
 }
