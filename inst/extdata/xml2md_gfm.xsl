@@ -16,6 +16,23 @@
 
     <xsl:output method="text" encoding="utf-8"/>
 
+      <!-- Text that needs to be preserved (e.g. math/checkboxes) -->
+
+    <xsl:template match="md:emph[@asis='true']">
+      <!-- 
+        Multiple subscripts in a LaTeX equation will result in emph tags.
+        our stylesheet enforces "*" for emph, we are using this workaround
+        for aiss emph.
+      -->
+      <xsl:text>_</xsl:text>
+      <xsl:apply-templates select="md:text[@asis='true']"/>
+      <xsl:text>_</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="md:text[@asis='true']">
+      <xsl:value-of select='string(.)'/>
+    </xsl:template>
+
 
     <!-- Table -->
 

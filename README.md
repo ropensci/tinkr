@@ -15,25 +15,24 @@ status](https://codecov.io/gh/ropenscilabs/tinkr/branch/master/graph/badge.svg)]
 <!-- badges: end -->
 
 The goal of tinkr is to convert (R)Markdown files to XML and back to
-allow their editing with `xml2` (XPath\!) instead of numerous
-complicated regular expressions. Would you like to kknow more? [This is
-great intro if you are new to
-XPath](https://www.w3schools.com/xml/xpath_intro.asp) and [this is a
-good resource on XSLT for XML
+allow their editing with `xml2` (XPath!) instead of numerous complicated
+regular expressions. Would you like to kknow more? [This is great intro
+if you are new to XPath](https://www.w3schools.com/xml/xpath_intro.asp)
+and [this is a good resource on XSLT for XML
 transformations](https://www.w3schools.com/xml/xsl_intro.asp).
 
 ## Use-Cases
 
 Possible applications are R scripts using this and XPath in `xml2` to:
 
-  - change levels of headers, cf [this
+-   change levels of headers, cf [this
     script](inst/scripts/roweb2_headers.R) and [this pull request to
     roweb2](https://github.com/ropensci/roweb2/pull/279)
-  - change chunk labels and options
-  - extract all runnable code (including inline code)
-  - insert arbitrary markdown elements
-  - modify link URLs
-  - your idea, feel free to suggest use cases\!
+-   change chunk labels and options
+-   extract all runnable code (including inline code)
+-   insert arbitrary markdown elements
+-   modify link URLs
+-   your idea, feel free to suggest use cases!
 
 ## Workflow
 
@@ -91,11 +90,6 @@ manipulating them does not require reassignment.
 
 ``` r
 library("magrittr")
-#| 
-#| Attaching package: 'magrittr'
-#| The following objects are masked from 'package:testthat':
-#| 
-#|     equals, is_less_than, not
 library("tinkr")
 # From Markdown to XML
 path <- system.file("extdata", "example1.md", package = "tinkr")
@@ -167,7 +161,7 @@ that will take plain markdown and translate it to XML nodes and insert
 them into the document for you. For example, you can add a new code
 block:
 
-```` r
+``` r
 path <- system.file("extdata", "example2.Rmd", package = "tinkr")
 rmd <- tinkr::yarn$new(path)
 xml2::xml_find_first(rmd$body, ".//md:code_block", rmd$ns)
@@ -198,7 +192,7 @@ rmd$head(21)
 #| knitr::opts_chunk$set(echo = TRUE)
 #| ```
 #| 
-#| ```{r xml-block, message = TRUE}
+#| ```{r xml-block, message=TRUE}
 #| message("this is a new chunk from {tinkr}")
 #| ```
 #| 
@@ -208,7 +202,7 @@ rmd$head(21)
 #| | xslt                       | TRUE                | 
 #| | commonmark                 | TRUE                | 
 #| | tinkr                      | TRUE                |
-````
+```
 
 ## Loss of Markdown style
 
@@ -218,22 +212,24 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly
 lossy because of Markdown syntax redundancy, so the loop from (R)md to
 R(md) via `to_xml` and `to_md` will be a bit lossy. For instance
 
-  - lists can be created with either “+”, “-” or "\*“. When using
+-   lists can be created with either “+”, “-” or "\*“. When using
     `tinkr`, the (R)md after editing will only use”-" for lists.
 
-  - Links built like `[word][smallref]` and bottom `[smallref]: URL`
+-   Links built like `[word][smallref]` and bottom `[smallref]: URL`
     become `[word](URL)`.
 
-  - Characters are escaped (e.g. “\[” when not for a link).
+-   Characters are escaped (e.g. “\[” when not for a link).
 
-  - Block quotes lines all get “\>” whereas in the input only the first
-    could have a “\>” at the beginning of the first line.
+-   [x] GitHub tickboxes are preserved (only for `yarn` objects)
 
-  - For tables see the next subsection.
+-   Block quotes lines all get “&gt;” whereas in the input only the
+    first could have a “&gt;” at the beginning of the first line.
+
+-   For tables see the next subsection.
 
 Such losses make your (R)md different, and the git diff a bit harder to
 parse, but should *not* change the documents your (R)md is rendered to.
-If it does, report a bug in the issue tracker\!
+If it does, report a bug in the issue tracker!
 
 A solution to not loose your Markdown style, e.g. your preferring "\*"
 over “-” for lists is to tweak [our XSL
@@ -242,9 +238,85 @@ stylesheet](inst/extdata/xml2md_gfm.xsl) and provide its filepath as
 
 ### The special case of tables
 
-  - Tables are supposed to remain/become pretty after a full loop
+-   Tables are supposed to remain/become pretty after a full loop
     `to_xml` + `to_md`. If you notice something amiss, e.g. too much
     space compared to what you were expecting, please open an issue.
+
+### LaTeX equations
+
+While markdown parsers like pandoc know what LaTeX is, commonmark does
+not, and that means LaTeX equations will end up with extra markup due to
+commonmark’s desire to escape characters.
+
+If you have LaTeX equations that use either `$` or `$$` to delimit them,
+you can protect them from formatting changes with the `$protect_math()`
+method (for users of the `yarn` object) or the `protect_math()` funciton
+(for those using the output of `to_xml()`). Below is a demonstration
+using the `yarn` object:
+
+``` r
+path <- system.file("extdata", "math-example.md", package = "tinkr")
+math <- tinkr::yarn$new(path)
+math$tail() # malformed
+#| 
+#| $$
+#| Q\_{N(norm)}=\\frac{C\_N +C\_{N-1}}2\\times
+#| \\frac{\\sum *{i=N-n}^{N}Q\_i} {\\sum*{j=N-n}^{N}{(\\frac{C\_j+C\_{j-1}}2)}}
+#| $$
+math$protect_math()$tail() # success!
+#| 
+#| $$
+#| Q_{N(norm)}=\frac{C_N +C_{N-1}}2\times
+#| \frac{\sum _{i=N-n}^{N}Q_i} {\sum_{j=N-n}^{N}{(\frac{C_j+C_{j-1}}2)}}
+#| $$
+```
+
+Note, however, that there are a few caveats for this:
+
+1.  The dollar notation for inline math must be adjacent to the text.
+    E.G. `$\alpha$` is valid, but `$ \alpha$` and `$\alpha $` are not
+    valid.
+
+2.  We do not currently have support for bracket notation
+
+3.  If you use a postfix dollar sign in your prose (e.g. BASIC commands
+    or a Burroughs-Wheeler Transformation demonstration), you must be
+    sure to either use punctuation after the trailing dollar sign OR
+    format the text as code. (i.e. `` `INKEY$` `` is good, but `INKEY$`
+    by itself is not good and will be interepreted as LaTeX code,
+    throwing an error:
+
+    ``` r
+    path <- system.file("extdata", "basic-math.md", package = "tinkr")
+    math <- tinkr::yarn$new(path)
+    math$head(15) # malformed
+    #| ---
+    #| title: basic math
+    #| ---
+    #| 
+    #| BASIC programming can make things weird:
+    #| 
+    #| - Give you $2 to tell me what INKEY$ means.
+    #| - Give you $2 to *show* me what INKEY$ means.
+    #| - Give you $2 to *show* me what `INKEY$` means.
+    #| 
+    #| Postfix dollars mixed with prefixed dollars can make things weird:
+    #| 
+    #| - We write $2 but say 2$ verbally.
+    #| - We write $2 but *say* 2$ verbally.
+    math$protect_math() #error
+    #| Error: Inline math delimiters are not balanced.
+    #| 
+    #| HINT: If you are writing BASIC code, make sure you wrap variable
+    #|       names and code in backtics like so: `INKEY$`. 
+    #| 
+    #| Below are the pairs that were found:
+    #|            start...end
+    #|            -----...---
+    #|  Give you $2 to ... me what INKEY$ means.
+    #|  Give you $2 to ... 2$ verbally.
+    #| We write $2 but ...
+    ```
 
 ## Meta
 

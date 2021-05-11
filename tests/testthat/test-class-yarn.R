@@ -24,15 +24,15 @@ test_that("yarn can be created from markdown", {
 test_that("yarn show, head, and tail methods work", {
 
   y1 <- yarn$new(pathrmd)
-  expect_snapshot(y1$show()) # I have no clue how to suppress the output for this test
-  expect_type(y1$show(), "character") 
+  expect_snapshot(show_user(res <- y1$show(), TRUE))
+  expect_type(res, "character") 
 
-  expect_snapshot(y1$head(10))
-  expect_length(y1$head(10), 10) %>%
+  expect_snapshot(show_user(res <- y1$head(10), TRUE))
+  expect_length(res, 10) %>%
     expect_type("character")
 
-  expect_snapshot(y1$tail(10))
-  expect_length(y1$tail(10), 10) %>%
+  expect_snapshot(show_user(res <- y1$tail(11), TRUE))
+  expect_length(res, 11) %>%
     expect_type("character")
 
 })
@@ -64,12 +64,21 @@ test_that("a yarn object can be written back to markdown", {
 test_that("a yarn object can be reset", {
 
   scarf1 <- withr::local_file("yarn-write.md")
-  y1 <- yarn$new(pathmd)
+  y1 <- yarn$new(pathmd, sourcepos = TRUE, encoding = "utf-8")
+
+  expect_equal(y1$.__enclos_env__$private$encoding, "utf-8")
+  expect_true(y1$.__enclos_env__$private$sourcepos)
   expect_s3_class(y1$body, "xml_document")
+  expect_false(is.na(xml2::xml_attr(y1$body, "sourcepos")))
+
   y1$body <- xml2::xml_missing()
   expect_s3_class(y1$body, "xml_missing")
+
   y1$reset()
   expect_s3_class(y1$body, "xml_document")
+  expect_equal(y1$.__enclos_env__$private$encoding, "utf-8")
+  expect_true(y1$.__enclos_env__$private$sourcepos)
+  expect_false(is.na(xml2::xml_attr(y1$body, "sourcepos")))
 
 })
 

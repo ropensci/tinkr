@@ -10,6 +10,14 @@
 #'
 #' @return A list containing the YAML of the file (yaml)
 #' and its body (body) as XML.
+#' 
+#' @details This function will take a (R)markdown file, split the yaml header
+#'   from the body, and read in the body through [commonmark::markdown_xml()].
+#'   Any RMarkdown code fences will be parsed to expose the chunk options in
+#'   XML and tickboxes (aka checkboxes) in GitHub-flavored markdown will be
+#'   preserved (both modifications from the commonmark standard). 
+#'
+#'   Math elements 
 #' @export
 #'
 #' @examples
@@ -32,6 +40,7 @@ to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE){
     xml2::read_xml(encoding = encoding) -> body
 
   parse_rmd(body)
+  body <- protect_tickbox(body, md_ns())
 
   list(yaml = yaml,
        body = body)

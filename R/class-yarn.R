@@ -6,7 +6,7 @@
 #' @details
 #' This class is a fancy wrapper around the results of [tinkr::to_xml()] and
 #' has methods that make it easier to add, analyze, remove, or write elements
-#' of your markdown document.
+#' of your markdown document. 
 #' @export
 yarn <- R6::R6Class("yarn", 
   portable = TRUE,
@@ -49,7 +49,9 @@ yarn <- R6::R6Class("yarn",
       self$path <- path
       self$yaml <- xml$yaml
       self$body <- xml$body
-      self$ns   <- xml2::xml_ns_rename(xml2::xml_ns(xml$body), d1 = "md")
+      self$ns   <- tinkr::md_ns()
+      private$sourcepos <- sourcepos
+      private$encoding  <- encoding
       invisible(self)
     },
 
@@ -64,7 +66,7 @@ yarn <- R6::R6Class("yarn",
     #' ex1$reset()
     #' ex1$body
     reset = function() {
-      x <- to_xml(self$path)
+      x <- to_xml(self$path, encoding = private$encoding, sourcepos = private$sourcepos)
       self$body <- x$body
       self$yaml <- x$yaml
       invisible(self)
@@ -88,7 +90,7 @@ yarn <- R6::R6Class("yarn",
       if (is.null(path)) {
         stop("Please provide a file path", call. = FALSE)
       }
-      to_md(self, path, stylesheet_path)
+      private$md_lines(path, stylesheet_path)
       invisible(self)
     },
 
@@ -102,8 +104,7 @@ yarn <- R6::R6Class("yarn",
     #' ex2$tail(5)
     #' ex2$show()
     show = function() {
-      cat(out <- private$md_lines(), sep = "\n")
-      invisible(out)
+      show_user(private$md_lines())
     },
 
     #' @description show the head of the markdown contents on the screen
@@ -112,8 +113,7 @@ yarn <- R6::R6Class("yarn",
     #' exclude lines from the bottom
     #' @return a character vector with `n` elements
     head = function(n = 6L) {
-      cat(out <- head(private$md_lines(), n), sep = "\n")
-      invisible(out)
+      show_user(head(private$md_lines(), n))
     },
 
     #' @description show the tail of the markdown contents on the screen
@@ -123,8 +123,7 @@ yarn <- R6::R6Class("yarn",
     #' 
     #' @return a character vector with `n` elements
     tail = function(n = 6L) {
-      cat(out <- tail(private$md_lines(), n), sep = "\n")
-      invisible(out)
+      show_user(tail(private$md_lines(), n))
     },
     
     #' @description add an arbitrary Markdown element to the document
@@ -153,22 +152,34 @@ yarn <- R6::R6Class("yarn",
     #' ex$write(tmp)
     #' readLines(tmp, n = 20) 
     add_md = function(md, where = 0L) {
-      b <- self$body
-      new <- clean_content(md)
-      new <- commonmark::markdown_xml(new, extensions = TRUE)
-      new <- xml2::xml_ns_strip(xml2::read_xml(new))
-      new <- xml2::xml_children(new)
-      for (child in rev(new)) {
-        xml2::xml_add_child(b, child, .where = where)
-      }
-      self$body <- copy_xml(b)
+      self$body <- add_md(self$body, md, where)
+      invisible(self)
+    },
+    #' @description Protect math blocks from being escaped
+    #' 
+    #' @examples
+    #' path <- system.file("extdata", "math-example.md", package = "tinkr")
+    #' ex <- tinkr::yarn$new(path)
+    #' ex$tail() # math blocks are escaped :(
+    #' ex$protect_math()$tail() # math blocks are no longer escaped :)
+    protect_math = function() {
+      self$body <- protect_math(self$body, self$ns)
       invisible(self)
     }
   ),
   private = list(
+    sourcepos = FALSE,
+    encoding  = "UTF-8",
     # converts the document to markdown and separates the output into lines
-    md_lines = function() {
-      md <- to_md(self)
+    md_lines = function(path = NULL, stylesheet = NULL) {
+      if (is.null(stylesheet)) {
+        md <- to_md(self, path)
+      } else {
+        md <- to_md(self, path, stylesheet)
+      }
+      if (!is.null(path) && !is.null(stylesheet)) {
+        return(md)
+      }
       # Make sure that the yaml is not sitting on top of the first markdown line
       if (length(md) == 2) {
         md[1] <- paste0(md[1], "\n")
