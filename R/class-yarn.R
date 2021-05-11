@@ -85,8 +85,7 @@ yarn <- R6::R6Class("yarn",
     #' ex1$write(tmp)
     #' head(readLines(tmp)) # now a markdown file
     #' unlink(tmp)
-    write = function(path = NULL, 
-      stylesheet_path = system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")){
+    write = function(path = NULL, stylesheet_path = stylesheet()){
       if (is.null(path)) {
         stop("Please provide a file path", call. = FALSE)
       }
@@ -96,6 +95,7 @@ yarn <- R6::R6Class("yarn",
 
     #' @description show the markdown contents on the screen
     #'
+    #' @param stylesheet_path path to the xsl stylesheet to convert XML to markdown.
     #' @return a character vector with one line for each line in the output
     #' @examples
     #' path <- system.file("extdata", "example2.Rmd", package = "tinkr")
@@ -103,27 +103,29 @@ yarn <- R6::R6Class("yarn",
     #' ex2$head(5)
     #' ex2$tail(5)
     #' ex2$show()
-    show = function() {
-      show_user(private$md_lines())
+    show = function(stylesheet_path = stylesheet() ) {
+      show_user(private$md_lines(stylesheet = stylesheet_path))
     },
 
     #' @description show the head of the markdown contents on the screen
     #'
     #' @param n the number of elements to show from the top. Negative numbers
+    #' @param stylesheet_path path to the xsl stylesheet to convert XML to markdown.
     #' exclude lines from the bottom
     #' @return a character vector with `n` elements
-    head = function(n = 6L) {
-      show_user(head(private$md_lines(), n))
+    head = function(n = 6L, stylesheet_path = stylesheet()) {
+      show_user(head(private$md_lines(stylesheet = stylesheet_path), n))
     },
 
     #' @description show the tail of the markdown contents on the screen
     #'
     #' @param n the number of elements to show from the bottom. Negative numbers
+    #' @param stylesheet_path path to the xsl stylesheet to convert XML to markdown.
     #' exclude lines from the top
     #' 
     #' @return a character vector with `n` elements
-    tail = function(n = 6L) {
-      show_user(tail(private$md_lines(), n))
+    tail = function(n = 6L, stylesheet_path = stylesheet()) {
+      show_user(tail(private$md_lines(stylesheet = stylesheet_path), n))
     },
     
     #' @description add an arbitrary Markdown element to the document

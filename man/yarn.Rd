@@ -192,10 +192,7 @@ ex1$body
 \subsection{Method \code{write()}}{
 Write a yarn document to Markdown/R Markdown
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{yarn$write(
-  path = NULL,
-  stylesheet_path = system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{yarn$write(path = NULL, stylesheet_path = stylesheet())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -229,9 +226,16 @@ unlink(tmp)
 \subsection{Method \code{show()}}{
 show the markdown contents on the screen
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{yarn$show()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{yarn$show(stylesheet_path = stylesheet())}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
 a character vector with one line for each line in the output
 }
@@ -254,13 +258,15 @@ ex2$show()
 \subsection{Method \code{head()}}{
 show the head of the markdown contents on the screen
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{yarn$head(n = 6L)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{yarn$head(n = 6L, stylesheet_path = stylesheet())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{n}}{the number of elements to show from the top. Negative numbers
+\item{\code{n}}{the number of elements to show from the top. Negative numbers}
+
+\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.
 exclude lines from the bottom}
 }
 \if{html}{\out{</div>}}
@@ -275,13 +281,15 @@ a character vector with \code{n} elements
 \subsection{Method \code{tail()}}{
 show the tail of the markdown contents on the screen
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{yarn$tail(n = 6L)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{yarn$tail(n = 6L, stylesheet_path = stylesheet())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{n}}{the number of elements to show from the bottom. Negative numbers
+\item{\code{n}}{the number of elements to show from the bottom. Negative numbers}
+
+\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.
 exclude lines from the top}
 }
 \if{html}{\out{</div>}}

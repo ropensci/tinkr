@@ -36,8 +36,7 @@
 #' # file.edit("newmd.md")
 #' file.remove(newmd)
 #'
-to_md <- function(yaml_xml_list, path = NULL,
-                  stylesheet_path = system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")){
+to_md <- function(yaml_xml_list, path = NULL, stylesheet_path = stylesheet()){
 
   # duplicate document to avoid overwriting
   body <- copy_xml(yaml_xml_list$body)
