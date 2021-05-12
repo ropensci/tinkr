@@ -3,6 +3,7 @@
 export(find_between)
 export(md_ns)
 export(protect_math)
+export(stylesheet)
 export(to_md)
 export(to_xml)
 export(yarn)

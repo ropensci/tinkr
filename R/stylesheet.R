@@ -1,3 +1,16 @@
+#' The {tinkr} stylesheet
+#'
+#' This function returns the path to the {tinkr} stylesheet
+#'
+#' @return a single element character vector representing the path to the 
+#'   stylesheet used by {tinkr}.
+#' @export
+#' @examples
+#' tinkr::stylesheet()
+stylesheet <- function() {
+  system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")
+}
+
 is_stylesheet <- function(stylesheet) {
   inherits(stylesheet, "xml_document") && 
     length(xml2::xml_name(stylesheet)) == 1L    &&

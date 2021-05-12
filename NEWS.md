@@ -11,6 +11,10 @@
   default (@zkamvar, #39).
 * 2021-05-11: `md_ns()` is a new convenience function to provide the `md` 
   namespace prefix for commonmark xml documents (@zkamvar, #39).
+* 2021-05-11: `stylesheet()` returns the path to the internal {tinkr} stylesheet
+  so that it can easily be discovered by other packages
+* 2021-05-11: yarn methods `show()`, `head()`, and `tail()` all gain 
+  `stylesheet_path` arguments so the modified stylesheets can be used.
 
 # tinkr 0.0.0.9000
 
