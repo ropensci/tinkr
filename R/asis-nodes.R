@@ -184,14 +184,11 @@ fix_fully_inline <- function(math) {
 }
 
 set_default_space <- function(char) {
-  new_nodes <- char_to_nodelist(char)
-  n <- xml2::xml_find_all(new_nodes, ".//node()")
-  # set space to default to avoid weird formatting (this may change)
-  xml2::xml_set_attr(n, "xml:space", "default")
+  new_nodes <- make_text_nodes(char)
   new_nodes
 }
 
-char_to_nodelist <- function(txt) {
+make_text_nodes <- function(txt) {
   doc <- glue::glue(commonmark::markdown_xml("{paste(txt, collapse = '\n')}")) 
   doc <- xml2::read_xml(doc)
   nodes <- xml2::xml_children(xml2::xml_children(doc))
