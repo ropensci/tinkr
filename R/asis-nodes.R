@@ -158,7 +158,7 @@ fix_partial_inline <- function(tag, body, ns) {
   char[[1]] <- sub("[$]", "$</text><text asis='true'>", char[[1]])
   char[[n]] <- sub("[<]text ", "<text asis='true' ", char[[n]])
   nodes <- paste(char, collapse = "")
-  nodes <- xml2::xml_children(set_default_space(nodes))
+  nodes <- xml2::xml_children(make_text_nodes(nodes))
   nodes <- xml2::xml_ns_strip(nodes)
   # add the new nodes to the bottom of the existing math lines 
   last_line <- math_lines[n]
@@ -180,12 +180,7 @@ fix_fully_inline <- function(math) {
     x = char,
     perl = TRUE
   )
-  set_default_space(char)
-}
-
-set_default_space <- function(char) {
-  new_nodes <- make_text_nodes(char)
-  new_nodes
+  make_text_nodes(char)
 }
 
 make_text_nodes <- function(txt) {
@@ -233,7 +228,7 @@ protect_tickbox <- function(body, ns) {
   char <- as.character(ticks)
   char <- sub("(\\[.\\])", "\\1</text><text>", char, perl = TRUE)
   new_nodes <- lapply(
-    set_default_space(char), 
+    make_text_nodes(char), 
     function(n) xml2::xml_ns_strip(xml2::xml_children(n))
   )
   # since we split up the nodes, we have to do this node by node
