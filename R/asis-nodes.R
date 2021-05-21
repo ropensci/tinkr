@@ -109,7 +109,7 @@ protect_inline_math <- function(body, ns) {
   if (length(imath)) {
     new_nodes <- lapply(
       fix_fully_inline(imath), 
-      FUN = function(n) xml2::xml_ns_strip(xml2::xml_children(n))
+      FUN = function(n) xml2::xml_children(n)
     )
     # since we split up the nodes, we have to do this node by node
     for (i in seq(new_nodes)) {
@@ -159,7 +159,6 @@ fix_partial_inline <- function(tag, body, ns) {
   char[[n]] <- sub("[<]text ", "<text asis='true' ", char[[n]])
   nodes <- paste(char, collapse = "")
   nodes <- xml2::xml_children(make_text_nodes(nodes))
-  nodes <- xml2::xml_ns_strip(nodes)
   # add the new nodes to the bottom of the existing math lines 
   last_line <- math_lines[n]
   to_remove <- math_lines[-n]
@@ -185,7 +184,7 @@ fix_fully_inline <- function(math) {
 
 make_text_nodes <- function(txt) {
   doc <- glue::glue(commonmark::markdown_xml("{paste(txt, collapse = '\n')}")) 
-  doc <- xml2::read_xml(doc)
+  doc <- xml2::xml_ns_strip(xml2::read_xml(doc))
   nodes <- xml2::xml_children(xml2::xml_children(doc))
   nodes[xml2::xml_name(nodes) != "softbreak"]
 }
@@ -229,7 +228,7 @@ protect_tickbox <- function(body, ns) {
   char <- sub("(\\[.\\])", "\\1</text><text>", char, perl = TRUE)
   new_nodes <- lapply(
     make_text_nodes(char), 
-    function(n) xml2::xml_ns_strip(xml2::xml_children(n))
+    function(n) xml2::xml_children(n)
   )
   # since we split up the nodes, we have to do this node by node
   for (i in seq(new_nodes)) {
