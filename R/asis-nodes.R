@@ -107,10 +107,7 @@ protect_inline_math <- function(body, ns) {
 
   # protect math that is strictly inline
   if (length(imath)) {
-    new_nodes <- lapply(
-      fix_fully_inline(imath), 
-      FUN = function(n) xml2::xml_children(n)
-    )
+    new_nodes <- lapply(imath, fix_fully_inline)
     # since we split up the nodes, we have to do this node by node
     for (i in seq(new_nodes)) {
       add_node_siblings(imath[[i]], new_nodes[[i]], remove = TRUE)
@@ -158,7 +155,7 @@ fix_partial_inline <- function(tag, body, ns) {
   char[[1]] <- sub("[$]", "$</text><text asis='true'>", char[[1]])
   char[[n]] <- sub("[<]text ", "<text asis='true' ", char[[n]])
   nodes <- paste(char, collapse = "")
-  nodes <- xml2::xml_children(make_text_nodes(nodes))
+  nodes <- make_text_nodes(nodes)
   # add the new nodes to the bottom of the existing math lines 
   last_line <- math_lines[n]
   to_remove <- math_lines[-n]
@@ -182,11 +179,30 @@ fix_fully_inline <- function(math) {
   make_text_nodes(char)
 }
 
+#' Transform a character vector of XML into text nodes
+#'
+#' This is useful in the case where we want to modify some text content to
+#' split it and label a portion of it 'asis' to protect it from commonmark's
+#' escape processing.
+#' 
+#' For example, `fix_fully_inline()` uses this to modify a single text node
+#' into several text nodes: 
+#'
+#' ```html
+#'    <text>this is $\LaTeX$ text</text>
+#'      becomes
+#'    <text>this is </text><text asis='true'>$\LaTeX$</text><text> text</text>
+#' ```
+#'
+#' The `make_text_nodes()` function takes the above text string and converts it
+#' into nodes so that the original text node can be replaced.
+#' @param a character vector of modified text nodes 
+#' @return a nodeset with no associated namespace
+#' @noRd
 make_text_nodes <- function(txt) {
-  doc <- glue::glue(commonmark::markdown_xml("{paste(txt, collapse = '\n')}")) 
-  doc <- xml2::xml_ns_strip(xml2::read_xml(doc))
-  nodes <- xml2::xml_children(xml2::xml_children(doc))
-  nodes[xml2::xml_name(nodes) != "softbreak"]
+  doc <- glue::glue(commonmark::markdown_xml("{paste(txt, collapse = '')}")) 
+  nodes <- xml2::xml_ns_strip(xml2::read_xml(doc))
+  xml2::xml_find_all(nodes, ".//paragraph/text/*")
 }
 
 
@@ -226,10 +242,7 @@ protect_tickbox <- function(body, ns) {
   set_asis(ticks)
   char <- as.character(ticks)
   char <- sub("(\\[.\\])", "\\1</text><text>", char, perl = TRUE)
-  new_nodes <- lapply(
-    make_text_nodes(char), 
-    function(n) xml2::xml_children(n)
-  )
+  new_nodes <- lapply(char, make_text_nodes)
   # since we split up the nodes, we have to do this node by node
   for (i in seq(new_nodes)) {
     add_node_siblings(ticks[[i]], new_nodes[[i]], remove = TRUE)
