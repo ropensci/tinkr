@@ -9,6 +9,9 @@
 #' @param path path to the source file
 #' @param ns an the NS that resolves the md ns
 #' @param encoding the encoding of the file. Defaults to UTF-8
+#' @examples
+#' f <- system.file("extdata", "link-test.md", package = "tinkr")
+#' md <- yarn$new(f, sourcepos = TRUE)
 resolve_links <- function(body, path, ns = md_ns(), encoding = "UTF-8") {
   # if (is.na(xml2::xml_attr(body, "sourcepos"))) {
   #   warning("no sourcepos attribute")
