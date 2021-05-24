@@ -16,10 +16,8 @@ status](https://codecov.io/gh/ropenscilabs/tinkr/branch/master/graph/badge.svg)]
 
 The goal of tinkr is to convert (R)Markdown files to XML and back to
 allow their editing with `xml2` (XPath!) instead of numerous complicated
-regular expressions. Would you like to kknow more? [This is great intro
-if you are new to XPath](https://www.w3schools.com/xml/xpath_intro.asp)
-and [this is a good resource on XSLT for XML
-transformations](https://www.w3schools.com/xml/xsl_intro.asp).
+regular expressions. If these words mean nothing to you, see our list of
+[resources to get started](#pre-reqs).
 
 ## Use-Cases
 
@@ -216,9 +214,11 @@ background knowledge do you need before using tinkr?
     how to find, replace, remove nodes etc.
 -   How to use R6 classes… although reading the examples should help you
     get the gist.
--   [XSLT](https://ropensci.org/blog/2017/01/10/xslt-release/) but only
-    if you are not happy with our [default
-    stylesheet](#general-principles-and-solution).
+-   If you are not happy with [our default
+    stylesheet](#general-principles-and-solution), then understanding
+    [XSLT](https://ropensci.org/blog/2017/01/10/xslt-release/) will help
+    you create your own. Refer to this good resource on [XSLT for XML
+    transformations](https://www.w3schools.com/xml/xsl_intro.asp).
 
 ## Loss of Markdown style
 
