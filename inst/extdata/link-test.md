@@ -23,7 +23,7 @@ footnotes should not be properly parsed and will be considered 'asis' nodes
 
 
 [this fun link1]: https://example.com/1
-[link2]: https://example.com/2
+[link2]: https://example.com/2 "link with title!"
 [link3]: https://example.com/3
 [link4]: https://example.com/4
 [standalone]: https://example.com/standalone
