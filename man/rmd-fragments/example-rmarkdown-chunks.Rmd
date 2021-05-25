@@ -1,0 +1,11 @@
+
+For R Markdown files, to ease editing of chunk label and options, `to_xml` munges the chunk info into different attributes. 
+E.g. below you see that `code_blocks` can have a `language`, `name`, `echo` attributes.
+
+```{r}
+path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+rmd <- tinkr::yarn$new(path)
+rmd$body
+```
+
+Note that all of the features in tinkr work for both Markdown and R Markdown.

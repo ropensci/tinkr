@@ -1,0 +1,24 @@
+This is a basic example. 
+We read "example1.md", change all headers 3 to headers 1, and save it back to md. 
+Because the xml2 objects are [passed by reference](https://blog.penjee.com/wp-content/uploads/2015/02/pass-by-reference-vs-pass-by-value-animation.gif), manipulating them does not require reassignment. 
+
+```{r}
+library("magrittr")
+library("tinkr")
+# From Markdown to XML
+path <- system.file("extdata", "example1.md", package = "tinkr")
+# Level 3 header example:
+cat(tail(readLines(path, 40)), sep = "\n")
+ex1  <- tinkr::yarn$new(path)
+# transform level 3 headers into level 1 headers
+ex1$body %>%
+  xml2::xml_find_all(xpath = ".//md:heading[@level='3']", ex1$ns) %>% 
+  xml2::xml_set_attr("level", 1)
+
+# Back to Markdown
+tmp <- tempfile(fileext = "md")
+ex1$write(tmp)
+# Level three headers are now Level one:
+cat(tail(readLines(tmp, 40)), sep = "\n")
+unlink(tmp)
+```

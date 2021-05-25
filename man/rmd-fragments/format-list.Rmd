@@ -1,0 +1,17 @@
+The (R)md to XML to (R)md loop on which tinkr is based is slightly lossy because of Markdown syntax redundancy, so the loop from (R)md to R(md) via `to_xml` and `to_md` will be a bit lossy. For instance 
+
+ * lists can be created with either "+", "-" or "*". When using `tinkr`, the (R)md after editing will only use "-" for lists. 
+ 
+ * Links built like `[word][smallref]` and bottom `[smallref]: URL` become `[word](URL)`.
+ 
+ * Characters are escaped (e.g. "[" when not for a link).
+
+ * [x] GitHub tickboxes are preserved (only for `yarn` objects).
+ 
+ * Block quotes lines all get ">" whereas in the input only the first could have a ">" at the beginning of the first line.
+ 
+ * For tables see the next subsection.
+    
+  Such losses make your (R)md different, and the git diff a bit harder to parse, but should _not_ change the documents your (R)md is rendered to. If it does, report a bug in the issue tracker!
+  
+  A solution to not loose your Markdown style, e.g. your preferring "*" over "-" for lists is to tweak [our XSL stylesheet](inst/extdata/xml2md_gfm.xsl) and provide its filepath as `stylesheet_path` argument to `to_md`.

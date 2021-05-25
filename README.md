@@ -15,7 +15,7 @@ status](https://codecov.io/gh/ropenscilabs/tinkr/branch/master/graph/badge.svg)]
 <!-- badges: end -->
 
 The goal of tinkr is to convert (R)Markdown files to XML and back to
-allow their editing with `xml2` (XPath!) instead of numerous complicated
+allow their editing with xml2 (XPath!) instead of numerous complicated
 regular expressions. If these words mean nothing to you, see our list of
 [resources to get started](#background--pre-requisites).
 

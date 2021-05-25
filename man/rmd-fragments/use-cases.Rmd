@@ -1,0 +1,8 @@
+Possible applications are R scripts using tinkr, and XPath via xml2 to:
+
+* change levels of headers, cf [this script](inst/scripts/roweb2_headers.R) and [this pull request to roweb2](https://github.com/ropensci/roweb2/pull/279);
+* change chunk labels and options;
+* extract all runnable code (including inline code);
+* insert arbitrary Markdown elements;
+* modify link URLs;
+* your idea, please [report use cases](https://discuss.ropensci.org/c/usecases/10)!

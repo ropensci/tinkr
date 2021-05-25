@@ -1,0 +1,7 @@
+
+If you are not closely following one of the examples provided, what background knowledge do you need before using tinkr?
+
+* That XPath, a language for querying XML & HTML, exists, and [some basics](https://www.w3schools.com/xml/xpath_intro.asp). 
+* Basics of how [xml2 works](https://blog.r-hub.io/2020/01/22/mutable-api/#exposing-the-c-api-in-xml2): how to find, replace, remove nodes etc.
+* How to use R6 classes... although reading the examples should help you get the gist.
+* If you are not happy with [our default stylesheet](#general-principles-and-solution), then understanding [XSLT](https://ropensci.org/blog/2017/01/10/xslt-release/) will help you create your own. Refer to this good resource on [XSLT for XML transformations](https://www.w3schools.com/xml/xsl_intro.asp).

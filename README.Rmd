@@ -20,44 +20,20 @@ knitr::opts_chunk$set(
 [![R build status](https://github.com/ropenscilabs/tinkr/workflows/R-CMD-check/badge.svg)](https://github.com/ropenscilabs/tinkr/actions)
 [![Coverage status](https://codecov.io/gh/ropenscilabs/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropenscilabs/tinkr?branch=master)
 <!-- badges: end -->
-  
-The goal of tinkr is to convert (R)Markdown files to XML and back to allow their editing with `xml2` (XPath!) instead of numerous complicated regular expressions. 
-If these words mean nothing to you, see our list of [resources to get started](#background--pre-requisites).
+
+```{r child='man/rmd-fragments/goal.Rmd'} 
+```  
 
 ## Use Cases
 
-Possible applications are R scripts using tinkr, and XPath via xml2 to:
-
-* change levels of headers, cf [this script](inst/scripts/roweb2_headers.R) and [this pull request to roweb2](https://github.com/ropensci/roweb2/pull/279);
-* change chunk labels and options;
-* extract all runnable code (including inline code);
-* insert arbitrary Markdown elements;
-* modify link URLs;
-* your idea, please [report use cases](https://discuss.ropensci.org/c/usecases/10)!
+```{r child='man/rmd-fragments/use-cases.Rmd'} 
+```
 
 ## Workflow
 
-Only the body of the (R) Markdown file is cast to XML, using the Commonmark specification via the [`commonmark` package](https://github.com/jeroen/commonmark). 
-YAML metadata could be edited using the [`yaml` package](https://github.com/viking/r-yaml), which is not the goal of this package.
-
-We have created an [R6 class](https://r6.r-lib.org/) object called **yarn** to store the representation of both the YAML and the XML data, both of which are accessible through the `$body` and `$yaml` elements. 
-In addition, the namespace prefix is set to "md" in the `$ns` element.
-
-You can perform XPath queries using the `$body` and `$ns` elements:
-
-```{r}
-library("tinkr")
-library("xml2")
-path <- system.file("extdata", "example1.md", package = "tinkr")
-head(readLines(path))
-ex1 <- tinkr::yarn$new(path)
-# find all ropensci.org blog links
-xml_find_all(
-  x = ex1$body, 
-  xpath = ".//md:link[contains(@destination,'ropensci.org/blog')]", 
-  ns = ex1$ns
-)
+```{r child='man/rmd-fragments/workflow.Rmd'} 
 ```
+
 
 ## Installation
 
@@ -71,138 +47,44 @@ install.packages("tinkr", repos = "https://ropensci.r-universe.dev")
 
 ### Markdown
 
-This is a basic example. 
-We read "example1.md", change all headers 3 to headers 1, and save it back to md. 
-Because the xml2 objects are [passed by reference](https://blog.penjee.com/wp-content/uploads/2015/02/pass-by-reference-vs-pass-by-value-animation.gif), manipulating them does not require reassignment. 
-
-```{r}
-library("magrittr")
-library("tinkr")
-# From Markdown to XML
-path <- system.file("extdata", "example1.md", package = "tinkr")
-# Level 3 header example:
-cat(tail(readLines(path, 40)), sep = "\n")
-ex1  <- tinkr::yarn$new(path)
-# transform level 3 headers into level 1 headers
-ex1$body %>%
-  xml2::xml_find_all(xpath = ".//md:heading[@level='3']", ex1$ns) %>% 
-  xml2::xml_set_attr("level", 1)
-
-# Back to Markdown
-tmp <- tempfile(fileext = "md")
-ex1$write(tmp)
-# Level three headers are now Level one:
-cat(tail(readLines(tmp, 40)), sep = "\n")
-unlink(tmp)
+```{r child='man/rmd-fragments/example-markdown-headers.Rmd'} 
 ```
 
 ### R Markdown
 
-For R Markdown files, to ease editing of chunk label and options, `to_xml` munges the chunk info into different attributes. 
-E.g. below you see that `code_blocks` can have a `language`, `name`, `echo` attributes.
-
-```{r}
-path <- system.file("extdata", "example2.Rmd", package = "tinkr")
-rmd <- tinkr::yarn$new(path)
-rmd$body
+```{r child='man/rmd-fragments/example-rmarkdown-chunks.Rmd'} 
 ```
-
-Note that all of the features in tinkr work for both Markdown and R Markdown.
 
 ### Inserting new Markdown elements
 
-Inserting new nodes into the AST is surprisingly difficult if there is a default namespace, 
-so we have provided a method in the **yarn** object that will take plain Markdown 
-and translate it to XML nodes and insert them into the document for you. 
-For example, you can add a new code block:
-
-```{r new-block}
-path <- system.file("extdata", "example2.Rmd", package = "tinkr")
-rmd <- tinkr::yarn$new(path)
-xml2::xml_find_first(rmd$body, ".//md:code_block", rmd$ns)
-new_code <- c(
-  "```{r xml-block, message = TRUE}",
-  "message(\"this is a new chunk from {tinkr}\")",
-  "```")
-new_table <- data.frame(
-  package = c("xml2", "xslt", "commonmark", "tinkr"),
-  cool = TRUE
-)
-# Add chunk into document after the first chunk
-rmd$add_md(new_code, where = 1L)
-# Add a table after the second chunk:
-rmd$add_md(knitr::kable(new_table), where = 2L)
-# show the first 21 lines of modified document
-rmd$head(21)
+```{r child='man/rmd-fragments/example-rmarkdown-adding-elements.Rmd'}
 ```
 
 ## Background / pre-requisites
 
-If you are not closely following one of the examples provided, what background knowledge do you need before using tinkr?
+```{r child='man/rmd-fragments/prereqs.Rmd'}
+```
 
-* That XPath, a language for querying XML & HTML, exists, and [some basics](https://www.w3schools.com/xml/xpath_intro.asp). 
-* Basics of how [xml2 works](https://blog.r-hub.io/2020/01/22/mutable-api/#exposing-the-c-api-in-xml2): how to find, replace, remove nodes etc.
-* How to use R6 classes... although reading the examples should help you get the gist.
-* If you are not happy with [our default stylesheet](#general-principles-and-solution), then understanding [XSLT](https://ropensci.org/blog/2017/01/10/xslt-release/) will help you create your own. Refer to this good resource on [XSLT for XML transformations](https://www.w3schools.com/xml/xsl_intro.asp).
 
 ## Loss of Markdown style
 
 ### General principles and solution
 
-The (R)md to XML to (R)md loop on which tinkr is based is slightly lossy because of Markdown syntax redundancy, so the loop from (R)md to R(md) via `to_xml` and `to_md` will be a bit lossy. For instance 
+```{r child='man/rmd-fragments/format-list.Rmd'}
+```
 
- * lists can be created with either "+", "-" or "*". When using `tinkr`, the (R)md after editing will only use "-" for lists. 
- 
- * Links built like `[word][smallref]` and bottom `[smallref]: URL` become `[word](URL)`.
- 
- * Characters are escaped (e.g. "[" when not for a link).
-
- * [x] GitHub tickboxes are preserved (only for `yarn` objects).
- 
- * Block quotes lines all get ">" whereas in the input only the first could have a ">" at the beginning of the first line.
- 
- * For tables see the next subsection.
-    
-  Such losses make your (R)md different, and the git diff a bit harder to parse, but should _not_ change the documents your (R)md is rendered to. If it does, report a bug in the issue tracker!
-  
-  A solution to not loose your Markdown style, e.g. your preferring "*" over "-" for lists is to tweak [our XSL stylesheet](inst/extdata/xml2md_gfm.xsl) and provide its filepath as `stylesheet_path` argument to `to_md`.
   
 ### The special case of tables
   
-* Tables are supposed to remain/become pretty after a full loop `to_xml` + `to_md`. If you notice something amiss, e.g. too much space compared to what you were expecting, please open an issue.
+```{r child='man/rmd-fragments/format-table.Rmd'}
+```
+
 
 ### LaTeX equations
 
-While Markdown parsers like pandoc know what LaTeX is,
-commonmark does not, 
-and that means LaTeX equations will end up with extra markup due to commonmark's desire to escape characters.
-
-However, if you have LaTeX equations that use either `$` or `$$` to delimit them, 
-you can protect them from formatting changes with the `$protect_math()` method (for users of the `yarn` object) 
-or the `protect_math()` funciton (for those using the output of `to_xml()`). 
-Below is a demonstration using the `yarn` object:
-
-```{r protect-math}
-path <- system.file("extdata", "math-example.md", package = "tinkr")
-math <- tinkr::yarn$new(path)
-math$tail() # malformed
-math$protect_math()$tail() # success!
+```{r child='man/rmd-fragments/format-latex.Rmd'}
 ```
 
-Note, however, that there are a few caveats for this:
-
-1. The dollar notation for inline math must be adjacent to the text. E.G. 
-   `$\alpha$` is valid, but `$ \alpha$` and `$\alpha $` are not valid.
-2. We do not currently have support for bracket notation
-3. If you use a postfix dollar sign in your prose (e.g. BASIC commands or a Burroughs-Wheeler Transformation demonstration),
-you must be sure to either use punctuation after the trailing dollar sign OR format the text as code.
-(i.e. `` `INKEY$` `` is good, but `INKEY$` by itself is not good and will be interepreted as LaTeX code, throwing an error:
-    ```{r, basic, error = TRUE}
-    path <- system.file("extdata", "basic-math.md", package = "tinkr")
-    math <- tinkr::yarn$new(path)
-    math$head(15) # malformed
-    math$protect_math() #error
-    ```
 
 ## Meta
 
