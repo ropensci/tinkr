@@ -10,3 +10,13 @@ test_that("users can turn off anchor links", {
   expect_snapshot(show_user(m$tail(30), force = TRUE))
 })
 
+test_that("links can go round trip", {
+  
+  m <- yarn$new(f)
+  withr::local_file(tmp <- tempfile())
+  m$write(tmp)
+  mt <- yarn$new(tmp)
+  expect_equal(m$tail(30), mt$tail(30))
+
+})
+
