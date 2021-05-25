@@ -4,7 +4,7 @@
 \alias{to_xml}
 \title{Transform file to XML}
 \usage{
-to_xml(path, encoding = "UTF-8", sourcepos = FALSE)
+to_xml(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = TRUE)
 }
 \arguments{
 \item{path}{Path to the file.}
@@ -14,6 +14,10 @@ to_xml(path, encoding = "UTF-8", sourcepos = FALSE)
 \item{sourcepos}{passed to \code{\link[commonmark:commonmark]{commonmark::markdown_xml()}}. If \code{TRUE}, the
 source position of the file will be included as a "sourcepos" attribute.
 Defaults to \code{FALSE}.}
+
+\item{anchor_links}{if \code{TRUE}, anchor links (in the style of
+\verb{[key]: https://example.com/link "title"}) will be preserved as best as
+possible.}
 }
 \value{
 A list containing the YAML of the file (yaml)

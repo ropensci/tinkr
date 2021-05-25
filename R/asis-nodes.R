@@ -260,3 +260,38 @@ protect_tickbox <- function(body, ns) {
   }
   copy_xml(body)
 }
+
+# FOOTNOTES --------------------------------------------------------------------
+#nocov start
+footnote_check <- function(body, ns = md_ns()) {
+  predicate <- "contains(text(), '[^') and contains(text(), ']')"
+  cascade <- glue::glue(".//md:paragraph[*[{predicate}]]")
+  xml2::xml_find_all(body, cascade, ns = ns)
+}
+
+fix_footnotes <- function(feet) {
+  char <- as.character(feet)
+  char <- gsub(
+    pattern = "([\\[][\\^]|\\])",
+    replacement = "</text><text asis='true'>\\1</text><text>", 
+    x = char,
+    perl = TRUE
+  )
+  make_text_nodes(char)
+}
+
+protect_footnotes <- function(body, ns = md_ns()) {
+  body <- copy_xml(body)
+  
+  feet <- footnote_check(body, ns)
+  if (length(feet) == 0) {
+    return(body)
+  }
+  new_nodes <- fix_footnotes(feet)
+  # since we split up the nodes, we have to do this node by node
+  for (i in seq(new_nodes)) {
+    add_node_siblings(feet[[i]], new_nodes[[i]], remove = TRUE)
+  }
+  copy_xml(body)
+}
+#nocov end

@@ -127,7 +127,7 @@ commonmark.}
 \subsection{Method \code{new()}}{
 Create a new yarn document
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{yarn$new(path = NULL, encoding = "UTF-8", sourcepos = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{yarn$new(path = NULL, encoding = "UTF-8", sourcepos = FALSE, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -140,6 +140,8 @@ Create a new yarn document
 \item{\code{sourcepos}}{passed to \code{\link[commonmark:commonmark]{commonmark::markdown_xml()}}. If \code{TRUE}, the
 source position of the file will be included as a "sourcepos" attribute.
 Defaults to \code{FALSE}.}
+
+\item{\code{...}}{arguments passed on to \code{\link[=to_xml]{to_xml()}}.}
 }
 \if{html}{\out{</div>}}
 }
