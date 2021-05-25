@@ -15,9 +15,11 @@ to_xml(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = TRUE)
 source position of the file will be included as a "sourcepos" attribute.
 Defaults to \code{FALSE}.}
 
-\item{anchor_links}{if \code{TRUE}, anchor links (in the style of
-\verb{[key]: https://example.com/link "title"}) will be preserved as best as
-possible.}
+\item{anchor_links}{if \code{TRUE} (default), reference-style links with anchors
+(in the style of \verb{[key]: https://example.com/link "title"}) will be
+preserved as best as possible. If this is \code{FASLE}, the anchors disappear
+and the links will appear as normal links. See \code{\link[=resolve_anchor_links]{resolve_anchor_links()}} for
+details.}
 }
 \value{
 A list containing the YAML of the file (yaml)

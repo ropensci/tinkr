@@ -7,9 +7,11 @@
 #' @param sourcepos passed to [commonmark::markdown_xml()]. If `TRUE`, the
 #'   source position of the file will be included as a "sourcepos" attribute.
 #'   Defaults to `FALSE`.
-#' @param anchor_links if `TRUE`, anchor links (in the style of
-#'   `[key]: https://example.com/link "title"`) will be preserved as best as
-#'   possible. 
+#' @param anchor_links if `TRUE` (default), reference-style links with anchors
+#'   (in the style of `[key]: https://example.com/link "title"`) will be 
+#'   preserved as best as possible. If this is `FASLE`, the anchors disappear
+#'   and the links will appear as normal links. See [resolve_anchor_links()] for
+#'   details.
 #'
 #' @return A list containing the YAML of the file (yaml)
 #' and its body (body) as XML.
