@@ -23,19 +23,19 @@ test_that("links can go round trip", {
 test_that("singluar nodes can be added to the body", {
   
   m <- yarn$new(f)
-  node1 <- tinkr:::build_anchor_links("[a]: b 'c'")[[1]]
-  node2 <- tinkr:::build_anchor_links("[A]: B 'C'")[[1]]
+  node1 <- build_anchor_links("[a]: b 'c'")[[1]]
+  node2 <- build_anchor_links("[A]: B 'C'")[[1]]
 
   # add node1 at the top of the body
-  tinkr:::add_nodes_to_body(m$body, node1)
-  buddy <- tinkr:::copy_xml(m$body)
+  add_nodes_to_body(m$body, node1)
+  buddy <- copy_xml(m$body)
   buddy_node1 <- xml2::xml_find_first(buddy, ".//md:link", md_ns())
   expect_equal(xml2::xml_text(buddy_node1), "a")
   expect_equal(xml2::xml_attr(buddy_node1, "anchor"), "true")
 
   # add node2 after node1
-  tinkr:::add_node_siblings(buddy_node1, node2, remove = FALSE)
-  buddy <- tinkr:::copy_xml(buddy)
+  add_node_siblings(buddy_node1, node2, remove = FALSE)
+  buddy <- copy_xml(buddy)
   buddy_node2 <- xml2::xml_find_all(buddy, ".//md:link", md_ns())[[2]]
   expect_equal(xml2::xml_text(buddy_node2), "A")
   expect_equal(xml2::xml_attr(buddy_node2, "anchor"), "true")
