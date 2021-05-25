@@ -9,17 +9,31 @@ resolve_anchor_links(body, txt, ns = md_ns())
 \arguments{
 \item{body}{an XML body}
 
-\item{ns}{an the NS that resolves the md ns}
+\item{ns}{an the namespace that resolves the Markdown namespace}
 
 \item{path}{path to the source file}
 
 \item{encoding}{the encoding of the file. Defaults to UTF-8}
 }
 \description{
+\href{https://www.markdownguide.org/basic-syntax/#reference-style-links}{Reference style links} are
+a form of markdown syntax that reduces dupcliation and makes markdown more
+readable. They come in two parts:
+\enumerate{
+\item The inline part that uses two pairs of square brackets where the second
+pair of square brackets contains the reference for the anchor part of the
+link. Example:\preformatted{[inline text describing link][link-reference]
+}
+\item The anchor part, which can be anywhere in the document, contains a pair
+of square brackets followed by a colon and space with the link and
+optionally the link title. Example:\preformatted{[link-reference]: https://docs.ropensci.org/tinkr/ 'documentation for tinkr'
+}
+}
+
 Commonmark treats reference-style links as regular links, which can be a
-pain when converting large documents. This is an attempt at resolving these
-links by reading in the source document, finding the relative links, and
-adding them back with the 'asis' attribute.
+pain when converting large documents. This function resolves these
+links by reading in the source document, finding the reference-style links,
+and adding them back at the end of the document with the 'anchor' attribute.
 }
 \examples{
 f <- system.file("extdata", "link-test.md", package = "tinkr")
