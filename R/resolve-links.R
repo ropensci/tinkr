@@ -7,7 +7,7 @@
 #'
 #' @param body an XML body
 #' @param path path to the source file
-#' @param ns an the NS that resolves the md ns
+#' @param ns an the namespace that resolves the Markdown namespace
 #' @param encoding the encoding of the file. Defaults to UTF-8
 #' @keywords internal
 #' @examples
