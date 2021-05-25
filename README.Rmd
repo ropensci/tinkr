@@ -16,32 +16,32 @@ knitr::opts_chunk$set(
 # tinkr
 
 <!-- badges: start -->
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip) 
-  [![R build status](https://github.com/ropenscilabs/tinkr/workflows/R-CMD-check/badge.svg)](https://github.com/ropenscilabs/tinkr/actions)
- [![Coverage status](https://codecov.io/gh/ropenscilabs/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropenscilabs/tinkr?branch=master)
-  <!-- badges: end -->
-
-
-
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![R build status](https://github.com/ropenscilabs/tinkr/workflows/R-CMD-check/badge.svg)](https://github.com/ropenscilabs/tinkr/actions)
+[![Coverage status](https://codecov.io/gh/ropenscilabs/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropenscilabs/tinkr?branch=master)
+<!-- badges: end -->
+  
 The goal of tinkr is to convert (R)Markdown files to XML and back to allow their editing with `xml2` (XPath!) instead of numerous complicated regular expressions. 
 If these words mean nothing to you, see our list of [resources to get started](#background--pre-requisites).
 
-## Use-Cases
+## Use Cases
 
-Possible applications are R scripts using this and XPath in `xml2` to:
+Possible applications are R scripts using tinkr, and XPath via xml2 to:
 
-* change levels of headers, cf [this script](inst/scripts/roweb2_headers.R) and [this pull request to roweb2](https://github.com/ropensci/roweb2/pull/279)
-* change chunk labels and options
-* extract all runnable code (including inline code)
-* insert arbitrary markdown elements 
-* modify link URLs 
-* your idea, feel free to suggest use cases!
+* change levels of headers, cf [this script](inst/scripts/roweb2_headers.R) and [this pull request to roweb2](https://github.com/ropensci/roweb2/pull/279);
+* change chunk labels and options;
+* extract all runnable code (including inline code);
+* insert arbitrary Markdown elements;
+* modify link URLs;
+* your idea, please [report use cases](https://discuss.ropensci.org/c/usecases/10)!
 
 ## Workflow
 
-Only the body of the (R) Markdown file is cast to XML, using the Commonmark specification via the [`commonmark` package](https://github.com/jeroen/commonmark). YAML metadata could be edited using the [`yaml` package](https://github.com/viking/r-yaml), which is not the goal of this package.
+Only the body of the (R) Markdown file is cast to XML, using the Commonmark specification via the [`commonmark` package](https://github.com/jeroen/commonmark). 
+YAML metadata could be edited using the [`yaml` package](https://github.com/viking/r-yaml), which is not the goal of this package.
 
-We have created an [R6 class](https://r6.r-lib.org/) object called **yarn** to store the representation of both the YAML and the XML data, both of which are accessible through the `$body` and `$yaml` elements. In addition, the namespace prefix is set to "md" in the `$ns` element.
+We have created an [R6 class](https://r6.r-lib.org/) object called **yarn** to store the representation of both the YAML and the XML data, both of which are accessible through the `$body` and `$yaml` elements. 
+In addition, the namespace prefix is set to "md" in the `$ns` element.
 
 You can perform XPath queries using the `$body` and `$ns` elements:
 
@@ -49,6 +49,7 @@ You can perform XPath queries using the `$body` and `$ns` elements:
 library("tinkr")
 library("xml2")
 path <- system.file("extdata", "example1.md", package = "tinkr")
+head(readLines(path))
 ex1 <- tinkr::yarn$new(path)
 # find all ropensci.org blog links
 xml_find_all(
@@ -60,19 +61,19 @@ xml_find_all(
 
 ## Installation
 
-Wanna try the package and tell me what doesn't work? 
+Wanna try the package and tell us what doesn't work yet? 
 
 ```r 
-remotes::install_github("ropenscilabs/tinkr")
+install.packages("tinkr", repos = "https://ropensci.r-universe.dev")
 ```
-
 
 ## Examples
 
 ### Markdown
 
-This is a basic example. We read "example1.md", change all headers 3 to headers 1, and save it back to md. Because the {xml2} objects are [passed by reference](https://blog.penjee.com/wp-content/uploads/2015/02/pass-by-reference-vs-pass-by-value-animation.gif), manipulating them does not require reassignment. 
-
+This is a basic example. 
+We read "example1.md", change all headers 3 to headers 1, and save it back to md. 
+Because the xml2 objects are [passed by reference](https://blog.penjee.com/wp-content/uploads/2015/02/pass-by-reference-vs-pass-by-value-animation.gif), manipulating them does not require reassignment. 
 
 ```{r}
 library("magrittr")
@@ -97,7 +98,8 @@ unlink(tmp)
 
 ### R Markdown
 
-For R Markdown files, to ease editing of chunk label and options, `to_xml` munges the chunk info into different attributes. E.g. below you see that `code_blocks` can have a `language`, `name`, `echo` attributes.
+For R Markdown files, to ease editing of chunk label and options, `to_xml` munges the chunk info into different attributes. 
+E.g. below you see that `code_blocks` can have a `language`, `name`, `echo` attributes.
 
 ```{r}
 path <- system.file("extdata", "example2.Rmd", package = "tinkr")
@@ -105,14 +107,14 @@ rmd <- tinkr::yarn$new(path)
 rmd$body
 ```
 
-Note that all of the features in {tinkr} work for both Markdown and R Markdown.
+Note that all of the features in tinkr work for both Markdown and R Markdown.
 
-### Inserting new markdown elements
+### Inserting new Markdown elements
 
-Inserting new nodes into the AST is surprisingly difficult if there is a default
-namespace, so we have provided a method in the **yarn** object that will take
-plain markdown and translate it to XML nodes and insert them into the document
-for you. For example, you can add a new code block:
+Inserting new nodes into the AST is surprisingly difficult if there is a default namespace, 
+so we have provided a method in the **yarn** object that will take plain Markdown 
+and translate it to XML nodes and insert them into the document for you. 
+For example, you can add a new code block:
 
 ```{r new-block}
 path <- system.file("extdata", "example2.Rmd", package = "tinkr")
@@ -134,7 +136,7 @@ rmd$add_md(knitr::kable(new_table), where = 2L)
 rmd$head(21)
 ```
 
-## Background / pre-requisites {#pre-reqs}
+## Background / pre-requisites
 
 If you are not closely following one of the examples provided, what background knowledge do you need before using tinkr?
 
@@ -147,7 +149,7 @@ If you are not closely following one of the examples provided, what background k
 
 ### General principles and solution
 
-The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy because of Markdown syntax redundancy, so the loop from (R)md to R(md) via `to_xml` and `to_md` will be a bit lossy. For instance 
+The (R)md to XML to (R)md loop on which tinkr is based is slightly lossy because of Markdown syntax redundancy, so the loop from (R)md to R(md) via `to_xml` and `to_md` will be a bit lossy. For instance 
 
  * lists can be created with either "+", "-" or "*". When using `tinkr`, the (R)md after editing will only use "-" for lists. 
  
@@ -155,7 +157,7 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy becau
  
  * Characters are escaped (e.g. "[" when not for a link).
 
- * [x] GitHub tickboxes are preserved (only for `yarn` objects)
+ * [x] GitHub tickboxes are preserved (only for `yarn` objects).
  
  * Block quotes lines all get ">" whereas in the input only the first could have a ">" at the beginning of the first line.
  
@@ -171,14 +173,14 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy becau
 
 ### LaTeX equations
 
-While markdown parsers like pandoc know what LaTeX is, commonmark does not, and
-that means LaTeX equations will end up with extra markup due to commonmark's
-desire to escape characters.
+While Markdown parsers like pandoc know what LaTeX is,
+commonmark does not, 
+and that means LaTeX equations will end up with extra markup due to commonmark's desire to escape characters.
 
-If you have LaTeX equations that use either `$` or `$$` to delimit them, you
-can protect them from formatting changes with the `$protect_math()` method (for
-users of the `yarn` object) or the `protect_math()` funciton (for those using
-the output of `to_xml()`). Below is a demonstration using the `yarn` object:
+However, if you have LaTeX equations that use either `$` or `$$` to delimit them, 
+you can protect them from formatting changes with the `$protect_math()` method (for users of the `yarn` object) 
+or the `protect_math()` funciton (for those using the output of `to_xml()`). 
+Below is a demonstration using the `yarn` object:
 
 ```{r protect-math}
 path <- system.file("extdata", "math-example.md", package = "tinkr")
@@ -192,11 +194,9 @@ Note, however, that there are a few caveats for this:
 1. The dollar notation for inline math must be adjacent to the text. E.G. 
    `$\alpha$` is valid, but `$ \alpha$` and `$\alpha $` are not valid.
 2. We do not currently have support for bracket notation
-3. If you use a postfix dollar sign in your prose (e.g. BASIC commands or a 
-   Burroughs-Wheeler Transformation demonstration), you must be sure to either
-   use punctuation after the trailing dollar sign OR format the text as code.
-   (i.e. `` `INKEY$` `` is good, but `INKEY$` by itself is not good and will be 
-   interepreted as LaTeX code, throwing an error:
+3. If you use a postfix dollar sign in your prose (e.g. BASIC commands or a Burroughs-Wheeler Transformation demonstration),
+you must be sure to either use punctuation after the trailing dollar sign OR format the text as code.
+(i.e. `` `INKEY$` `` is good, but `INKEY$` by itself is not good and will be interepreted as LaTeX code, throwing an error:
     ```{r, basic, error = TRUE}
     path <- system.file("extdata", "basic-math.md", package = "tinkr")
     math <- tinkr::yarn$new(path)
@@ -206,4 +206,4 @@ Note, however, that there are a few caveats for this:
 
 ## Meta
 
-Please note that the 'tinkr' project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By contributing to this project, you agree to abide by its terms.
+Please note that the 'tinkr' project is released with a [Contributor Code of Conduct](https://ropensci.org/code-of-conduct). By contributing to this project, you agree to abide by its terms.
