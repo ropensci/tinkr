@@ -1,0 +1,74 @@
+---
+title: "Introduction to the tinkr package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to the tinkr package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(tinkr)
+```
+
+```{r child='../man/rmd-fragments/goal.Rmd'} 
+```  
+
+## Use Cases
+
+```{r child='../man/rmd-fragments/use-cases.Rmd'} 
+```
+
+## Workflow
+
+```{r child='../man/rmd-fragments/workflow.Rmd'} 
+```
+
+## Examples
+
+### Markdown
+
+```{r child='../man/rmd-fragments/example-markdown-headers.Rmd'} 
+```
+
+### R Markdown
+
+```{r child='../man/rmd-fragments/example-rmarkdown-chunks.Rmd'} 
+```
+
+### Inserting new Markdown elements
+
+```{r child='../man/rmd-fragments/example-rmarkdown-adding-elements.Rmd'}
+```
+
+## Background / pre-requisites
+
+```{r child='../man/rmd-fragments/prereqs.Rmd'}
+```
+
+
+## Loss of Markdown style
+
+### General principles and solution
+
+```{r child='../man/rmd-fragments/format-list.Rmd'}
+```
+
+  
+### The special case of tables
+  
+```{r child='../man/rmd-fragments/format-table.Rmd'}
+```
+
+
+### LaTeX equations
+
+```{r child='../man/rmd-fragments/format-latex.Rmd'}
+```

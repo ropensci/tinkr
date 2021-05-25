@@ -9,9 +9,9 @@
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![R build
-status](https://github.com/ropenscilabs/tinkr/workflows/R-CMD-check/badge.svg)](https://github.com/ropenscilabs/tinkr/actions)
+status](https://github.com/ropensci/tinkr/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/tinkr/actions)
 [![Coverage
-status](https://codecov.io/gh/ropenscilabs/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropenscilabs/tinkr?branch=master)
+status](https://codecov.io/gh/ropensci/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropensci/tinkr?branch=master)
 <!-- badges: end -->
 
 The goal of tinkr is to convert (R)Markdown files to XML and back to

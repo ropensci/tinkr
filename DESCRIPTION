@@ -5,15 +5,16 @@ Authors@R:
     c(person(given = "Maëlle",
              family = "Salmon",
              role = c("aut", "cre"),
-             email = "maelle.salmon@yahoo.se"),
-      person(given = "Jeroen",
-             family = "Ooms",
-             role = "aut"),
+             email = "msmaellesalmon@gmail.com",
+             comment = c(ORCID = "0000-0002-2815-0399"))),
       person(given = "Zhian N.",
              family = "Kamvar",
              role = "aut",
              email = "zkamvar@gmail.com",
              comment = c(ORCID = "0000-0003-1458-7108")),
+      person(given = "Jeroen",
+             family = "Ooms",
+             role = "aut"),
       person(given = "Nick",
              family = "Wellnhofer",
              role = "cph",
@@ -44,8 +45,10 @@ Imports:
 Suggests: 
     testthat (>= 3.0.0),
     covr,
-    withr
+    withr,
+    rmarkdown
 URL: https://docs.ropensci.org/tinkr/, https://github.com/ropensci/tinkr
 BugReports: https://github.com/ropensci/tinkr/issues
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
+VignetteBuilder: knitr
