@@ -8,3 +8,4 @@
 ^\.Rproj\.user$
 ^README\.Rmd$
 .ropensci-staff
+^inst/presub\.md$
