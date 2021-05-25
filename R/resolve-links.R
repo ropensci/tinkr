@@ -2,10 +2,10 @@
 #'
 #' @description
 #'
-#' [Reference style 
-#' links](https://www.markdownguide.org/basic-syntax/#reference-style-links) are
-#' a form of markdown syntax that reduces dupcliation and makes markdown more
-#' readable. They come in two parts:
+#' [Reference style links and
+#' images](https://www.markdownguide.org/basic-syntax/#reference-style-links)
+#' are a form of markdown syntax that reduces dupcliation and makes markdown
+#' more readable. They come in two parts:
 #'
 #' 1. The inline part that uses two pairs of square brackets where the second
 #'    pair of square brackets contains the reference for the anchor part of the
@@ -23,12 +23,80 @@
 #' Commonmark treats reference-style links as regular links, which can be a
 #' pain when converting large documents. This function resolves these
 #' links by reading in the source document, finding the reference-style links,
-#' and adding them back at the end of the document with the 'anchor' attribute.
+#' and adding them back at the end of the document with the 'anchor' attribute
+#' and appending the reference to the link with the 'ref' attribute. 
 #'
+#' @details
+#' 
+#' ## Nomenclature
+#'
+#' The reference-style link contains two parts, but they don't have common names
+#' (the [markdown guide](https://www.markdownguide.org/basic-syntax/) calls 
+#' these "first part and second part"), so in this documentation, we call the
+#' link pattern of `[link text][link-ref]` as the "inline reference-style link"
+#' and the pattern of `[link-ref]: <URL>` as the "anchor references-style link".
+#'
+#' ## Reference-style links in commonmark's XML representation
+#'
+#' A link or image in XML is represented by a node with the following attributes
+#'  
+#'  - destination: the URL for the link
+#'  - title: an optional title for the link
+#'
+#' For example, this markdown link `[link text](https://example.com "example 
+#' link")` is represented in XML as text inside of a link node:
+#'
+#' ```{r}
+#' lnk <- "[link text](https://example.com 'example link')"
+#' xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
+#' cat(as.character(xml2::xml_find_first(xml, ".//d1:link")))
+#' ```
+#' 
+#' However, reference-style links are rendered equivalently: 
+#' 
+#' ```{r}
+#' lnk <- "
+#' [link text][link-ref]
+#'
+#' [link-ref]: https://example.com 'example link'
+#' "
+#' xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
+#' cat(as.character(xml2::xml_find_first(xml, ".//d1:link")))
+#' ```
+#'
+#' ## XML attributes of reference-style links
+#'
+#' To preserve the anchor reference-style links, we search the source document
+#' for the destination attribute proceded by `]: `, transform that information
+#' into a new link node with the `anchor` attribute, and add it to the end of
+#' the document. That node looks like this:
+#'
+#' ```{r, echo = FALSE, comment = NA}
+#' lnk <- "[link-ref]: https://example.com 'example link'"
+#' al <- tinkr:::build_anchor_links(lnk)
+#' cat(as.character(xml2::xml_find_first(al, ".//link")))
+#' ```
+#' 
+#' From there, we add the anchor text to the node that is present in our 
+#' document as the `ref` attribute:
+#'
+#' ```{r, echo = FALSE, comment = NA}
+#' lnk <- "
+#' [link text][link-ref]
+#'
+#' [link-ref]: https://example.com 'example link'
+#' "
+#' xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
+#' lnk <- xml2::xml_find_first(xml, ".//d1:link")
+#' xml2::xml_set_attr(lnk, "rel", "link-ref")
+#' cat(as.character(lnk))
+#' ```
+#'
+#' @note this function is internally used in the function [to_xml()].
 #' @param body an XML body
-#' @param path path to the source file
-#' @param ns an the namespace that resolves the Markdown namespace
-#' @param encoding the encoding of the file. Defaults to UTF-8
+#' @param txt the text of a source file
+#' @param ns an the namespace that resolves the Markdown namespace (defaults to
+#'   [md_ns()])
 #' @keywords internal
 #' @examples
 #' f <- system.file("extdata", "link-test.md", package = "tinkr")
@@ -57,7 +125,7 @@ resolve_anchor_links <- function(body, txt, ns = md_ns()) {
   # extract all of matches from the document
   anchors <- txt[pos]
   # set the attributes of the links that have anchors
-  xml2::xml_set_attr(links[pos != 0], "rel", rl_name(anchors))
+  xml2::xml_set_attr(links[pos != 0], "rel", al_name(anchors))
   # add the anchors at the end of the document
   add_anchor_links(body, unique(anchors))
 }
@@ -79,9 +147,9 @@ add_anchor_links <- function(body, links) {
 # Make an anchor link node from a text string
 # build_anchor_links("[CAT!]: https://placekitten.com/200/200 'cute kitty'")
 build_anchor_links <- function(link) {
-  txt <- glue::glue("<text>{rl_name(link)}</text>")
+  txt <- glue::glue("<text>{al_name(link)}</text>")
   attrs <- glue::glue(
-    "destination='{rl_dest(link)}' title='{rl_title(link)}' anchor='true'"
+    "destination='{al_dest(link)}' title='{al_title(link)}' anchor='true'"
   ) 
   # wrap the nodes in a paragraph to make sure they don't get screwed up by
   # any footer text
@@ -95,15 +163,15 @@ build_anchor_links <- function(link) {
 # Helpers for parsing anchor links:
 #
 #   [name]: dest 'title'
-rl_name <- function(link) {
+al_name <- function(link) {
   sub("^[[\\[](.+?)[\\]]:\\s.+?$", "\\1", link, perl = TRUE)
 }
 
-rl_dest <- function(link) {
+al_dest <- function(link) {
   sub("^[\\[].+?[\\]]:\\s([^\\s]+?)(\\s['\"]?.*?)?$", "\\1", link, perl = TRUE)
 }
 
-rl_title <- function(link) {
+al_title <- function(link) {
   # try to find titles, but if they don't exist, they will match exactly with
   # the original string, so we need to censor them.
   titles <- sub("^[\\[].+?[\\]]:\\s[^\\s]+?(\\s['\"](.*?)['\"])$", "\\2", 
