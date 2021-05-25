@@ -17,9 +17,7 @@ add_nodes_to_body <- function(body, nodes, where = 0L) {
   if (inherits(nodes, "xml_node")) {
     xml2::xml_add_child(body, nodes, .where = where)
   } else {
-    for (child in rev(nodes)) {
-      xml2::xml_add_child(body, child, .where = where)
-    }
+    purrr::walk(rev(nodes), ~xml2::xml_add_child(body, .x, .where = where))
   }
 }
 
@@ -29,9 +27,7 @@ add_node_siblings <- function(node, nodes, where = "after", remove = TRUE) {
   if (inherits(nodes, "xml_node")) {
     xml2::xml_add_sibling(node, nodes, .where = where)
   } else {
-    for (sib in rev(nodes)) {
-      xml2::xml_add_sibling(node, sib, .where = where)
-    }
+    purrr::walk(rev(nodes), ~xml2::xml_add_sibling(node, .x, .where = where))
   }
   if (remove) xml2::xml_remove(node)
 }
