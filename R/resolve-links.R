@@ -141,7 +141,7 @@ find_anchor_link <- function(target, txt) {
   if (length(position) == 0) {
     return(0L)
   }
-  position
+  max(position) # examples in markdown will create duplicates
 }
 
 add_anchor_links <- function(body, links) {

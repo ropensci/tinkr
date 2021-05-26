@@ -18,6 +18,14 @@ This should also [include non-reference links](https://example.com/5)
 If you write \[some link text\]\[link2\], that will appear as [some link text][link2]
 but you can also [test][racehorse] [sub][sub-link1] [links][sub-link2]
 
+```markdown
+you can write links like [a link](https://example.com/racehorse) or using
+[reference style][racehorce]
+
+[racehorse]: https://example.com/racehorse/   
+```
+
+
 [this fun link1]: https://example.com/1
 [link2]: https://example.com/2 "link with title!"
 [link3]: https://example.com/3
