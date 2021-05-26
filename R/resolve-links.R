@@ -174,7 +174,10 @@ al_name <- function(link) {
 }
 
 al_dest <- function(link) {
-  sub("^[\\[].+?[\\]]:\\s([^\\s]+?)(\\s['\"]?.*?)?$", "\\1", link, perl = TRUE)
+  res <- sub("^[\\[].+?[\\]]:\\s([^\\s]+?)(\\s['\"]?.*?)?$", "\\1", link, perl = TRUE)
+  # escape ampersands that are not valid code points, though this will still
+  # allow invalid code points, but it's better than nothing
+  gsub("[&](?![#]?[A-Za-z0-9]+?[;])", "&amp;", res, perl = TRUE)
 }
 
 al_title <- function(link) {
