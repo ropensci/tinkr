@@ -113,11 +113,12 @@ resolve_anchor_links <- function(body, txt, ns = md_ns()) {
   if (length(links) == 0) {
     return(invisible(body))
   }
-  # Search for the pattern that resolves to `]: <LINK>` and return the 
+  # Search for the pattern that resolves to `]: <LINK>( <TITLE>)` and return the 
   # line number the link was found on 
-  targets <- xml2::xml_attr(links, "destination")
-  targets <- gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", targets)
-  rel <- paste0("\\]:\\s+?", targets)
+  dests  <- xml2::xml_attr(links, "destination")
+  titles <- xml2::xml_attr(links, "title")
+  targets <- paste0(clean_targets(dests), "\\s?['\"]?", clean_targets(titles))
+  rel <- paste0("\\]:\\s+?", targets, "['\"]?\\s*$")
   pos <- purrr::map_int(rel, find_anchor_link, txt)
   if (sum(pos) == 0) {
     return(invisible(body))  
@@ -128,6 +129,11 @@ resolve_anchor_links <- function(body, txt, ns = md_ns()) {
   xml2::xml_set_attr(links[pos != 0], "rel", al_name(anchors))
   # add the anchors at the end of the document
   add_anchor_links(body, unique(anchors))
+}
+
+# Lifted from Hmisc::escapeRegex in Hmisc 4.5.0
+clean_targets <- function(targets) {
+  gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", targets)
 }
 
 find_anchor_link <- function(target, txt) {

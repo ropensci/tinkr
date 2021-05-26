@@ -1,9 +1,16 @@
 # anchored links are processed by default
 
     Code
-      show_user(m$tail(30), force = TRUE)
+      show_user(m$show(), force = TRUE)
     Output
-      [can be `inline`][link2] or [can be spread across multiple lines
+      ---
+      title: this tests links
+      ---
+      
+      ## These are some links that are valid in basic markdown
+      
+      This is some text [that contains links][this fun link1] which
+      [can be `inline`](https://example.com/2) or [can be spread across multiple lines
       because the link text is JUST TOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
       LONG, y'all][link3].
       
@@ -13,6 +20,7 @@
       This should also [include non-reference links](https://example.com/5)
       
       If you write \[some link text\]\[link2\], that will appear as [some link text][link2]
+      but you can also [test][racehorse] [sub][sub-link1] [links][sub-link2]
       
       ## This is some extended markdown content {#extended .callout}
       
@@ -27,9 +35,12 @@
       should be preserved
       
       [this fun link1]: https://example.com/1
-      [link2]: https://example.com/2 "link with title!"
       [link3]: https://example.com/3
       [link4]: https://example.com/4
+      [link2]: https://example.com/2 "link with title!"
+      [racehorse]: https://example.com/racehorse/
+      [sub-link1]: https://example.com/racehorse/1/1 "One One Won One"
+      [sub-link2]: https://example.com/racehorse/2/2/ "Two Two Won One Two"
       [standalone]: https://example.com/standalone
       
       
@@ -37,7 +48,7 @@
 # users can turn off anchor links
 
     Code
-      show_user(m$tail(30), force = TRUE)
+      show_user(m$show(), force = TRUE)
     Output
       ---
       title: this tests links
@@ -56,6 +67,7 @@
       This should also [include non-reference links](https://example.com/5)
       
       If you write \[some link text\]\[link2\], that will appear as [some link text](https://example.com/2 "link with title!")
+      but you can also [test](https://example.com/racehorse/) [sub](https://example.com/racehorse/1/1 "One One Won One") [links](https://example.com/racehorse/2/2/ "Two Two Won One Two")
       
       ## This is some extended markdown content {#extended .callout}
       
