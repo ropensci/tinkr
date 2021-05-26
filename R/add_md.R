@@ -14,15 +14,20 @@ add_md <- function(body, md, where = 0L) {
 
 # Add children to a specific location in the full document.
 add_nodes_to_body <- function(body, nodes, where = 0L) {
-  for (child in rev(nodes)) {
-    xml2::xml_add_child(body, child, .where = where)
+  if (inherits(nodes, "xml_node")) {
+    xml2::xml_add_child(body, nodes, .where = where)
+  } else {
+    purrr::walk(rev(nodes), ~xml2::xml_add_child(body, .x, .where = where))
   }
 }
 
 # Add siblings to a node
 add_node_siblings <- function(node, nodes, where = "after", remove = TRUE) {
-  for (sib in rev(nodes)) {
-    xml2::xml_add_sibling(node, sib, .where = where)
+  # if there is a single node, then we need only add it
+  if (inherits(nodes, "xml_node")) {
+    xml2::xml_add_sibling(node, nodes, .where = where)
+  } else {
+    purrr::walk(rev(nodes), ~xml2::xml_add_sibling(node, .x, .where = where))
   }
   if (remove) xml2::xml_remove(node)
 }

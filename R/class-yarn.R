@@ -30,6 +30,7 @@ yarn <- R6::R6Class("yarn",
     #' @param sourcepos passed to [commonmark::markdown_xml()]. If `TRUE`, the
     #'   source position of the file will be included as a "sourcepos" attribute.
     #'   Defaults to `FALSE`.
+    #' @param ... arguments passed on to [to_xml()].
     #' @return A new yarn object containing an XML representation of a 
     #' (R)Markdown file.
     #'
@@ -40,11 +41,11 @@ yarn <- R6::R6Class("yarn",
     #' path2 <- system.file("extdata", "example2.Rmd", package = "tinkr")
     #' ex2 <- tinkr::yarn$new(path2)
     #' ex2
-    initialize = function(path = NULL, encoding = "UTF-8", sourcepos = FALSE) {
+    initialize = function(path = NULL, encoding = "UTF-8", sourcepos = FALSE, ...) {
       if (is.null(path)) {
         return(self)
       } else {
-        xml <- to_xml(path, encoding, sourcepos)
+        xml <- to_xml(path, encoding, sourcepos, ...)
       }
       self$path <- path
       self$yaml <- xml$yaml

@@ -151,7 +151,8 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly lossy becau
 
  * lists can be created with either "+", "-" or "*". When using `tinkr`, the (R)md after editing will only use "-" for lists. 
  
- * Links built like `[word][smallref]` and bottom `[smallref]: URL` become `[word](URL)`.
+ * Links built like `[word][smallref]` with a bottom anchor `[smallref]: URL`
+  will have the anchor moved to the bottom of the document.
  
  * Characters are escaped (e.g. "[" when not for a link).
 
