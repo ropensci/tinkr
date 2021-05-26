@@ -169,15 +169,21 @@ build_anchor_links <- function(link) {
 # Helpers for parsing anchor links:
 #
 #   [name]: dest 'title'
+
+escape_ampersand <- function(amp) {
+  # escape ampersands that are not valid code points, though this will still
+  # allow invalid code points, but it's better than nothing
+  gsub("[&](?![#]?[A-Za-z0-9]+?[;])", "&amp;", amp, perl = TRUE)
+}
+
 al_name <- function(link) {
-  sub("^[[\\[](.+?)[\\]]:\\s.+?$", "\\1", link, perl = TRUE)
+  res <- sub("^[[\\[](.+?)[\\]]:\\s.+?$", "\\1", link, perl = TRUE)
+  escape_ampersand(res)
 }
 
 al_dest <- function(link) {
   res <- sub("^[\\[].+?[\\]]:\\s([^\\s]+?)(\\s['\"]?.*?)?$", "\\1", link, perl = TRUE)
-  # escape ampersands that are not valid code points, though this will still
-  # allow invalid code points, but it's better than nothing
-  gsub("[&](?![#]?[A-Za-z0-9]+?[;])", "&amp;", res, perl = TRUE)
+  escape_ampersand(res)
 }
 
 al_title <- function(link) {
@@ -186,7 +192,7 @@ al_title <- function(link) {
   titles <- sub("^[\\[].+?[\\]]:\\s[^\\s]+?(\\s['\"](.*?)['\"])$", "\\2", 
     link, perl = TRUE)
   titles[titles == link] <- ""
-  titles
+  escape_ampersand(titles)
 }
 
 #nocov start
