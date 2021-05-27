@@ -87,7 +87,7 @@ A further application, that is however not in scope as it might be viewed as "ge
 
 -   Who is the target audience and what are scientific applications of this package?  
 
-The target audience would be any scientist getting R Markdown or Markdown files as data source.
+The target audience would be any scientist using R Markdown or Markdown files as data source. Salient examples of applications are extracting/modifying links from markdown documents (e.g. for CRAN checks), analyzing patterns of markdown features in documents across repositories (e.g. https://carpentries.github.io/pegboard/articles/swc-survey.html#summary-of-solutions-1), and transformation of markdown documents in a systematic way (e.g. https://carpentries.github.io/pegboard/#manipulation).
 
 -   Are there other R packages that accomplish the same thing? If so, how does yours differ or meet [our criteria for best-in-category](https://ropensci.github.io/dev_guide/policies.html#overlap)?
 
