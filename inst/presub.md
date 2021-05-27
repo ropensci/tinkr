@@ -15,15 +15,16 @@ Authors@R:
     c(person(given = "Maëlle",
              family = "Salmon",
              role = c("aut", "cre"),
-             email = "maelle.salmon@yahoo.se"),
-      person(given = "Jeroen",
-             family = "Ooms",
-             role = "aut"),
+             email = "msmaellesalmon@gmail.com",
+             comment = c(ORCID = "0000-0002-2815-0399")),
       person(given = "Zhian N.",
              family = "Kamvar",
              role = "aut",
              email = "zkamvar@gmail.com",
              comment = c(ORCID = "0000-0003-1458-7108")),
+      person(given = "Jeroen",
+             family = "Ooms",
+             role = "aut"),
       person(given = "Nick",
              family = "Wellnhofer",
              role = "cph",
@@ -34,31 +35,32 @@ Authors@R:
       person(given = "Peter",
              family = "Daengeli",
              role = "ctb"))
-Description: Casts (R)Markdown files to XML and back to allow their editing via XPath.
+Description: Casts (R)Markdown files to XML and back to allow their
+    editing via XPath.
 License: GPL-3
-Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.1.1.9000
-Imports: 
-    magrittr,
-    commonmark (>= 1.6),
-    xslt,
-    xml2,
-    glue,
-    fs,
-    yaml,
-    stringr,
-    knitr,
-    purrr,
-    R6
-Suggests: 
-    testthat (>= 3.0.0),
-    covr,
-    withr
 URL: https://docs.ropensci.org/tinkr/, https://github.com/ropensci/tinkr
 BugReports: https://github.com/ropensci/tinkr/issues
+Imports: 
+    commonmark (>= 1.6),
+    fs,
+    glue,
+    knitr,
+    magrittr,
+    purrr,
+    R6,
+    stringr,
+    xml2,
+    xslt,
+    yaml
+Suggests: 
+    covr,
+    testthat (>= 3.0.0),
+    withr
 Config/testthat/edition: 3
+Encoding: UTF-8
+LazyData: true
 Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1.9001
 ```
 
 
