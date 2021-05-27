@@ -15,6 +15,9 @@
   so that it can easily be discovered by other packages
 * 2021-05-11: yarn methods `show()`, `head()`, and `tail()` all gain 
   `stylesheet_path` arguments so the modified stylesheets can be used.
+* 2021-05-24: reference style links (i.e. `[text][link-ref]` with `[link-ref]: 
+  <link>` on another place in the document will be preserved and the anchor will
+  sink to the bottom of the document.
 
 # tinkr 0.0.0.9000
 
