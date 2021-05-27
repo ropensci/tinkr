@@ -1,0 +1,137 @@
+---
+title: "Hold Namespace For Me"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Hold Namespace For Me}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## XML namespaces
+
+XML namespaces are a lot like package namespaces in R: they allow you to avoid
+clashes of names [for example, table can represent data or furniture](https://www.w3schools.com/XML/xml_namespaces.asp). 
+
+By default, nodes in XML do not have namespaces unless you give them one, which
+means that when you use XPath search, you can use the node names by default:
+
+```{r}
+d <- xml2::read_xml(glue::glue("<document>
+    <paragraph>
+      <text>hello there</text>
+      <text> ello  here</text>
+    </paragraph>
+  </document>"))
+xml2::xml_ns(d)
+xml2::xml_find_all(d, "//document")
+xml2::xml_find_all(d, "//text[contains(text(), 'hello')]")
+```
+
+However if there is a namespace added to a node, all of its descendants will 
+inherit the namespace, which affects your XPath expressions: 
+
+```{r}
+d <- xml2::read_xml(glue::glue("<document>
+    <paragraph xmlns='http://commonmark.org/xml/1.0'>
+      <text>hello there</text>
+      <text> ello  here</text>
+    </paragraph>
+  </document>"))
+xml2::xml_ns(d)
+xml2::xml_find_all(d, "//document")
+xml2::xml_find_all(d, "//text[contains(text(), 'hello')]") # does not work
+xml2::xml_find_all(d, "//d1:text[contains(text(), 'hello')]") # works; default namespace
+```
+
+When a namespace is specified with `xmlns=<URI>`, {xml2} assigns it a **default
+namespace** prefix, which is `d1`. The {xml2} documentation recommends to
+rename the namespace as soon as you read in a document and use the namespace
+object to semantically prefix your XPath expressions:
+
+```{r}
+ns <- xml2::xml_ns(d)
+ns <- xml2::xml_ns_rename(ns, d1 = "md") 
+ns
+xml2::xml_find_all(d, "//md:text[contains(text(), 'hello')]", ns)
+```
+
+You might be wondering, why don't we prefix the namespace from the start to 
+avoid needing to rename and specify the namespace? Here's an example. Let's take
+our previous example and modify the namespace attribute to have an `md` prefix:
+
+```{r}
+dc <- as.character(d)
+cat(dc <- gsub("xmlns=", "xmlns:md=", dc))
+dc <- xml2::read_xml(dc)
+xml2::xml_ns(dc)
+xml2::xml_find_all(dc, "//document")
+xml2::xml_find_all(dc, "//text[contains(text(), 'hello')]") # works!
+xml2::xml_find_all(dc, "//md:text") # prefix no longer works :(
+```
+
+Now the prefix syntax no longer works, but that's okay, because now we have the
+commonmark as our default namespace, right? Unfortunately, that's not quite the
+case. You might notice that we can access the `document` node AND the `text`
+node without a prefix even though the `text` node is in the commonmark namespace
+and the `document` node is outside of that namespace. It's because neither of
+these nodes actually have a namespace! 
+
+If a namespace is defined in the document with a prefix, *only nodes with that
+prefix are considered to be inside the namespace*. This becomes important when
+we want to pass our XML document through a stylesheet that expects the incoming
+nodes to have a specific namespace, which is exactly how we transform the XML
+representation of markdown back to markdown.
+
+## Commonmark
+
+
+**WIP**
+
+-------------------
+
+We use `commonmark::markdown_xml()` as a starting point to generate valid XML
+text that can be written to a file or read in directly:
+
+```{r cmark}
+cat(cmk <- commonmark::markdown_xml("this is a **test**"))
+xml <- xml2::read_xml(cmk)
+xml
+```
+
+You can see that the first node, `document`, specifies the `xmlns` attribute as 
+`http://commonmark.org/xml/1.0`. This gives a **default namespace**, which means
+that it's used by default across the document, which is useful to us for 
+transforming it back to markdown via our stylesheet:
+
+```{r stysh}
+sty <- xml2::read_xml(tinkr::stylesheet())
+cat(xslt::xml_xslt(xml, sty))
+```
+
+If we look at the stylesheet, we notice the nodes look a bit different---they
+all either have `xsl:` or `md:` prefixes:
+
+```{r}
+sty
+```
+
+If you look at the `stylesheet` node at the top, you'll notice that the 
+namespaces look a bit different. There's no default namespace, but there are two
+namespaces that each have a prefix. 
+
+```{r}
+xml <- xml2::read_xml(gsub("xmlns", "xmlns:md", cmk))  
+xml2::xml_ns(xml)  
+xml2::xml_find_all(xml, ".//md:text") # missing  
+xml2::xml_find_all(xml, ".//text") # okay  
+xml2::xml_ns(xml2::xml_find_all(xml, ".//text"))  
+xml2::xml_add_sibling(xml2::xml_find_first(xml, ".//text"), "text", "there")  
+xml2::xml_find_all(xml, ".//text")  
+```
