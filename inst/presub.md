@@ -92,7 +92,7 @@ The target audience would be any scientist using R Markdown or Markdown files as
 -   Are there other R packages that accomplish the same thing? If so, how does yours differ or meet [our criteria for best-in-category](https://ropensci.github.io/dev_guide/policies.html#overlap)?
 
 The [parsermd](https://rundel.github.io/parsermd/articles/parsermd.html) package by Colin Rundel aims at "extracting the content of an R Markdown file to allow for programmatic interactions with the document’s contents (i.e. code chunks and markdown text)".
-However, parsermd is focused on R Markdown documents, and as written in its docs "The goal is to capture the fundamental structure of the document and as such we do not attempt to parse every detail of the Rmd" whereas tinkr parses everything into XML.
+However, parsermd is focused on R Markdown documents, and as written in its docs "The goal is to capture the fundamental structure of the document and as such we do not attempt to parse every detail of the Rmd" whereas tinkr parses everything into XML according to the commonmark style.
 
 -   (If applicable) Does your package comply with our [guidance around _Ethics, Data Privacy and Human Subjects Research_](https://devguide.ropensci.org/policies.html#ethics-data-privacy-and-human-subjects-research)?
 
