@@ -1,0 +1,21 @@
+Only the body of the (R) Markdown file is cast to XML, using the Commonmark specification via the [`commonmark` package](https://github.com/jeroen/commonmark). 
+YAML metadata could be edited using the [`yaml` package](https://github.com/viking/r-yaml), which is not the goal of this package.
+
+We have created an [R6 class](https://r6.r-lib.org/) object called **yarn** to store the representation of both the YAML and the XML data, both of which are accessible through the `$body` and `$yaml` elements. 
+In addition, the namespace prefix is set to "md" in the `$ns` element.
+
+You can perform XPath queries using the `$body` and `$ns` elements:
+
+```{r}
+library("tinkr")
+library("xml2")
+path <- system.file("extdata", "example1.md", package = "tinkr")
+head(readLines(path))
+ex1 <- tinkr::yarn$new(path)
+# find all ropensci.org blog links
+xml_find_all(
+  x = ex1$body, 
+  xpath = ".//md:link[contains(@destination,'ropensci.org/blog')]", 
+  ns = ex1$ns
+)
+```

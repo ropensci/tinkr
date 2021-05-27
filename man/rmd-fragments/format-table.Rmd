@@ -1,0 +1,1 @@
+* Tables are supposed to remain/become pretty after a full loop `to_xml` + `to_md`. If you notice something amiss, e.g. too much space compared to what you were expecting, please open an issue.

@@ -5,32 +5,33 @@
 
 <!-- badges: start -->
 
-[![Project Status: WIP – Initial development is in progress, but there
-has not yet been a stable, usable release suitable for the
-public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![R build
-status](https://github.com/ropenscilabs/tinkr/workflows/R-CMD-check/badge.svg)](https://github.com/ropenscilabs/tinkr/actions)
+status](https://github.com/ropensci/tinkr/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/tinkr/actions)
 [![Coverage
-status](https://codecov.io/gh/ropenscilabs/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropenscilabs/tinkr?branch=master)
+status](https://codecov.io/gh/ropensci/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropensci/tinkr?branch=master)
 <!-- badges: end -->
 
 The goal of tinkr is to convert (R)Markdown files to XML and back to
-allow their editing with `xml2` (XPath!) instead of numerous complicated
+allow their editing with xml2 (XPath!) instead of numerous complicated
 regular expressions. If these words mean nothing to you, see our list of
 [resources to get started](#background--pre-requisites).
 
-## Use-Cases
+## Use Cases
 
-Possible applications are R scripts using this and XPath in `xml2` to:
+Possible applications are R scripts using tinkr, and XPath via xml2 to:
 
 -   change levels of headers, cf [this
     script](inst/scripts/roweb2_headers.R) and [this pull request to
-    roweb2](https://github.com/ropensci/roweb2/pull/279)
--   change chunk labels and options
--   extract all runnable code (including inline code)
--   insert arbitrary markdown elements
--   modify link URLs
--   your idea, feel free to suggest use cases!
+    roweb2](https://github.com/ropensci/roweb2/pull/279);
+-   change chunk labels and options;
+-   extract all runnable code (including inline code);
+-   insert arbitrary Markdown elements;
+-   modify link URLs;
+-   your idea, please [report use
+    cases](https://discuss.ropensci.org/c/usecases/10)!
 
 ## Workflow
 
@@ -51,6 +52,13 @@ You can perform XPath queries using the `$body` and `$ns` elements:
 library("tinkr")
 library("xml2")
 path <- system.file("extdata", "example1.md", package = "tinkr")
+head(readLines(path))
+#| [1] "---"                                                                               
+#| [2] "title: \"What have these birds been studied for? Querying science outputs with R\""
+#| [3] "slug: birds-science"                                                               
+#| [4] "authors:"                                                                          
+#| [5] "  - name: Maëlle Salmon"                                                           
+#| [6] "    url: https://masalmon.eu/"
 ex1 <- tinkr::yarn$new(path)
 # find all ropensci.org blog links
 xml_find_all(
@@ -59,21 +67,21 @@ xml_find_all(
   ns = ex1$ns
 )
 #| {xml_nodeset (7)}
-#| [1] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/" title="" ...
-#| [2] <link destination="https://ropensci.org/blog/2018/09/04/birds-taxo-traits/" title=" ...
-#| [3] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/" title="" ...
-#| [4] <link destination="https://ropensci.org/blog/2018/08/14/where-to-bird/" title="">\n ...
-#| [5] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/" title="" ...
-#| [6] <link destination="https://ropensci.org/blog/2018/08/28/birds-ocr/" title="">\n  <t ...
-#| [7] <link destination="https://ropensci.org/blog/2018/09/04/birds-taxo-traits/" title=" ...
+#| [1] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/ ...
+#| [2] <link destination="https://ropensci.org/blog/2018/09/04/birds-taxo-traits ...
+#| [3] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/ ...
+#| [4] <link destination="https://ropensci.org/blog/2018/08/14/where-to-bird/" t ...
+#| [5] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/ ...
+#| [6] <link destination="https://ropensci.org/blog/2018/08/28/birds-ocr/" title ...
+#| [7] <link destination="https://ropensci.org/blog/2018/09/04/birds-taxo-traits ...
 ```
 
 ## Installation
 
-Wanna try the package and tell me what doesn’t work?
+Wanna try the package and tell us what doesn’t work yet?
 
 ``` r
-remotes::install_github("ropenscilabs/tinkr")
+install.packages("tinkr", repos = "https://ropensci.r-universe.dev")
 ```
 
 ## Examples
@@ -81,18 +89,13 @@ remotes::install_github("ropenscilabs/tinkr")
 ### Markdown
 
 This is a basic example. We read “example1.md”, change all headers 3 to
-headers 1, and save it back to md. Because the {xml2} objects are
-[passed by
+headers 1, and save it back to md. Because the xml2 objects are [passed
+by
 reference](https://blog.penjee.com/wp-content/uploads/2015/02/pass-by-reference-vs-pass-by-value-animation.gif),
 manipulating them does not require reassignment.
 
 ``` r
 library("magrittr")
-#| 
-#| Attaching package: 'magrittr'
-#| The following objects are masked from 'package:testthat':
-#| 
-#|     equals, is_less_than, not
 library("tinkr")
 # From Markdown to XML
 path <- system.file("extdata", "example1.md", package = "tinkr")
@@ -136,31 +139,31 @@ rmd <- tinkr::yarn$new(path)
 rmd$body
 #| {xml_document}
 #| <document xmlns="http://commonmark.org/xml/1.0">
-#|  [1] <code_block xml:space="preserve" language="r" name="setup" include="FALSE" eval="T ...
-#|  [2] <heading level="2">\n  <text xml:space="preserve">R Markdown</text>\n</heading>
-#|  [3] <paragraph>\n  <text xml:space="preserve">This is an </text>\n  <strikethrough>\n  ...
-#|  [4] <paragraph>\n  <text xml:space="preserve">When you click the </text>\n  <strong>\n ...
-#|  [5] <code_block xml:space="preserve" language="r" name="" eval="TRUE" echo="TRUE">summ ...
-#|  [6] <heading level="2">\n  <text xml:space="preserve">Including Plots</text>\n</heading>
-#|  [7] <paragraph>\n  <text xml:space="preserve">You can also embed plots, for example:</ ...
-#|  [8] <code_block xml:space="preserve" language="python" name="" fig.cap="&quot;pretty p ...
-#|  [9] <code_block xml:space="preserve" language="python" name="">plot(pressure)\n</code_ ...
-#| [10] <paragraph>\n  <text xml:space="preserve">Non-RMarkdown blocks are also considered ...
-#| [11] <code_block info="bash" xml:space="preserve" name="">echo "this is an unevaluted b ...
-#| [12] <code_block xml:space="preserve" name="">This is an ambiguous code block\n</code_b ...
-#| [13] <paragraph>\n  <text xml:space="preserve">Note that the </text>\n  <code xml:space ...
-#| [14] <table>\n  <table_header>\n    <table_cell align="left">\n      <text xml:space="p ...
+#|  [1] <code_block xml:space="preserve" language="r" name="setup" include="FALS ...
+#|  [2] <heading level="2">\n  <text xml:space="preserve">R Markdown</text>\n</h ...
+#|  [3] <paragraph>\n  <text xml:space="preserve">This is an </text>\n  <striket ...
+#|  [4] <paragraph>\n  <text xml:space="preserve">When you click the </text>\n   ...
+#|  [5] <code_block xml:space="preserve" language="r" name="" eval="TRUE" echo=" ...
+#|  [6] <heading level="2">\n  <text xml:space="preserve">Including Plots</text> ...
+#|  [7] <paragraph>\n  <text xml:space="preserve">You can also embed plots, for  ...
+#|  [8] <code_block xml:space="preserve" language="python" name="" fig.cap="&quo ...
+#|  [9] <code_block xml:space="preserve" language="python" name="">plot(pressure ...
+#| [10] <paragraph>\n  <text xml:space="preserve">Non-RMarkdown blocks are also  ...
+#| [11] <code_block info="bash" xml:space="preserve" name="">echo "this is an un ...
+#| [12] <code_block xml:space="preserve" name="">This is an ambiguous code block ...
+#| [13] <paragraph>\n  <text xml:space="preserve">Note that the </text>\n  <code ...
+#| [14] <table>\n  <table_header>\n    <table_cell align="left">\n      <text xm ...
 #| [15] <paragraph>\n  <text xml:space="preserve">blabla</text>\n</paragraph>
 ```
 
-Note that all of the features in {tinkr} work for both Markdown and R
+Note that all of the features in tinkr work for both Markdown and R
 Markdown.
 
-### Inserting new markdown elements
+### Inserting new Markdown elements
 
 Inserting new nodes into the AST is surprisingly difficult if there is a
 default namespace, so we have provided a method in the **yarn** object
-that will take plain markdown and translate it to XML nodes and insert
+that will take plain Markdown and translate it to XML nodes and insert
 them into the document for you. For example, you can add a new code
 block:
 
@@ -237,7 +240,7 @@ R(md) via `to_xml` and `to_md` will be a bit lossy. For instance
     `tinkr`, the (R)md after editing will only use”-" for lists.
 
 -   Links built like `[word][smallref]` with a bottom anchor
-    `[smallref]: URL` will have the anchor move to the bottom of the
+    `[smallref]: URL` will have the anchor moved to the bottom of the
     document.
 
 -   Characters are escaped (e.g. “\[” when not for a link).
@@ -266,15 +269,15 @@ stylesheet](inst/extdata/xml2md_gfm.xsl) and provide its filepath as
 
 ### LaTeX equations
 
-While markdown parsers like pandoc know what LaTeX is, commonmark does
+While Markdown parsers like pandoc know what LaTeX is, commonmark does
 not, and that means LaTeX equations will end up with extra markup due to
 commonmark’s desire to escape characters.
 
-If you have LaTeX equations that use either `$` or `$$` to delimit them,
-you can protect them from formatting changes with the `$protect_math()`
-method (for users of the `yarn` object) or the `protect_math()` funciton
-(for those using the output of `to_xml()`). Below is a demonstration
-using the `yarn` object:
+However, if you have LaTeX equations that use either `$` or `$$` to
+delimit them, you can protect them from formatting changes with the
+`$protect_math()` method (for users of the `yarn` object) or the
+`protect_math()` funciton (for those using the output of `to_xml()`).
+Below is a demonstration using the `yarn` object:
 
 ``` r
 path <- system.file("extdata", "math-example.md", package = "tinkr")
@@ -343,5 +346,5 @@ Note, however, that there are a few caveats for this:
 ## Meta
 
 Please note that the ‘tinkr’ project is released with a [Contributor
-Code of Conduct](CODE_OF_CONDUCT.md). By contributing to this project,
-you agree to abide by its terms.
+Code of Conduct](https://ropensci.org/code-of-conduct). By contributing
+to this project, you agree to abide by its terms.

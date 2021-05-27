@@ -1,0 +1,22 @@
+url: https://docs.ropensci.org/tinkr
+
+authors:
+  Maëlle Salmon:
+    href: https://masalmon.eu
+  Zhian N. Kamvar:
+    href: https://zkamvar.netlify.app/
+  Jeroen Ooms:
+    href: https://github.com/jeroen
+
+reference:
+- title: Main interface
+  contents:
+  - '`yarn`'
+  - '`to_xml`'
+  - '`to_md`'
+- title: Helpers
+  contents:
+  - '`find_between`'
+  - '`md_ns`'
+  - '`protect_math`'
+  - '`stylesheet`'
