@@ -23,6 +23,81 @@ library("xslt")
 library("purrr")
 ```
 
+## Introduction
+
+This document was written to address common confusions about XML namespaces and
+their implications in constructing XPath queries, adding new XML nodes, and 
+converting XML to markdown. This guide is written for the user who is 
+comfortable with XPath queries and wants to understand more about how to handle
+and manpiulate their XML representation of markdown.
+
+### Motivation 
+
+The underlying motivation for {tinkr} was to wrap the process of converting 
+markdown documents to XML and back again. This process uses {commonmark} and
+{xml2} to translate and read in the markdown to an XML document.
+
+```{r}
+xml <- commonmark::markdown_xml("## h1\n\ntext with `r 'code'`") %>% 
+  xml2::read_xml()
+xml
+```
+
+We use the `xslt` package to to the conversion from XML back to markdown.
+
+```{r}
+xslt_style <- tinkr::stylesheet() %>% xml2::read_xml()
+cat(xslt::xml_xslt(xml, xslt_style))
+```
+
+One of the downsides of this conversion is that commonmark provides a default
+namespace, which means that nodes in XPath queries must have a prefix that
+defines the namespace. For example, an XPath query to select all paragraphs
+that have executable R code looks like the following query:
+
+```{r}
+xml2::xml_find_first(xml, "//d1:paragraph[d1:code[starts-with(text(), 'r ')]]") 
+```
+
+The reason why we add `d1` is because that's the prefix for the default
+namespace in {xml2}.
+
+```{r}
+xml2::xml_ns(xml)
+```
+
+### The {tinkr} difference
+
+The XML document that {tinkr} generates has no namespace by default because 
+operations on an XML document without a namespace becomes easier than if there
+were a default or a prefixed namespace. 
+
+```{r}
+xml2::xml_ns_strip(xml)
+xml2::xml_find_first(xml, "//paragraph[code[starts-with(text(), 'r ')]]")
+```
+
+However, removing the namespace has implications for exporting XML objects 
+because namespaces _are important_. For example, this document namespace-less
+document no longer can be converted with our XSLT stylesheet, which expects a
+commonmark namespace:
+
+```{r}
+xslt_style <- tinkr::stylesheet() %>% xml2::read_xml()
+cat(xslt::xml_xslt(xml, xslt_style))
+```
+
+To alleviate this, we add the namespace just before it's converted in
+`tinkr::to_md()`.
+
+```{r}
+xml2::xml_set_attr(xml, "xmlns", "http://commonmark.org/xml/1.0")
+cat(xslt::xml_xslt(xml, xslt_style))
+```
+
+Read on to find out more about XML namespaces and their implications on your
+tinkering.
+
 
 ## XML namespaces
 
@@ -84,12 +159,20 @@ expressions:
 ns <- xml2::xml_ns(d)
 ns <- xml2::xml_ns_rename(ns, d1 = "md") 
 ns
+```
+
+Now we can modify our XPath query to use `md` as a prefix, but we also need to
+supply the namespace as an argument to the command:
+
+```{r}
 xml2::xml_find_all(d, "//md:text[contains(text(), 'hello')]", ns)
 ```
 
-You might be wondering, why don't we prefix the namespace from the start to 
-avoid needing to rename and specify the namespace? Here's an example. Let's take
-our previous example and modify the namespace attribute to have an `md` prefix:
+You might be wondering, why isn't it recommended to prefix the namespace from
+the start to avoid needing to rename and specify the namespace? The reason is
+because the *prefixed namespaces only apply to nodes with that prefix*. Here's
+an example. Let's take our previous example and modify the namespace attribute
+to have an `md` prefix:
 
 ```{r}
 dc <- as.character(d)
@@ -97,24 +180,45 @@ cat(dc <- gsub("xmlns=", "xmlns:md=", dc))
 dc <- xml2::read_xml(dc)
 xml2::xml_ns(dc)
 xml2::xml_find_all(dc, "//document")
-xml2::xml_find_all(dc, "//text[contains(text(), 'hello')]") # works!
-xml2::xml_find_all(dc, "//md:text") # prefix no longer works :(
 ```
 
-Now the prefix syntax no longer works, but that's okay, because now we have the
-commonmark as our default namespace, right? Unfortunately, that's not quite the
-case. You might notice that we can access the `document` node AND the `text`
+We can see that the XPath query without the prefix works.
+
+```{r}
+xml2::xml_find_all(dc, "//text[contains(text(), 'hello')]") 
+```
+
+However, the XPath query with the prefix no longer works.
+
+```{r}
+xml2::xml_find_all(dc, "//md:text") 
+```
+
+You might be wondering, when we specified the prefix earlier with a default 
+namespace, the prefixed XPath query worked, but now with a namespace that 
+explicitly defines the prefix, that query is no longer working. Isn't everything
+below the `paragraph` node in the commonmark namespace?
+
+You might notice that we can access the `document` node AND the `text`
 node without a prefix even though the `text` node is in the commonmark namespace
 and the `document` node is outside of that namespace. It's because neither of
 these nodes actually have a namespace! 
 
-You can see this when we add a new node with a namespace prefix:
+This is demonstrated when we add a new node with the `md` prefix
 
 ```{r}
 pgp <- xml2::xml_find_first(dc, "//paragraph")
 xml2::xml_add_child(pgp, "md:text", "hello from the md namespace")
-xml2::xml_find_all(dc, "//md:text") # only one text element in the md namespace
-xml2::xml_find_all(dc, "//text")    # md namespace does not show up here
+dc
+```
+
+Now we can see that there are three text nodes, one of which has the `md` 
+namespace prefix. If we select the nodes with that prefix and without the 
+prefix, we will get one and two nodes, respectively.
+
+```{r}
+xml2::xml_find_all(dc, "//md:text") # one node
+xml2::xml_find_all(dc, "//text")    # two nodes
 ```
 
 If a namespace is defined in the document with a prefix, *only nodes with that
@@ -135,7 +239,7 @@ xml <- xml2::read_xml(cmk)
 xml
 ```
 
-### It's default of the namespace
+### Commonmark uses a default namespace
 
 You can see from the commonmark output that it has a **default namespace** that
 resolves to `http://commonmark.org/xml/1.0`, which means that we need to use
@@ -145,7 +249,7 @@ the default namespace if we want to munge the data:
 xml2::xml_find_all(xml, "//d1:text")
 ```
 
-### Who is up for semantics?
+### Using a semantic prefix with the default namespace
 
 To make things more semantic, we could rename the namespace to have the "md"
 prefix and carry around that object. Note: an `xml_namespace` object is a named
@@ -160,7 +264,7 @@ xml2::xml_find_all(xml, "//md:text", ns)
 Of course, now if we want to make any semantic XPath query, we need to include
 both a prefix and a namespace object.
 
-### Transformers!
+### Transforming XML to markdown with XSLT
 
 The commonmark namespace allows us to transform our document to markdown using 
 an XSLT stylesheet, which is---that's right---an XML document:
@@ -178,7 +282,9 @@ allows us to write back to markdown:
 cat(xslt::xml_xslt(xml, sty))
 ```
 
-We can in this way programatically transform the content of the markdown:
+We can in this way programatically transform the content of the markdown. In 
+this example, we can change the `**test**` to be an inline R code chunk that
+emits `_test_`. 
 
 ```{r}
 xml <- commonmark::markdown_xml("this is a **test**") %>%
@@ -297,6 +403,14 @@ sty <- xml2::read_xml(tinkr::stylesheet())
 cat(xslt::xml_xslt(xml, sty))
 ```
 
+## Conclusion
+
+While developing {tinkr} we[^1] struggled a lot with understanding namespaces.
+This guide was our attempt at demystifying working with namespaces in {xml2}.
+For the casual user of {tinkr} who is interested in extracting data from 
+markdown documents, this guide is not very useful, but we hope that this 
+guide provies useful for the user who wants to use this for cleaning and
+standardizing their markdown documents. 
 
 [reparse]: https://community.rstudio.com/t/adding-nodes-in-xml2-how-to-avoid-duplicate-default-namespaces/84870/2?u=zkamvar
-
+[^1]: Well, mostly just Zhian.
