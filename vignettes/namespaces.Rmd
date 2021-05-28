@@ -45,7 +45,8 @@ xml2::xml_find_all(d, "//text[contains(text(), 'hello')]")
 ```
 
 However if there is a namespace added to a node, all of its descendants will 
-inherit the namespace, which affects your XPath expressions: 
+inherit the namespace, which affects your XPath expressions.
+Below we had the namespace of commonmark to the paragraph node.
 
 ```{r}
 d <- xml2::read_xml("<document>
@@ -284,5 +285,4 @@ cat(xslt::xml_xslt(xml, sty))
 
 
 [reparse]: https://community.rstudio.com/t/adding-nodes-in-xml2-how-to-avoid-duplicate-default-namespaces/84870/2?u=zkamvar
-
 
