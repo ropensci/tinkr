@@ -57,14 +57,28 @@ d <- xml2::read_xml("<document>
   </document>")
 xml2::xml_ns(d)
 xml2::xml_find_all(d, "//document")
-xml2::xml_find_all(d, "//text[contains(text(), 'hello')]") # does not work
-xml2::xml_find_all(d, "//d1:text[contains(text(), 'hello')]") # works; default namespace
 ```
 
-When a namespace is specified with `xmlns=<URI>`, {xml2} assigns it a **default
-namespace** prefix, which is `d1`. The {xml2} documentation recommends to
-rename the namespace as soon as you read in a document and use the namespace
-object to semantically prefix your XPath expressions:
+Using the same XPath query as before no longer works, our call to
+`xml2::xml_find_all()` returns nothing.
+
+```{r}
+xml2::xml_find_all(d, "//text[contains(text(), 'hello')]") # does not work
+```
+
+When a namespace is specified with `xmlns=&lt;URI&gt;`, {xml2} assigns it a
+**default namespace** prefix, which is `d1`.  Therefore editing our XPath query
+like so will work:
+
+```{r}
+xml2::xml_find_all(d, "//d1:text[contains(text(), 'hello')]")
+```
+
+But *is it a good idea to use `d1` as a namespace prefix*? No, the {xml2}
+documentation recommends to rename the namespace as soon as you read in a
+document and use the namespace object to semantically prefix your XPath
+expressions:
+
 
 ```{r}
 ns <- xml2::xml_ns(d)
