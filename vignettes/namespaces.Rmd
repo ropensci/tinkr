@@ -1,5 +1,5 @@
 ---
-title: "Hold Namespace For Me"
+title: "Understanding XML Namespaces"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Hold Namespace For Me}
@@ -29,7 +29,7 @@ This document was written to address common confusions about XML namespaces and
 their implications in constructing XPath queries, adding new XML nodes, and 
 converting XML to markdown. This guide is written for the user who is 
 comfortable with XPath queries and wants to understand more about how to handle
-and manpiulate their XML representation of markdown.
+and manipulate their XML representation of markdown.
 
 ### Motivation 
 
@@ -50,7 +50,7 @@ xslt_style <- tinkr::stylesheet() %>% xml2::read_xml()
 cat(xslt::xml_xslt(xml, xslt_style))
 ```
 
-One of the downsides of this conversion is that commonmark provides a default
+One of the downsides of this conversion is that {commonmark} provides a default
 namespace, which means that nodes in XPath queries must have a prefix that
 defines the namespace. For example, an XPath query to select all paragraphs
 that have executable R code looks like the following query:
@@ -77,7 +77,7 @@ xml2::xml_ns_strip(xml)
 xml2::xml_find_first(xml, "//paragraph[code[starts-with(text(), 'r ')]]")
 ```
 
-However, removing the namespace has implications for exporting XML objects 
+However, removing the namespace has implications for exporting XML objects (e.g. for manipulating them with another language)
 because namespaces _are important_. For example, this document namespace-less
 document no longer can be converted with our XSLT stylesheet, which expects a
 commonmark namespace:
@@ -141,8 +141,8 @@ Using the same XPath query as before no longer works, our call to
 xml2::xml_find_all(d, "//text[contains(text(), 'hello')]") # does not work
 ```
 
-When a namespace is specified with `xmlns=&lt;URI&gt;`, {xml2} assigns it a
-**default namespace** prefix, which is `d1`.  Therefore editing our XPath query
+When a namespace is specified with `xmlns=<URI>`, {xml2} assigns it a
+**default namespace prefix**, which is `d1`.  Therefore editing our XPath query
 like so will work:
 
 ```{r}
@@ -176,7 +176,8 @@ to have an `md` prefix:
 
 ```{r}
 dc <- as.character(d)
-cat(dc <- gsub("xmlns=", "xmlns:md=", dc))
+dc <- gsub("xmlns=", "xmlns:md=", dc)
+dc
 dc <- xml2::read_xml(dc)
 xml2::xml_ns(dc)
 xml2::xml_find_all(dc, "//document")
@@ -225,11 +226,11 @@ If a namespace is defined in the document with a prefix, *only nodes with that
 prefix are considered to be inside the namespace*. This becomes important when
 we want to pass our XML document through a stylesheet that expects the incoming
 nodes to have a specific namespace, which is exactly how we transform the XML
-representation of markdown back to markdown.
+representation of Markdown back to Markdown.
 
 ## Commonmark
 
-The {tinkr} package streamlines the process of markdown to xml and back again.
+The {tinkr} package streamlines the process of Markdown to XML and back again.
 We use `commonmark::markdown_xml()` as a starting point to generate valid XML:
 
 
@@ -282,7 +283,7 @@ allows us to write back to markdown:
 cat(xslt::xml_xslt(xml, sty))
 ```
 
-We can in this way programatically transform the content of the markdown. In 
+We can in this way programmatically transform the content of the markdown. In 
 this example, we can change the `**test**` to be an inline R code chunk that
 emits `_test_`. 
 
@@ -409,7 +410,7 @@ While developing {tinkr} we[^1] struggled a lot with understanding namespaces.
 This guide was our attempt at demystifying working with namespaces in {xml2}.
 For the casual user of {tinkr} who is interested in extracting data from 
 markdown documents, this guide is not very useful, but we hope that this 
-guide provies useful for the user who wants to use this for cleaning and
+guide proves useful for the user who wants to use this for cleaning and
 standardizing their markdown documents. 
 
 [reparse]: https://community.rstudio.com/t/adding-nodes-in-xml2-how-to-avoid-duplicate-default-namespaces/84870/2?u=zkamvar
