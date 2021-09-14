@@ -22,6 +22,15 @@ test_that("to_xml works for Rmd", {
 
 })
 
+
+test_that("to_xml will not convert numeric options to character", {
+  txt <- "```{r txt, fig.width=4.2, fig.height=4.2, out.width='100%', eval = FALSE}\n#code\n```"
+  con <- textConnection(txt)
+  code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
+  expect_equal(xml2::xml_attr(code), list(name = "txt", fig.width = "4.2", fig.height = "4.2", out.width = "\"100%\"", eval = "FALSE"))
+})
+
+
 test_that("to_xml works with text connection", {
 
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
