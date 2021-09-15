@@ -61,7 +61,7 @@ transform_params <- function(params){
   params_string <- try(eval(parse(text = paste('alist(', quote_label(params), ')'))),
                        silent = TRUE)
 
-  if(inherits(params_string, "try-error")){
+  if (inherits(params_string, "try-error")){
     params <- stringr::str_replace(params, " ", ", ")
     params_string <- eval(parse(text = paste('alist(', quote_label(params), ')')))
   }
@@ -69,25 +69,19 @@ transform_params <- function(params){
   label <- parse_label(params_string[[1]])
 
   result <- unlist(c(label, params_string[-1]))
-  result[purrr::map_lgl(result, is.character)&
-           !names(result) %in% c("language", "name")] <- glue::glue('"{result[purrr::map_lgl(result, is.character)&
-           !names(result) %in% c("language", "name")]}"')
 
-  logical_options <- c("echo", "eval", "collapse", "warning",
+  logical_options  <- c("echo", "eval", "collapse", "warning",
                        "error", "message", "split", "include",
                        "strip.white", "prompt", "highlight", "cache",
                        "autodep", "external", "sanitize", "purl")
-  if(any(names(result) %in% logical_options)){
+  unquoted_options <- c("language", "name", "fig.width", "fig.height")
 
-    result[names(result) %in% logical_options&
-             is.character(result)] <- stringr::str_remove_all(result[names(result) %in% logical_options&
-                                                                       is.character(result)],
-                                                                          "\\\"")
+  are_characters <- purrr::map_lgl(result, is.character)
+  not_forbidden  <- !names(result) %in% c(unquoted_options, logical_options)
+  needs_quoting  <- are_characters & not_forbidden
+  result[needs_quoting] <- shQuote(result[needs_quoting], type = "cmd")
 
-
-  }
-
-   result
+  result
 }
 
 

@@ -18,6 +18,8 @@
 * 2021-05-24: reference style links (i.e. `[text][link-ref]` with `[link-ref]: 
   <link>` on another place in the document will be preserved and the anchor will
   sink to the bottom of the document.
+* 2021-09-14: numeric options fig.width and fig.height will no longer be quoted;
+  `transform_params()` is simplified and no longer requires glue.
 
 # tinkr 0.0.0.9000
 

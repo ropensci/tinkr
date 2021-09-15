@@ -24,10 +24,16 @@ test_that("to_xml works for Rmd", {
 
 
 test_that("to_xml will not convert numeric options to character", {
-  txt <- "```{r txt, fig.width=4.2, fig.height=4.2, out.width='100%', eval = FALSE}\n#code\n```"
+  txt <- "```{r txt, fig.width=4.2, fig.height=4.2, out.width='100%', purl = TRUE}\n#code\n```"
   con <- textConnection(txt)
   code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
-  expect_equal(xml2::xml_attr(code), list(name = "txt", fig.width = "4.2", fig.height = "4.2", out.width = "\"100%\"", eval = "FALSE"))
+  attrs <- xml2::xml_attrs(code)
+  expect_equal(attrs[["fig.width"]], "4.2") 
+  expect_equal(attrs[["fig.height"]], "4.2") 
+  # out.width is the only one that's quoted
+  expect_equal(attrs[["out.width"]], shQuote("100%", type = "cmd"))
+  expect_equal(attrs[["purl"]], "TRUE")
+  expect_equal(attrs[["name"]], "txt")
 })
 
 
