@@ -62,7 +62,7 @@ transform_params <- function(params) {
   # Step 1: parse the parameters and their labels into a list
   params_list <- try(parse_params(params), silent = TRUE)
 
-  if (inherits(params_list, "try-error")){
+  if (inherits(params_list, "try-error")) {
     params <- stringr::str_replace(params, " ", ", ")
     params_list <- parse_params(params)
   }
@@ -79,7 +79,7 @@ transform_params <- function(params) {
 
   # Step 4: add quotes around the params that are characters
   not_forbidden <- !names(result) %in% c("language", "name")
-  needs_quoting  <- are_characters & not_forbidden
+  needs_quoting <- are_characters & not_forbidden
   result[needs_quoting] <- shQuote(result[needs_quoting], type = "cmd")
 
   result
