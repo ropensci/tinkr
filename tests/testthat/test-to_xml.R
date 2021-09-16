@@ -39,12 +39,13 @@ test_that("to_xml will not convert numeric options to character", {
 
 test_that("to_xml will not convert chunk options as r objects to character", {
 
-  txt <- "```{r txt, R.options = list(width = 100)}\n#code\n```"
+  txt <- "```{r txt, R.options = list(width = 100), eval = eval_param}\n#code\n```"
   con <- textConnection(txt)
   code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
   attrs <- xml2::xml_attrs(code)
   expect_equal(attrs[["name"]], "txt")
   expect_equal(attrs[["R.options"]], "list(width = 100)")
+  expect_equal(attrs[["eval"]], "eval_param")
 
 })
 
