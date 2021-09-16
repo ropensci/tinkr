@@ -57,33 +57,38 @@ yaml_load = function(x) yaml::yaml.load(
 
 # from knitr via namer
 # https://github.com/lockedata/namer/blob/2d88c5cb200724f775631946fc8e08903ff110de/R/utils.R#L3
-transform_params <- function(params){
-  params_string <- try(eval(parse(text = paste('alist(', quote_label(params), ')'))),
-                       silent = TRUE)
+transform_params <- function(params) {
 
-  if (inherits(params_string, "try-error")){
+  # Step 1: parse the parameters and their labels into a list
+  params_list <- try(parse_params(params), silent = TRUE)
+
+  if (inherits(params_list, "try-error")){
     params <- stringr::str_replace(params, " ", ", ")
-    params_string <- eval(parse(text = paste('alist(', quote_label(params), ')')))
+    params_list <- parse_params(params)
   }
 
-  label <- parse_label(params_string[[1]])
+  label <- parse_label(params_list[[1]])
+  result <- c(label, params_list[-1])
 
-  result <- unlist(c(label, params_string[-1]))
-
-  logical_options  <- c("echo", "eval", "collapse", "warning",
-                       "error", "message", "split", "include",
-                       "strip.white", "prompt", "highlight", "cache",
-                       "autodep", "external", "sanitize", "purl")
-  unquoted_options <- c("language", "name", "fig.width", "fig.height")
-
+  # Step 2: find the parameters that are characters because we need to add
+  # quotes around them (as all parameters are coerced as characters)
   are_characters <- purrr::map_lgl(result, is.character)
-  not_forbidden  <- !names(result) %in% c(unquoted_options, logical_options)
+
+  # Step 3: flatten all params into a character vector
+  result <- unlist(result)
+
+  # Step 4: add quotes around the params that are characters
+  not_forbidden <- !names(result) %in% c("language", "name")
   needs_quoting  <- are_characters & not_forbidden
   result[needs_quoting] <- shQuote(result[needs_quoting], type = "cmd")
 
   result
+
 }
 
+parse_params <- function(params) {
+  eval(parse(text = paste('alist(', quote_label(params), ')')))
+}
 
 parse_label <- function(label){
   label %>%
