@@ -37,6 +37,30 @@ test_that("to_xml will not convert numeric options to character", {
 })
 
 
+test_that("to_xml will not convert chunk options as r objects to character", {
+
+  txt <- "```{r txt, R.options = list(width = 100)}\n#code\n```"
+  con <- textConnection(txt)
+  code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
+  attrs <- xml2::xml_attrs(code)
+  expect_equal(attrs[["name"]], "txt")
+  expect_equal(attrs[["R.options"]], "list(width = 100)")
+
+})
+
+test_that("to_xml will respect logicals for custom chunk options", {
+
+  txt <- "```{r txt, coffee = TRUE, tea = FALSE, fun = 'pizza+icecream'}\n#code\n```"
+  con <- textConnection(txt)
+  code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
+  attrs <- xml2::xml_attrs(code)
+  expect_equal(attrs[["name"]], "txt")
+  expect_equal(attrs[["coffee"]], "TRUE")
+  expect_equal(attrs[["tea"]], "FALSE")
+  expect_equal(attrs[["fun"]], shQuote("pizza+icecream", type = "cmd"))
+
+})
+
 test_that("to_xml works with text connection", {
 
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
