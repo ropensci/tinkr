@@ -22,6 +22,46 @@ test_that("to_xml works for Rmd", {
 
 })
 
+
+test_that("to_xml will not convert numeric options to character", {
+  txt <- "```{r txt, fig.width=4.2, fig.height=4.2, out.width='100%', purl = TRUE}\n#code\n```"
+  con <- textConnection(txt)
+  code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
+  attrs <- xml2::xml_attrs(code)
+  expect_equal(attrs[["fig.width"]], "4.2") 
+  expect_equal(attrs[["fig.height"]], "4.2") 
+  # out.width is the only one that's quoted
+  expect_equal(attrs[["out.width"]], shQuote("100%", type = "cmd"))
+  expect_equal(attrs[["purl"]], "TRUE")
+  expect_equal(attrs[["name"]], "txt")
+})
+
+
+test_that("to_xml will not convert chunk options as r objects to character", {
+
+  txt <- "```{r txt, R.options = list(width = 100), eval = eval_param}\n#code\n```"
+  con <- textConnection(txt)
+  code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
+  attrs <- xml2::xml_attrs(code)
+  expect_equal(attrs[["name"]], "txt")
+  expect_equal(attrs[["R.options"]], "list(width = 100)")
+  expect_equal(attrs[["eval"]], "eval_param")
+
+})
+
+test_that("to_xml will respect logicals for custom chunk options", {
+
+  txt <- "```{r txt, coffee = TRUE, tea = FALSE, fun = 'pizza+icecream'}\n#code\n```"
+  con <- textConnection(txt)
+  code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
+  attrs <- xml2::xml_attrs(code)
+  expect_equal(attrs[["name"]], "txt")
+  expect_equal(attrs[["coffee"]], "TRUE")
+  expect_equal(attrs[["tea"]], "FALSE")
+  expect_equal(attrs[["fun"]], shQuote("pizza+icecream", type = "cmd"))
+
+})
+
 test_that("to_xml works with text connection", {
 
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
