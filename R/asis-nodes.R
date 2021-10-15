@@ -53,8 +53,8 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
   # (https://junli.netlify.app/en/overlapping-regular-expression-in-python/)
   # 
   # The rest of the regex looks for a dollar sign that does not butt up against
-  # a space or another dollar. 
-  minus_maybe <- glue::glue("(([-]?=[{ace}])?[^{ace},;.?$-])")
+  # a space, a dollar sign, or any possible adjacent punctuation.
+  minus_maybe <- glue::glue("(([-]?=[{ace}])?[^]}}>){ace},;.?$-])")
   # Allow for $\beta, $$\beta, $-\beta, $- \beta
   start <- glue::glue("(?=^|{punks})[$]?[$]{minus_maybe}")
   stop  <- glue::glue("[^{ace}$][$][$]?(?={punks}|$)")
