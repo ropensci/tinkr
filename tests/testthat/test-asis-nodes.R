@@ -9,7 +9,7 @@ test_that("mal-formed inline math throws an informative error", {
 
 test_that("multi-line inline math can have punctutation after", {
   template <- "C) $E(\\text{Weight}) = 81.37 + 1.26 \\times x_1 +\n2.65 \\times x_2$punk\n"
-  for (punk in c('--', '---', ',', ';', '.', '?')) {
+  for (punk in c('--', '---', ',', ';', '.', '?', ')', ']', '}', '>')) {
     expected <- sub("punk", punk, template)
     math <- commonmark::markdown_xml(expected)
     txt <- xml2::read_xml(math)
