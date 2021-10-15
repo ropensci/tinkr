@@ -19,6 +19,28 @@ test_that("multi-line inline math can have punctutation after", {
   }
 })
 
+test_that("math with inline code still works", {
+
+  expected <- "some inline math, for example $R^2 = `r runif(1)`$, is failing with code\n"
+  math <- commonmark::markdown_xml(expected)
+  txt <- xml2::read_xml(math)
+  protxt <- protect_inline_math(txt, md_ns())
+  actual <- to_md(list(yaml = NULL, body = protxt))
+  expect_equal(actual, expected)
+
+})
+
+test_that("math with inline code still works", {
+
+  expected <- "example\n\n- 42 $\\alpha$,\n- $R^2 = `r runif(1)`$,\n- is working with $\\beta$ code\n"
+  math <- commonmark::markdown_xml(expected)
+  txt <- xml2::read_xml(math)
+  protxt <- protect_inline_math(txt, md_ns())
+  actual <- to_md(list(yaml = NULL, body = protxt))
+  expect_equal(actual, expected)
+
+})
+
 test_that("block math can be protected", {
   expect_length(xml2::xml_ns(m$body), 1L)
   expect_equal(md_ns()[[1]], xml2::xml_ns(m$body)[[1]])
