@@ -54,7 +54,9 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
   # 
   # The rest of the regex looks for a dollar sign that does not butt up against
   # a space or another dollar. 
-  start <- glue::glue("(?=^|{punks})[$]?[$][^{ace}$]")
+  minus_maybe <- glue::glue("(([-]?=[{ace}])?[^{ace},;.?$-])")
+  # Allow for $\beta, $$\beta, $-\beta, $- \beta
+  start <- glue::glue("(?=^|{punks})[$]?[$]{minus_maybe}")
   stop  <- glue::glue("[^{ace}$][$][$]?(?={punks}|$)")
   switch(type,
     start = start,
@@ -70,7 +72,7 @@ find_broken_math <- function(math) {
   stop  <- grepl(inline_dollars_regex("stop"), txt, perl = TRUE)
   incomplete <- !(start & stop)
   list(
-    no_end = start & incomplete, 
+    no_end = start & incomplete,
     no_beginning = stop & incomplete
   )
 }

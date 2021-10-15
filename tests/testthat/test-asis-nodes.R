@@ -4,7 +4,19 @@ m <- yarn$new(pathmath)
 me <- yarn$new(patherr)
 
 test_that("mal-formed inline math throws an informative error", {
-  expect_snapshot_error(me$protect_math())  
+  expect_snapshot_error(me$protect_math())
+})
+
+test_that("multi-line inline math can have punctutation after", {
+  template <- "C) $E(\\text{Weight}) = 81.37 + 1.26 \\times x_1 +\n2.65 \\times x_2$punk\n"
+  for (punk in c('--', '---', ',', ';', '.', '?')) {
+    expected <- sub("punk", punk, template)
+    math <- commonmark::markdown_xml(expected)
+    txt <- xml2::read_xml(math)
+    protxt <- protect_inline_math(txt, md_ns())
+    actual <- to_md(list(yaml = NULL, body = protxt))
+    expect_equal(actual, expected)
+  }
 })
 
 test_that("block math can be protected", {
