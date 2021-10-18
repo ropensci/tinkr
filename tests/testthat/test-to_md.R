@@ -164,3 +164,14 @@ test_that("code chunks can be inserted on round trip", {
   to_md(yaml_xml_list, newmd)
   expect_snapshot_file(newmd)
 })
+
+test_that("links that start lines are not escaped", {
+
+  expected <- "## Dataset\n\nThe data used:\n[data](https://example.com)\n"
+  math <- commonmark::markdown_xml(expected)
+  txt <- xml2::read_xml(math)
+  protxt <- protect_inline_math(txt, md_ns())
+  actual <- to_md(list(yaml = NULL, body = protxt))
+  expect_equal(actual, expected)
+
+})
