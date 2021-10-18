@@ -20,6 +20,8 @@
   sink to the bottom of the document.
 * 2021-09-14: numeric options fig.width and fig.height will no longer be quoted;
   `transform_params()` is simplified and no longer requires glue.
+* 2021-10-15: math with embedded code and punctuation following are now allowed
+  (@zkamvar #56)
 
 # tinkr 0.0.0.9000
 

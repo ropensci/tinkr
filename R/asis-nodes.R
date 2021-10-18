@@ -52,9 +52,14 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
   # they do not consume the string 
   # (https://junli.netlify.app/en/overlapping-regular-expression-in-python/)
   # 
-  # The rest of the regex looks for a dollar sign that does not butt up against
-  # a space or another dollar. 
-  start <- glue::glue("(?=^|{punks})[$]?[$][^{ace}$]")
+  # This looks for a potetial minus sign followed by maybe a space to allow for
+  # $\beta, $$\beta, $-\beta, $- \beta
+  minus_maybe <- glue::glue("(?=([-][{ace}]?)?")
+  # punctuation marks that should _not_ occur after the dollar sign. I'm listing
+  # them here because \ and - and opening symbols are valid afaict.
+  post_punks <- "]})>[:space:],;.?$-"
+  no_punks <- glue::glue("{minus_maybe}[^{post_punks}])")
+  start <- glue::glue("(?=^|{punks})[$]?[$]{no_punks}")
   stop  <- glue::glue("[^{ace}$][$][$]?(?={punks}|$)")
   switch(type,
     start = start,
@@ -67,11 +72,17 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
 find_broken_math <- function(math) {
   txt <- xml2::xml_text(math)
   start <- grepl(inline_dollars_regex("start"), txt, perl = TRUE)
-  stop  <- grepl(inline_dollars_regex("stop"), txt, perl = TRUE)
+  stop <- grepl(inline_dollars_regex("stop"), txt, perl = TRUE)
+  full <- grepl(inline_dollars_regex("full"), txt, perl = TRUE)
+
   incomplete <- !(start & stop)
+  no_end <- start & incomplete
+  no_beginning <- stop & incomplete
+
   list(
-    no_end = start & incomplete, 
-    no_beginning = stop & incomplete
+    no_end = no_end,
+    no_beginning = no_beginning,
+    ambiguous = !full & !(no_end | no_beginning)
   )
 }
 
@@ -98,7 +109,7 @@ protect_inline_math <- function(body, ns) {
   }
   broke <- find_broken_math(math)
 
-  bespoke  <- !(broke$no_end | broke$no_beginning)
+  bespoke  <- !(broke$no_end | broke$no_beginning | broke$ambiguous)
   endless  <- broke$no_end[!bespoke]
   headless <- broke$no_beginning[!bespoke]
 
@@ -116,9 +127,21 @@ protect_inline_math <- function(body, ns) {
 
   # protect math that is broken across lines or markdown elements
   if (length(bmath)) {
+    if (any(broke$ambiguous)) {
+      # ambiguous math may be due to inline r code that produces an answer:
+      # $R^2 = `r runif(1)`$
+      # In this case, we can detect it and properly address it as a headless
+      # part.
+      has_inline_code <- xml2::xml_find_lgl(bmath,
+        "boolean(.//preceding-sibling::md:code)", ns
+      )
+      headless <- headless | has_inline_code
+    }
     # If the lengths of the beginning and ending tags don't match, we throw
     # an error.
-    if ((le <- length(bmath[endless])) != (lh <- length(bmath[headless]))) {
+    le <- length(bmath[endless])
+    lh <- length(bmath[headless])
+    if (le != lh) {
       unbalanced_math_error(bmath, endless, headless, le, lh) 
     }
     # assign sequential tags to the pairs of inline math elements
