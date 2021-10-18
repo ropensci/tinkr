@@ -71,11 +71,11 @@ transform_to_md <- function(body, yaml, stylesheet) {
 remove_phantom_text <- function(body) {
   # find the nodes we wish to protect. Append this list if there are any other
   # surprises
-  to_protect <- xml2::xml_find_all(body,
-    ".//md:link | .//md:image | .//md:text[@asis]", ns = md_ns())
-  # find the nodes that precede these nodes with zero length text
-  to_sever <- xml2::xml_find_all(to_protect,
-    ".//preceding-sibling::md:text[string-length(text())=0]", ns = md_ns())
+  # to_protect <- xml2::xml_find_all(body,
+  #   ".//md:link | .//md:image | .//md:text[@asis]", ns = md_ns())
+  # # find the nodes that precede these nodes with zero length text
+  to_sever <- xml2::xml_find_all(body,
+    ".//md:text[string-length(text())=0]", ns = md_ns())
   if (length(to_sever)) {
     xml2::xml_remove(to_sever)
   }
