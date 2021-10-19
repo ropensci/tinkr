@@ -41,6 +41,17 @@ test_that("math with inline code still works", {
 
 })
 
+
+test_that("math that starts a line will be protected", {
+  expected <-  "- so $\\beta^2 = `r runif(1)`$ works and\n- $\\beta$ does too\n"
+  math <- commonmark::markdown_xml(expected)
+  txt <- xml2::read_xml(math)
+  protxt <- protect_inline_math(txt, md_ns())
+  actual <- to_md(list(yaml = NULL, body = protxt))
+  expect_equal(actual, expected)
+})
+
+
 test_that("block math can be protected", {
   expect_length(xml2::xml_ns(m$body), 1L)
   expect_equal(md_ns()[[1]], xml2::xml_ns(m$body)[[1]])

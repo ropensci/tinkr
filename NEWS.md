@@ -22,6 +22,8 @@
   `transform_params()` is simplified and no longer requires glue.
 * 2021-10-15: math with embedded code and punctuation following are now allowed
   (@zkamvar #56)
+* 2021-10-18: links and asis nodes that are at the beginning of paragraphs are
+  no longer escaped (@zkamvar, #58)
 
 # tinkr 0.0.0.9000
 
