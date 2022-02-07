@@ -24,6 +24,7 @@
   (@zkamvar #56)
 * 2021-10-18: links and asis nodes that are at the beginning of paragraphs are
   no longer escaped (@zkamvar, #58)
+* 2022-02-07: @zkamvar is now the maintainer
 
 # tinkr 0.0.0.9000
 
