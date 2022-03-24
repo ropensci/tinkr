@@ -46,9 +46,7 @@ to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = T
 
   parse_rmd(body)
   if (utils::packageVersion("commonmark") < "1.8.0") {
-    #nocov start
-    body <- protect_tickbox(body, md_ns())
-    #nocov end
+    body <- protect_tickbox(body, md_ns()) # nocov
   }
   if (anchor_links) {
     body <- resolve_anchor_links(body, splitted_content$body) 
