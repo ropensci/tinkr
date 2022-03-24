@@ -1,4 +1,11 @@
-# tinkr dev
+# tinkr 0.0.0.9002
+
+## BUG FIX
+
+* 2022-03-23: added `tasklist` template for compatibility with commonmark
+  [version 1.8](https://github.com/r-lib/commonmark/blob/2b5cce9b85575a7c48a2c22e3e5f9114a41ef2d6/NEWS#L1) (#66)
+
+# tinkr 0.0.0.9001
 
 * xml and yaml objects are now stored in an R6 class called `yarn`.
 * testthat edition 3 is now being used with snapshot testing.
