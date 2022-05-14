@@ -32,7 +32,6 @@ URL: https://docs.ropensci.org/tinkr/, https://github.com/ropensci/tinkr
 BugReports: https://github.com/ropensci/tinkr/issues
 Imports: 
     commonmark (>= 1.6),
-    fs,
     glue,
     knitr,
     magrittr,
@@ -43,6 +42,7 @@ Imports:
     xslt,
     yaml
 Suggests: 
+    fs,
     rmarkdown,
     covr,
     testthat (>= 3.0.0),
