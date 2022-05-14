@@ -110,20 +110,20 @@ commonmark.}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{yarn$new()}}
-\item \href{#method-reset}{\code{yarn$reset()}}
-\item \href{#method-write}{\code{yarn$write()}}
-\item \href{#method-show}{\code{yarn$show()}}
-\item \href{#method-head}{\code{yarn$head()}}
-\item \href{#method-tail}{\code{yarn$tail()}}
-\item \href{#method-add_md}{\code{yarn$add_md()}}
-\item \href{#method-protect_math}{\code{yarn$protect_math()}}
-\item \href{#method-clone}{\code{yarn$clone()}}
+\item \href{#method-yarn-new}{\code{yarn$new()}}
+\item \href{#method-yarn-reset}{\code{yarn$reset()}}
+\item \href{#method-yarn-write}{\code{yarn$write()}}
+\item \href{#method-yarn-show}{\code{yarn$show()}}
+\item \href{#method-yarn-head}{\code{yarn$head()}}
+\item \href{#method-yarn-tail}{\code{yarn$tail()}}
+\item \href{#method-yarn-add_md}{\code{yarn$add_md()}}
+\item \href{#method-yarn-protect_math}{\code{yarn$protect_math()}}
+\item \href{#method-yarn-clone}{\code{yarn$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-yarn-new"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new yarn document
 \subsection{Usage}{
@@ -164,8 +164,8 @@ ex2
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-reset"></a>}}
-\if{latex}{\out{\hypertarget{method-reset}{}}}
+\if{html}{\out{<a id="method-yarn-reset"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-reset}{}}}
 \subsection{Method \code{reset()}}{
 reset a yarn document from the original file
 \subsection{Usage}{
@@ -189,8 +189,8 @@ ex1$body
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-write"></a>}}
-\if{latex}{\out{\hypertarget{method-write}{}}}
+\if{html}{\out{<a id="method-yarn-write"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-write}{}}}
 \subsection{Method \code{write()}}{
 Write a yarn document to Markdown/R Markdown
 \subsection{Usage}{
@@ -223,8 +223,8 @@ unlink(tmp)
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-show"></a>}}
-\if{latex}{\out{\hypertarget{method-show}{}}}
+\if{html}{\out{<a id="method-yarn-show"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-show}{}}}
 \subsection{Method \code{show()}}{
 show the markdown contents on the screen
 \subsection{Usage}{
@@ -255,8 +255,8 @@ ex2$show()
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-head"></a>}}
-\if{latex}{\out{\hypertarget{method-head}{}}}
+\if{html}{\out{<a id="method-yarn-head"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-head}{}}}
 \subsection{Method \code{head()}}{
 show the head of the markdown contents on the screen
 \subsection{Usage}{
@@ -278,8 +278,8 @@ a character vector with \code{n} elements
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-tail"></a>}}
-\if{latex}{\out{\hypertarget{method-tail}{}}}
+\if{html}{\out{<a id="method-yarn-tail"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-tail}{}}}
 \subsection{Method \code{tail()}}{
 show the tail of the markdown contents on the screen
 \subsection{Usage}{
@@ -301,8 +301,8 @@ a character vector with \code{n} elements
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_md"></a>}}
-\if{latex}{\out{\hypertarget{method-add_md}{}}}
+\if{html}{\out{<a id="method-yarn-add_md"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-add_md}{}}}
 \subsection{Method \code{add_md()}}{
 add an arbitrary Markdown element to the document
 \subsection{Usage}{
@@ -347,8 +347,8 @@ readLines(tmp, n = 20)
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-protect_math"></a>}}
-\if{latex}{\out{\hypertarget{method-protect_math}{}}}
+\if{html}{\out{<a id="method-yarn-protect_math"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-protect_math}{}}}
 \subsection{Method \code{protect_math()}}{
 Protect math blocks from being escaped
 \subsection{Usage}{
@@ -368,8 +368,8 @@ ex$protect_math()$tail() # math blocks are no longer escaped :)
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-yarn-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
