@@ -1,3 +1,16 @@
+# tinkr 0.9.9.9002
+
+## BREAKING CHANGE
+
+* The namespace definition has been removed from the XML representation so that
+  working with the XML nodes is much easier. For example, the XPath statement
+  for finding links would look like `.//link` instead of `.//d1:link` or even
+  `.//md:link`. This will fix #48.    
+  For users who have used tinkr in the past, they can run sed to remove `md:`
+  and `d1:` from their namespaces.    
+  Users who use `to_md()` directly from a commonmark XML document, strip the
+  namespace before running.
+
 # tinkr 0.0.0.9002
 
 ## BUG FIX
