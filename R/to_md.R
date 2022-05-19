@@ -25,7 +25,7 @@
 #' # transform level 3 headers into level 1 headers
 #' body <- yaml_xml_list$body
 #' body %>%
-#'   xml2::xml_find_all(xpath = './/d1:heading',
+#'   xml2::xml_find_all(xpath = './/heading',
 #'                      xml2::xml_ns(.)) %>%
 #'   .[xml2::xml_attr(., "level") == "3"] -> headers3
 #' xml2::xml_set_attr(headers3, "level", 1)
@@ -59,6 +59,7 @@ to_md <- function(yaml_xml_list, path = NULL, stylesheet_path = stylesheet()){
 
 # convert body and yaml to markdown text given a stylesheet
 transform_to_md <- function(body, yaml, stylesheet) {
+  xml2::xml_set_attr(body, "xmlns", "http://commonmark.org/xml/1.0")
   body <- xslt::xml_xslt(body, stylesheet = stylesheet)
 
   yaml <- glue::glue_collapse(yaml, sep = "\n")
@@ -72,10 +73,10 @@ remove_phantom_text <- function(body) {
   # find the nodes we wish to protect. Append this list if there are any other
   # surprises
   # to_protect <- xml2::xml_find_all(body,
-  #   ".//md:link | .//md:image | .//md:text[@asis]", ns = md_ns())
+  #   ".//link | .//image | .//text[@asis]", ns = md_ns())
   # # find the nodes that precede these nodes with zero length text
   to_sever <- xml2::xml_find_all(body,
-    ".//md:text[string-length(text())=0]", ns = md_ns())
+    ".//text[string-length(text())=0]", ns = md_ns())
   if (length(to_sever)) {
     xml2::xml_remove(to_sever)
   }
@@ -89,7 +90,7 @@ copy_xml <- function(xml) {
 transform_code_blocks <- function(xml){
   # Find all code blocks with a language attribute (those without it are not processed)
   code_blocks <- xml %>%
-    xml2::xml_find_all(xpath = './/d1:code_block[@language]',
+    xml2::xml_find_all(xpath = './/code_block[@language]',
                        xml2::xml_ns(.))
 
   if(length(code_blocks) == 0){

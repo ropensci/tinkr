@@ -61,12 +61,10 @@ For example, this markdown link \verb{[link text](https://example.com "example  
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{lnk <- "[link text](https://example.com 'example link')"
 xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
-cat(as.character(xml2::xml_find_first(xml, ".//d1:link")))
+cat(as.character(xml2::xml_find_first(xml, ".//link")))
 }\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{## <link destination="https://example.com" title="example link">
-##   <text xml:space="preserve">link text</text>
-## </link>
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## NA
 }\if{html}{\out{</div>}}
 
 However, reference-style links are rendered equivalently:
@@ -77,12 +75,10 @@ However, reference-style links are rendered equivalently:
 [link-ref]: https://example.com 'example link'
 "
 xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
-cat(as.character(xml2::xml_find_first(xml, ".//d1:link")))
+cat(as.character(xml2::xml_find_first(xml, ".//link")))
 }\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{## <link destination="https://example.com" title="example link">
-##   <text xml:space="preserve">link text</text>
-## </link>
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## NA
 }\if{html}{\out{</div>}}
 }
 
@@ -101,9 +97,7 @@ the document. That node looks like this:
 From there, we add the anchor text to the node that is present in our
 document as the \code{ref} attribute:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{<link destination="https://example.com" title="example link" rel="link-ref">
-  <text xml:space="preserve">link text</text>
-</link>
+\if{html}{\out{<div class="sourceCode">}}\preformatted{NA
 }\if{html}{\out{</div>}}
 }
 }

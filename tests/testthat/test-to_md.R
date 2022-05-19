@@ -59,7 +59,7 @@ test_that("to_md works", {
   yaml_xml_list <- to_xml(path)
   # transform level 3 headers into level 1 headers
   yaml_xml_list$body %>%
-    xml2::xml_find_all(xpath = './/d1:heading[@level="3"]',
+    xml2::xml_find_all(xpath = './/heading[@level="3"]',
                        xml2::xml_ns(.)) %>%
     xml2::xml_set_attr("level", 1)
 
@@ -89,7 +89,7 @@ test_that("to_md works for Rmd", {
   yaml_xml_list <- to_xml(path, sourcepos = TRUE)
   body <- yaml_xml_list$body
   blocks <- yaml_xml_list$body %>%
-    xml2::xml_find_all(xpath = './/d1:code_block',
+    xml2::xml_find_all(xpath = './/code_block',
                        xml2::xml_ns(.))
 
   # Two non-evaluated blocks
@@ -144,6 +144,7 @@ test_that("code chunks can be inserted on round trip", {
   # set up new code block
   cc <- "<code_block language='r' name='cody' xmlns='http://commonmark.org/xml/1.0'></code_block>"
   xcc <- xml2::read_xml(cc)
+  xml2::xml_ns_strip(xcc)
 
   # NOTE: code elements MUST have a newline character at the end to be
   # processed by the stylesheet and I'm not sure why.
@@ -151,13 +152,13 @@ test_that("code chunks can be inserted on round trip", {
   xml2::xml_set_text(xcc, txt)
 
   # add code block after setup chunk
-  cody_block <- ".//d1:code_block[@name='cody']"
+  cody_block <- ".//code_block[@name='cody']"
   xml2::xml_add_child(yaml_xml_list$body, xcc, .where = 1L)
 
   # Check that our code block exists and that it contains the same code
   our_block <- xml2::xml_find_all(yaml_xml_list$body, cody_block)
   expect_length(our_block, 1L)
-  expect_named(xml2::xml_attrs(our_block)[[1]], c("language", "name", "xmlns"))
+  expect_named(xml2::xml_attrs(our_block)[[1]], c("language", "name"))
   expect_equal(xml2::xml_text(our_block)[1], txt)
 
   # Convert to markdown and re-test
@@ -170,6 +171,7 @@ test_that("links that start lines are not escaped", {
   expected <- "## Dataset\n\nThe data used:\n[data](https://example.com)\n"
   math <- commonmark::markdown_xml(expected)
   txt <- xml2::read_xml(math)
+  xml2::xml_ns_strip(txt)
   protxt <- protect_inline_math(txt, md_ns())
   actual <- to_md(list(yaml = NULL, body = protxt))
   expect_equal(actual, expected)

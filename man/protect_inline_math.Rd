@@ -22,6 +22,7 @@ txt <- commonmark::markdown_xml(
   "This sentence contains $I_A$ $\\\\frac{\\\\pi}{2}$ inline $\\\\LaTeX$ math."
 )
 txt <- xml2::read_xml(txt)
+xml2::xml_ns_strip(txt)
 cat(to_md(list(body = txt, yaml = "")), sep = "\n")
 ns  <- tinkr::md_ns()
 protxt <- tinkr:::protect_inline_math(txt, ns)

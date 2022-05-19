@@ -7,7 +7,7 @@ For example, you can add a new code block:
 ```{r new-block}
 path <- system.file("extdata", "example2.Rmd", package = "tinkr")
 rmd <- tinkr::yarn$new(path)
-xml2::xml_find_first(rmd$body, ".//md:code_block", rmd$ns)
+xml2::xml_find_first(rmd$body, ".//code_block", rmd$ns)
 new_code <- c(
   "```{r xml-block, message = TRUE}",
   "message(\"this is a new chunk from {tinkr}\")",

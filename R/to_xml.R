@@ -42,7 +42,8 @@ to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = T
   splitted_content$body %>%
     clean_content() %>%
     commonmark::markdown_xml(extensions = TRUE, sourcepos = sourcepos) %>%
-    xml2::read_xml(encoding = encoding) -> body
+    xml2::read_xml(encoding = encoding) %>%
+    xml2::xml_ns_strip() -> body
 
   parse_rmd(body)
   if (utils::packageVersion("commonmark") < "1.8.0") {
@@ -91,7 +92,7 @@ transform_block <- function(code_block){
 
 parse_rmd <- function(body){
   code_blocks <- body %>%
-    xml2::xml_find_all(xpath = './/d1:code_block',
+    xml2::xml_find_all(xpath = './/code_block',
                        xml2::xml_ns(.))
 
   purrr::walk(code_blocks,

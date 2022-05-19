@@ -49,7 +49,7 @@
 #' ```{r}
 #' lnk <- "[link text](https://example.com 'example link')"
 #' xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
-#' cat(as.character(xml2::xml_find_first(xml, ".//d1:link")))
+#' cat(as.character(xml2::xml_find_first(xml, ".//link")))
 #' ```
 #' 
 #' However, reference-style links are rendered equivalently: 
@@ -61,7 +61,7 @@
 #' [link-ref]: https://example.com 'example link'
 #' "
 #' xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
-#' cat(as.character(xml2::xml_find_first(xml, ".//d1:link")))
+#' cat(as.character(xml2::xml_find_first(xml, ".//link")))
 #' ```
 #'
 #' ## XML attributes of reference-style links
@@ -87,7 +87,7 @@
 #' [link-ref]: https://example.com 'example link'
 #' "
 #' xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
-#' lnk <- xml2::xml_find_first(xml, ".//d1:link")
+#' lnk <- xml2::xml_find_first(xml, ".//link")
 #' xml2::xml_set_attr(lnk, "rel", "link-ref")
 #' cat(as.character(lnk))
 #' ```
@@ -109,7 +109,7 @@ resolve_anchor_links <- function(body, txt, ns = md_ns()) {
   # copy the body so that we can recover from errors
   body <- copy_xml(body)
   # find all links and images (since either one could have an anchor link)
-  links <- xml2::xml_find_all(body, ".//md:link | .//md:image", ns)
+  links <- xml2::xml_find_all(body, ".//link | .//image", ns)
   if (length(links) == 0) {
     return(invisible(body))
   }
