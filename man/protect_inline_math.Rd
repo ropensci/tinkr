@@ -19,7 +19,7 @@ Find and protect all inline math elements
 }
 \examples{
 txt <- commonmark::markdown_xml(
-  r"{This sentence contains $I_A$ $\frac{\pi}{2}$ inline $\LaTeX$ math.}"
+  "This sentence contains $I_A$ $\\\\frac{\\\\pi}{2}$ inline $\\\\LaTeX$ math."
 )
 txt <- xml2::read_xml(txt)
 cat(to_md(list(body = txt, yaml = "")), sep = "\n")
