@@ -15,7 +15,7 @@ ex1 <- tinkr::yarn$new(path)
 # find all ropensci.org blog links
 xml_find_all(
   x = ex1$body, 
-  xpath = ".//md:link[contains(@destination,'ropensci.org/blog')]", 
+  xpath = ".//link[contains(@destination,'ropensci.org/blog')]", 
   ns = ex1$ns
 )
 ```

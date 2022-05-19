@@ -13,6 +13,7 @@ test_that("multi-line inline math can have punctutation after", {
     expected <- sub("punk", punk, template)
     math <- commonmark::markdown_xml(expected)
     txt <- xml2::read_xml(math)
+    xml2::xml_ns_strip(txt)
     protxt <- protect_inline_math(txt, md_ns())
     actual <- to_md(list(yaml = NULL, body = protxt))
     expect_equal(actual, expected)
@@ -24,6 +25,7 @@ test_that("math with inline code still works", {
   expected <- "some inline math, for example $R^2 = `r runif(1)`$, is failing with code\n"
   math <- commonmark::markdown_xml(expected)
   txt <- xml2::read_xml(math)
+  xml2::xml_ns_strip(txt)
   protxt <- protect_inline_math(txt, md_ns())
   actual <- to_md(list(yaml = NULL, body = protxt))
   expect_equal(actual, expected)
@@ -35,6 +37,7 @@ test_that("math with inline code still works", {
   expected <- "example\n\n- 42 $\\alpha$,\n- $R^2 = `r runif(1)`$,\n- is working with $\\beta$ code\n"
   math <- commonmark::markdown_xml(expected)
   txt <- xml2::read_xml(math)
+  xml2::xml_ns_strip(txt)
   protxt <- protect_inline_math(txt, md_ns())
   actual <- to_md(list(yaml = NULL, body = protxt))
   expect_equal(actual, expected)
@@ -46,6 +49,7 @@ test_that("math that starts a line will be protected", {
   expected <-  "- so $\\beta^2 = `r runif(1)`$ works and\n- $\\beta$ does too\n"
   math <- commonmark::markdown_xml(expected)
   txt <- xml2::read_xml(math)
+  xml2::xml_ns_strip(txt)
   protxt <- protect_inline_math(txt, md_ns())
   actual <- to_md(list(yaml = NULL, body = protxt))
   expect_equal(actual, expected)
@@ -53,27 +57,18 @@ test_that("math that starts a line will be protected", {
 
 
 test_that("block math can be protected", {
-  expect_length(xml2::xml_ns(m$body), 1L)
-  expect_equal(md_ns()[[1]], xml2::xml_ns(m$body)[[1]])
   expect_snapshot(show_user(m$protect_math()$tail(48), force = TRUE))
-  expect_length(xml2::xml_ns(m$body), 1L)
-  expect_equal(md_ns()[[1]], xml2::xml_ns(m$body)[[1]])
 })
 
 test_that("tick boxes are protected by default", {
-  expect_length(xml2::xml_ns(m$body), 1L)
-  expect_equal(md_ns()[[1]], xml2::xml_ns(m$body)[[1]])
   expect_snapshot(show_user(m$head(15), force = TRUE))
 })
 
 test_that("documents with no math do no harm", {
   x <- xml2::read_xml(commonmark::markdown_xml("no math here"))
-  expect_length(xml2::xml_ns(x), 1L)
-  expect_equal(md_ns()[[1]], xml2::xml_ns(x)[[1]])
+  xml2::xml_ns_strip(x)
   x1 <- as.character(x)
   x <- protect_math(x, md_ns())
-  expect_length(xml2::xml_ns(x), 1L)
-  expect_equal(md_ns()[[1]], xml2::xml_ns(x)[[1]])
   # block math does nothing
   expect_equal(as.character(x), x1)
 })
