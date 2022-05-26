@@ -7,6 +7,5 @@
 ^tinkr\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
-.ropensci-staff
 ^inst/presub\.md$
 ^_pkgdown.yml$
