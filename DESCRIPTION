@@ -1,5 +1,5 @@
 Package: tinkr
-Title: Cast (R)Markdown Files to XML and Back Again
+Title: Cast '(R)Markdown' Files to 'XML' and Back Again
 Version: 0.1.0
 Authors@R: 
     c(person(given = "Maëlle",
@@ -25,8 +25,8 @@ Authors@R:
       person(given = "Peter",
              family = "Daengeli",
              role = "ctb"))
-Description: Casts (R)Markdown files to XML and back to allow their
-    editing via XPath.
+Description: Casts '(R)Markdown' files to 'XML' and back to allow in-memory
+    editing via of 'markdown' elements via 'XPath' through the 'R6' class 'yarn'.
 License: GPL-3
 URL: https://docs.ropensci.org/tinkr/, https://github.com/ropensci/tinkr
 BugReports: https://github.com/ropensci/tinkr/issues
