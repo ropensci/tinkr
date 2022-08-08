@@ -102,7 +102,7 @@ ex$protect_math()$tail() # math blocks are no longer escaped :)
 
 \item{\code{body}}{[\code{xml_document}] an xml document of the (R)Markdown file.}
 
-\item{\code{ns}}{[\code{xml_document}] an xml namespace object definining "md" to
+\item{\code{ns}}{[\code{xml_document}] an xml namespace object defining "md" to
 commonmark.}
 }
 \if{html}{\out{</div>}}
