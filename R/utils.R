@@ -90,11 +90,10 @@ parse_params <- function(params) {
   eval(parse(text = paste('alist(', quote_label(params), ')')))
 }
 
-parse_label <- function(label){
-  label %>%
-    stringr::str_replace(" ", "\\/") %>%
-    stringr::str_split("\\/",
-                       simplify = TRUE) -> language_name
+parse_label <- function(label) {
+
+  language_name <- stringr::str_replace(label, " ", "\\/")
+  language_name <- stringr::str_split(language_name, "\\/", simplify = TRUE)
 
   if(ncol(language_name) == 1){
     list(language = trimws(language_name[1, 1]),

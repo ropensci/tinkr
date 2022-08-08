@@ -1,5 +1,3 @@
-#' @importFrom magrittr %>%
-#'
 #' @title Transform file to XML
 #'
 #' @param path Path to the file.

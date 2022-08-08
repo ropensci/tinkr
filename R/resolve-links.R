@@ -4,7 +4,7 @@
 #'
 #' [Reference style links and
 #' images](https://www.markdownguide.org/basic-syntax/#reference-style-links)
-#' are a form of markdown syntax that reduces dupcliation and makes markdown
+#' are a form of markdown syntax that reduces duplication and makes markdown
 #' more readable. They come in two parts:
 #'
 #' 1. The inline part that uses two pairs of square brackets where the second

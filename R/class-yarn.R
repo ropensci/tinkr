@@ -20,7 +20,7 @@ yarn <- R6::R6Class("yarn",
     #' @field body \[`xml_document`\] an xml document of the (R)Markdown file. 
     body = NULL,
 
-    #' @field ns \[`xml_document`\] an xml namespace object definining "md" to
+    #' @field ns \[`xml_document`\] an xml namespace object defining "md" to
     #'   commonmark.
     ns = NULL,
     #' @description Create a new yarn document 

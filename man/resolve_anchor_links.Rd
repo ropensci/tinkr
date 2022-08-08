@@ -16,7 +16,7 @@ resolve_anchor_links(body, txt, ns = md_ns())
 }
 \description{
 \href{https://www.markdownguide.org/basic-syntax/#reference-style-links}{Reference style links and images}
-are a form of markdown syntax that reduces dupcliation and makes markdown
+are a form of markdown syntax that reduces duplication and makes markdown
 more readable. They come in two parts:
 \enumerate{
 \item The inline part that uses two pairs of square brackets where the second
@@ -62,11 +62,9 @@ For example, this markdown link \verb{[link text](https://example.com "example  
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{lnk <- "[link text](https://example.com 'example link')"
 xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
 cat(as.character(xml2::xml_find_first(xml, ".//d1:link")))
-}\if{html}{\out{</div>}}
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{## <link destination="https://example.com" title="example link">
-##   <text xml:space="preserve">link text</text>
-## </link>
+#> <link destination="https://example.com" title="example link">
+#>   <text xml:space="preserve">link text</text>
+#> </link>
 }\if{html}{\out{</div>}}
 
 However, reference-style links are rendered equivalently:
@@ -78,11 +76,9 @@ However, reference-style links are rendered equivalently:
 "
 xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
 cat(as.character(xml2::xml_find_first(xml, ".//d1:link")))
-}\if{html}{\out{</div>}}
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{## <link destination="https://example.com" title="example link">
-##   <text xml:space="preserve">link text</text>
-## </link>
+#> <link destination="https://example.com" title="example link">
+#>   <text xml:space="preserve">link text</text>
+#> </link>
 }\if{html}{\out{</div>}}
 }
 
