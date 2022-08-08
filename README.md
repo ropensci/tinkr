@@ -25,7 +25,7 @@ Possible applications are R scripts using tinkr, and XPath via xml2 to:
 
 -   change levels of headers, cf [this
     script](inst/scripts/roweb2_headers.R) and [this pull request to
-    roweb2](https://github.com/ropensci/roweb2/pull/279);
+    roweb2](https://github.com/ropensci-archive/roweb2/pull/279);
 -   change chunk labels and options;
 -   extract all runnable code (including inline code);
 -   insert arbitrary Markdown elements;
@@ -37,9 +37,10 @@ Possible applications are R scripts using tinkr, and XPath via xml2 to:
 
 Only the body of the (R) Markdown file is cast to XML, using the
 Commonmark specification via the [`commonmark`
-package](https://github.com/jeroen/commonmark). YAML metadata could be
-edited using the [`yaml` package](https://github.com/viking/r-yaml),
-which is not the goal of this package.
+package](https://github.com/r-lib/commonmark). YAML metadata could be
+edited using the [`yaml`
+package](https://cran.r-project.org/package=yaml), which is not the goal
+of this package.
 
 We have created an [R6 class](https://r6.r-lib.org/) object called
 **yarn** to store the representation of both the YAML and the XML data,

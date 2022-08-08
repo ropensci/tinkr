@@ -7,5 +7,6 @@
 ^tinkr\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
+^README\.html$
 ^inst/presub\.md$
 ^_pkgdown.yml$
