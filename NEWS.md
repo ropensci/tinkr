@@ -1,5 +1,7 @@
 # tinkr 0.1.0
 
+First version on CRAN
+
 # tinkr 0.0.0.9002
 
 ## BUG FIX
