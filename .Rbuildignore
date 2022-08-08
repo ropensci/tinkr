@@ -10,3 +10,4 @@
 ^README\.html$
 ^inst/presub\.md$
 ^_pkgdown.yml$
+^cran-comments\.md$
