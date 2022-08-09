@@ -23,8 +23,9 @@ regular expressions. If these words mean nothing to you, see our list of
 
 Possible applications are R scripts using tinkr, and XPath via xml2 to:
 
--   change levels of headers, cf [this
-    script](inst/scripts/roweb2_headers.R) and [this pull request to
+-   change levels of headers, cf [our `roweb2_headers.R`
+    script](https://github.com/ropensci/tinkr/blob/main/inst/scripts/roweb2_headers.R)
+    and [pull request \#279 to
     roweb2](https://github.com/ropensci-archive/roweb2/pull/279);
 -   change chunk labels and options;
 -   extract all runnable code (including inline code);
@@ -54,9 +55,12 @@ library("tinkr")
 library("xml2")
 path <- system.file("extdata", "example1.md", package = "tinkr")
 head(readLines(path))
-#| [1] "---"                                                                                "title: \"What have these birds been studied for? Querying science outputs with R\""
-#| [3] "slug: birds-science"                                                                "authors:"                                                                          
-#| [5] "  - name: Maëlle Salmon"                                                            "    url: https://masalmon.eu/"
+#| [1] "---"                                                                               
+#| [2] "title: \"What have these birds been studied for? Querying science outputs with R\""
+#| [3] "slug: birds-science"                                                               
+#| [4] "authors:"                                                                          
+#| [5] "  - name: Maëlle Salmon"                                                           
+#| [6] "    url: https://masalmon.eu/"
 ex1 <- tinkr::yarn$new(path)
 # find all ropensci.org blog links
 xml_find_all(
@@ -65,13 +69,13 @@ xml_find_all(
   ns = ex1$ns
 )
 #| {xml_nodeset (7)}
-#| [1] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/" title="">\n  <text xml:space="preserve">second post of the series where we obtained data from</text>\n  <softb ...
-#| [2] <link destination="https://ropensci.org/blog/2018/09/04/birds-taxo-traits/" title="">\n  <text xml:space="preserve">the fourth post of the</text>\n  <softbreak/>\n  <text xml:space="pre ...
-#| [3] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/" title="">\n  <text xml:space="preserve">previous post</text>\n  <softbreak/>\n  <text xml:space="preserve">of  ...
-#| [4] <link destination="https://ropensci.org/blog/2018/08/14/where-to-bird/" title="">\n  <text xml:space="preserve">How to identify spots for birding using open geographical</text>\n  <soft ...
-#| [5] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/" title="">\n  <text xml:space="preserve">How to obtain bird occurrence data in</text>\n  <softbreak/>\n  <text  ...
-#| [6] <link destination="https://ropensci.org/blog/2018/08/28/birds-ocr/" title="">\n  <text xml:space="preserve">How to extract text from old natural history</text>\n  <softbreak/>\n  <text  ...
-#| [7] <link destination="https://ropensci.org/blog/2018/09/04/birds-taxo-traits/" title="">\n  <text xml:space="preserve">How to complement an occurrence dataset with taxonomy and trait</text ...
+#| [1] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/ ...
+#| [2] <link destination="https://ropensci.org/blog/2018/09/04/birds-taxo-traits ...
+#| [3] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/ ...
+#| [4] <link destination="https://ropensci.org/blog/2018/08/14/where-to-bird/" t ...
+#| [5] <link destination="https://ropensci.org/blog/2018/08/21/birds-radolfzell/ ...
+#| [6] <link destination="https://ropensci.org/blog/2018/08/28/birds-ocr/" title ...
+#| [7] <link destination="https://ropensci.org/blog/2018/09/04/birds-taxo-traits ...
 ```
 
 ## Installation
@@ -137,20 +141,20 @@ rmd <- tinkr::yarn$new(path)
 rmd$body
 #| {xml_document}
 #| <document xmlns="http://commonmark.org/xml/1.0">
-#|  [1] <code_block xml:space="preserve" language="r" name="setup" include="FALSE" eval="TRUE">knitr::opts_chunk$set(echo = TRUE)\n</code_block>
-#|  [2] <heading level="2">\n  <text xml:space="preserve">R Markdown</text>\n</heading>
-#|  [3] <paragraph>\n  <text xml:space="preserve">This is an </text>\n  <strikethrough>\n    <text xml:space="preserve">R Markdown document</text>\n  </strikethrough>\n  <text xml:space="prese ...
-#|  [4] <paragraph>\n  <text xml:space="preserve">When you click the </text>\n  <strong>\n    <text xml:space="preserve">Knit</text>\n  </strong>\n  <text xml:space="preserve"> button a docume ...
-#|  [5] <code_block xml:space="preserve" language="r" name="" eval="TRUE" echo="TRUE">summary(cars)\n</code_block>
-#|  [6] <heading level="2">\n  <text xml:space="preserve">Including Plots</text>\n</heading>
-#|  [7] <paragraph>\n  <text xml:space="preserve">You can also embed plots, for example:</text>\n</paragraph>
-#|  [8] <code_block xml:space="preserve" language="python" name="" fig.cap="&quot;pretty plot&quot;" echo="-c(1, 2)" eval="TRUE">plot(pressure)\n</code_block>
-#|  [9] <code_block xml:space="preserve" language="python" name="">plot(pressure)\n</code_block>
-#| [10] <paragraph>\n  <text xml:space="preserve">Non-RMarkdown blocks are also considered</text>\n</paragraph>
-#| [11] <code_block info="bash" xml:space="preserve" name="">echo "this is an unevaluted bash block"\n</code_block>
-#| [12] <code_block xml:space="preserve" name="">This is an ambiguous code block\n</code_block>
-#| [13] <paragraph>\n  <text xml:space="preserve">Note that the </text>\n  <code xml:space="preserve">echo = FALSE</code>\n  <text xml:space="preserve"> parameter was added to the code chunk t ...
-#| [14] <table>\n  <table_header>\n    <table_cell align="left">\n      <text xml:space="preserve">scientific_name</text>\n    </table_cell>\n    <table_cell align="left">\n      <text xml:spa ...
+#|  [1] <code_block xml:space="preserve" language="r" name="setup" include="FALS ...
+#|  [2] <heading level="2">\n  <text xml:space="preserve">R Markdown</text>\n</h ...
+#|  [3] <paragraph>\n  <text xml:space="preserve">This is an </text>\n  <striket ...
+#|  [4] <paragraph>\n  <text xml:space="preserve">When you click the </text>\n   ...
+#|  [5] <code_block xml:space="preserve" language="r" name="" eval="TRUE" echo=" ...
+#|  [6] <heading level="2">\n  <text xml:space="preserve">Including Plots</text> ...
+#|  [7] <paragraph>\n  <text xml:space="preserve">You can also embed plots, for  ...
+#|  [8] <code_block xml:space="preserve" language="python" name="" fig.cap="&quo ...
+#|  [9] <code_block xml:space="preserve" language="python" name="">plot(pressure ...
+#| [10] <paragraph>\n  <text xml:space="preserve">Non-RMarkdown blocks are also  ...
+#| [11] <code_block info="bash" xml:space="preserve" name="">echo "this is an un ...
+#| [12] <code_block xml:space="preserve" name="">This is an ambiguous code block ...
+#| [13] <paragraph>\n  <text xml:space="preserve">Note that the </text>\n  <code ...
+#| [14] <table>\n  <table_header>\n    <table_cell align="left">\n      <text xm ...
 #| [15] <paragraph>\n  <text xml:space="preserve">blabla</text>\n</paragraph>
 ```
 
@@ -234,8 +238,8 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly
 lossy because of Markdown syntax redundancy, so the loop from (R)md to
 R(md) via `to_xml` and `to_md` will be a bit lossy. For instance
 
--   lists can be created with either “+”, “-” or "\*“. When using
-    `tinkr`, the (R)md after editing will only use”-" for lists.
+-   lists can be created with either “+”, “-” or “\*“. When using
+    `tinkr`, the (R)md after editing will only use”-” for lists.
 
 -   Links built like `[word][smallref]` with a bottom anchor
     `[smallref]: URL` will have the anchor moved to the bottom of the
@@ -245,8 +249,8 @@ R(md) via `to_xml` and `to_md` will be a bit lossy. For instance
 
 -   [x] GitHub tickboxes are preserved (only for `yarn` objects)
 
--   Block quotes lines all get “&gt;” whereas in the input only the
-    first could have a “&gt;” at the beginning of the first line.
+-   Block quotes lines all get “\>” whereas in the input only the first
+    could have a “\>” at the beginning of the first line.
 
 -   For tables see the next subsection.
 
@@ -254,10 +258,10 @@ Such losses make your (R)md different, and the git diff a bit harder to
 parse, but should *not* change the documents your (R)md is rendered to.
 If it does, report a bug in the issue tracker!
 
-A solution to not loose your Markdown style, e.g. your preferring "\*"
+A solution to not loose your Markdown style, e.g. your preferring “\*”
 over “-” for lists is to tweak [our XSL
-stylesheet](inst/extdata/xml2md_gfm.xsl) and provide its filepath as
-`stylesheet_path` argument to `to_md`.
+stylesheet](https://github.com/ropensci/tinkr/blob/main/inst/extdata/xml2md_gfm.xsl)
+and provide its filepath as `stylesheet_path` argument to `to_md`.
 
 ### The special case of tables
 
@@ -307,7 +311,7 @@ Note, however, that there are a few caveats for this:
     sure to either use punctuation after the trailing dollar sign OR
     format the text as code. (i.e. `` `INKEY$` `` is good, but `INKEY$`
     by itself is not good and will be interpreted as LaTeX code,
-    throwing an error:
+    throwing an error: ::: {.cell}
 
     ``` r
     path <- system.file("extdata", "basic-math.md", package = "tinkr")
@@ -340,6 +344,8 @@ Note, however, that there are a few caveats for this:
     #|  Give you $2 to ... 2$ verbally.
     #| We write $2 but ...
     ```
+
+    :::
 
 ## Meta
 
