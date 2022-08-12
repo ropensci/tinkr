@@ -110,8 +110,11 @@ this function is internally used in the function \code{\link[=to_xml]{to_xml()}}
 f <- system.file("extdata", "link-test.md", package = "tinkr")
 md <- yarn$new(f, sourcepos = TRUE, anchor_links = FALSE)
 md$show()
-lnks <- tinkr:::resolve_anchor_links(md$body, readLines(md$path))
+if (requireNamespace("withr")) {
+lnks <- withr::with_namespace("tinkr", 
+  resolve_anchor_links(md$body, readLines(md$path)))
 md$body <- lnks
 md$show()
+}
 }
 \keyword{internal}

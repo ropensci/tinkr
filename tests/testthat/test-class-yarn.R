@@ -51,8 +51,9 @@ test_that("the write method needs a filename", {
 })
 
 test_that("a yarn object can be written back to markdown", {
-  scarf1 <- withr::local_file("yarn-write.md")
-  scarf2 <- withr::local_file("yarn-write.Rmd")
+  tmpdir <- withr::local_tempdir()
+  scarf1 <- withr::local_file(file.path(tmpdir, "yarn.md"))
+  scarf2 <- withr::local_file(file.path(tmpdir, "yarn.Rmd"))
   y1 <- yarn$new(pathmd)
   y2 <- yarn$new(pathrmd)
   y1$write(scarf1) 
@@ -63,7 +64,7 @@ test_that("a yarn object can be written back to markdown", {
 
 test_that("a yarn object can be reset", {
 
-  scarf1 <- withr::local_file("yarn-write.md")
+  scarf1 <- withr::local_tempfile(fileext = "md")
   y1 <- yarn$new(pathmd, sourcepos = TRUE, encoding = "utf-8")
 
   expect_equal(y1$.__enclos_env__$private$encoding, "utf-8")
@@ -84,7 +85,8 @@ test_that("a yarn object can be reset", {
 
 test_that("random markdown can be added", {
 
-  scarf3 <- withr::local_file("yarn-write-table.md")
+  tmpdir <- withr::local_tempdir()
+  scarf3 <- withr::local_file(file.path(tmpdir, "yarn-kilroy.md"))
   mdtable <- system.file("extdata", "table.md", package = "tinkr")
   t1 <- yarn$new(mdtable)
   expect_equal(xml2::xml_name(xml2::xml_child(t1$body)), "table")
