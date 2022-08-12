@@ -73,7 +73,7 @@
 #'
 #' ```{r, echo = FALSE, comment = NA}
 #' lnk <- "[link-ref]: https://example.com 'example link'"
-#' al <- tinkr:::build_anchor_links(lnk)
+#' al <- withr::with_namespace("tinkr", build_anchor_links(lnk))
 #' cat(as.character(xml2::xml_find_first(al, ".//link")))
 #' ```
 #' 
@@ -102,9 +102,12 @@
 #' f <- system.file("extdata", "link-test.md", package = "tinkr")
 #' md <- yarn$new(f, sourcepos = TRUE, anchor_links = FALSE)
 #' md$show()
-#' lnks <- tinkr:::resolve_anchor_links(md$body, readLines(md$path))
+#' if (requireNamespace("withr")) {
+#' lnks <- withr::with_namespace("tinkr", 
+#'   resolve_anchor_links(md$body, readLines(md$path)))
 #' md$body <- lnks
 #' md$show()
+#' }
 resolve_anchor_links <- function(body, txt, ns = md_ns()) {
   # copy the body so that we can recover from errors
   body <- copy_xml(body)
