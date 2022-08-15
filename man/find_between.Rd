@@ -7,7 +7,7 @@
 find_between(
   body,
   ns,
-  pattern = "md:paragraph[md:text[starts-with(text(), ':::')]]",
+  pattern = "paragraph[text[starts-with(text(), ':::')]]",
   include = FALSE
 )
 }
@@ -49,5 +49,5 @@ ns <- xml2::xml_ns_rename(xml2::xml_ns(x), d1 = "md")
 res <- find_between(x, ns)
 res
 xml2::xml_text(res)
-xml2::xml_find_all(res, ".//descendant-or-self::md:*", ns = ns)
+xml2::xml_find_all(res, ".//descendant-or-self::*", ns = ns)
 }

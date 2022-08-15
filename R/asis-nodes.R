@@ -36,7 +36,7 @@ set_asis <- function(nodes) {
 
 # finding inline math consists of searching for $ and excluding $$
 find_inline_math <- function(body, ns) {
-   i <- ".//md:text[not(@asis) and contains(text(), '$') and not(contains(text(), '$$'))]"
+   i <- ".//text[not(@asis) and contains(text(), '$') and not(contains(text(), '$$'))]"
    xml2::xml_find_all(body, i, ns = ns)
 }
 
@@ -97,6 +97,7 @@ find_broken_math <- function(math) {
 #'   "This sentence contains $I_A$ $\\frac{\\pi}{2}$ inline $\\LaTeX$ math."
 #' )
 #' txt <- xml2::read_xml(txt)
+#' xml2::xml_ns_strip(txt)
 #' cat(to_md(list(body = txt, yaml = "")), sep = "\n")
 #' ns  <- tinkr::md_ns()
 #' protxt <- tinkr:::protect_inline_math(txt, ns)
@@ -133,7 +134,7 @@ protect_inline_math <- function(body, ns) {
       # In this case, we can detect it and properly address it as a headless
       # part.
       has_inline_code <- xml2::xml_find_lgl(bmath,
-        "boolean(.//preceding-sibling::md:code)", ns
+        "boolean(.//preceding-sibling::code)", ns
       )
       headless <- headless | has_inline_code
     }
@@ -243,18 +244,18 @@ make_text_nodes <- function(txt) {
 # BLOCK MATH ------------------------------------------------------------------
 
 find_block_math <- function(body, ns) {
-  find_between(body, ns, pattern = "md:text[contains(text(), '$$')]", include = FALSE)
+  find_between(body, ns, pattern = "text[contains(text(), '$$')]", include = FALSE)
 }
 
 find_between_inlines <- function(body, ns, tag) {
-  to_find <- "md:text[@latex-pair='{tag}']"
+  to_find <- "text[@latex-pair='{tag}']"
   find_between(body, ns, pattern = glue::glue(to_find), include = TRUE)
 }
 
 protect_block_math <- function(body, ns) {
   bm <- find_block_math(body, ns)
   # get all of the internal nodes
-  bm <- xml2::xml_find_all(bm, ".//descendant-or-self::md:*", ns = ns)
+  bm <- xml2::xml_find_all(bm, ".//descendant-or-self::*", ns = ns)
   set_asis(bm) 
 }
 
@@ -262,7 +263,7 @@ protect_block_math <- function(body, ns) {
 
 tick_check <- function(body, ns) {
   predicate <- "starts-with(text(), '[ ]') or starts-with(text(), '[x]')"
-  cascade <- glue::glue(".//md:item/md:paragraph/md:text[{predicate}]")
+  cascade <- glue::glue(".//item/paragraph/text[{predicate}]")
   xml2::xml_find_all(body, cascade, ns = ns)
 }
 
@@ -288,7 +289,7 @@ protect_tickbox <- function(body, ns) {
 #nocov start
 footnote_check <- function(body, ns = md_ns()) {
   predicate <- "contains(text(), '[^') and contains(text(), ']')"
-  cascade <- glue::glue(".//md:paragraph[*[{predicate}]]")
+  cascade <- glue::glue(".//paragraph[*[{predicate}]]")
   xml2::xml_find_all(body, cascade, ns = ns)
 }
 

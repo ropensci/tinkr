@@ -12,7 +12,7 @@ cat(tail(readLines(path, 40)), sep = "\n")
 ex1  <- tinkr::yarn$new(path)
 # transform level 3 headers into level 1 headers
 ex1$body %>%
-  xml2::xml_find_all(xpath = ".//md:heading[@level='3']", ex1$ns) %>% 
+  xml2::xml_find_all(xpath = ".//heading[@level='3']", ex1$ns) %>% 
   xml2::xml_set_attr("level", 1)
 
 # Back to Markdown

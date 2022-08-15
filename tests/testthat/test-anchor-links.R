@@ -29,14 +29,14 @@ test_that("singluar nodes can be added to the body", {
   # add node1 at the top of the body
   add_nodes_to_body(m$body, node1)
   buddy <- copy_xml(m$body)
-  buddy_node1 <- xml2::xml_find_first(buddy, ".//md:link", md_ns())
+  buddy_node1 <- xml2::xml_find_first(buddy, ".//link", md_ns())
   expect_equal(xml2::xml_text(buddy_node1), "a")
   expect_equal(xml2::xml_attr(buddy_node1, "anchor"), "true")
 
   # add node2 after node1
   add_node_siblings(buddy_node1, node2, remove = FALSE)
   buddy <- copy_xml(buddy)
-  buddy_node2 <- xml2::xml_find_all(buddy, ".//md:link", md_ns())[[2]]
+  buddy_node2 <- xml2::xml_find_all(buddy, ".//link", md_ns())[[2]]
   expect_equal(xml2::xml_text(buddy_node2), "A")
   expect_equal(xml2::xml_attr(buddy_node2, "anchor"), "true")
   

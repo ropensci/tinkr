@@ -14,7 +14,7 @@ test_that("to_xml works for Rmd", {
   expect_s3_class(post_list[[2]], "xml_document")
 
   blocks <- post_list[[2]] %>%
-    xml2::xml_find_all(xpath = './/d1:code_block',
+    xml2::xml_find_all(xpath = './/code_block',
                        xml2::xml_ns(.)) %>%
     .[xml2::xml_has_attr(., "language")]
 
@@ -26,7 +26,7 @@ test_that("to_xml works for Rmd", {
 test_that("to_xml will not convert numeric options to character", {
   txt <- "```{r txt, fig.width=4.2, fig.height=4.2, out.width='100%', purl = TRUE}\n#code\n```"
   con <- textConnection(txt)
-  code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
+  code <- xml2::xml_find_first(to_xml(con)$body, "code_block")
   attrs <- xml2::xml_attrs(code)
   expect_equal(attrs[["fig.width"]], "4.2") 
   expect_equal(attrs[["fig.height"]], "4.2") 
@@ -41,7 +41,7 @@ test_that("to_xml will not convert chunk options as r objects to character", {
 
   txt <- "```{r txt, R.options = list(width = 100), eval = eval_param}\n#code\n```"
   con <- textConnection(txt)
-  code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
+  code <- xml2::xml_find_first(to_xml(con)$body, "code_block")
   attrs <- xml2::xml_attrs(code)
   expect_equal(attrs[["name"]], "txt")
   expect_equal(attrs[["R.options"]], "list(width = 100)")
@@ -53,7 +53,7 @@ test_that("to_xml will respect logicals for custom chunk options", {
 
   txt <- "```{r txt, coffee = TRUE, tea = FALSE, fun = 'pizza+icecream'}\n#code\n```"
   con <- textConnection(txt)
-  code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
+  code <- xml2::xml_find_first(to_xml(con)$body, "code_block")
   attrs <- xml2::xml_attrs(code)
   expect_equal(attrs[["name"]], "txt")
   expect_equal(attrs[["coffee"]], "TRUE")
@@ -90,7 +90,7 @@ test_that("to_xml works with sourcepos for Rmd", {
   expect_true(xml2::xml_has_attr(post_list[[2]], "sourcepos"))
   expect_match(xml2::xml_attr(post_list[[2]], "sourcepos"), "^1:1-\\d+?:\\d+$")
   # code blocks retain their attributes
-  first_block <- xml2::xml_find_first(post_list[[2]], ".//d1:code_block")
+  first_block <- xml2::xml_find_first(post_list[[2]], ".//code_block")
 
   expect_match(xml2::xml_attr(first_block, "space"), "preserve")
   expect_match(xml2::xml_attr(first_block, "sourcepos"), "^\\d+?:\\d+?-\\d+?:\\d+$")

@@ -139,8 +139,8 @@ yarn <- R6::R6Class("yarn",
     #' path <- system.file("extdata", "example2.Rmd", package = "tinkr")
     #' ex <- tinkr::yarn$new(path)
     #' # two headings, no lists
-    #' xml2::xml_find_all(ex$body, "md:heading", ex$ns)
-    #' xml2::xml_find_all(ex$body, "md:list", ex$ns)
+    #' xml2::xml_find_all(ex$body, "heading", ex$ns)
+    #' xml2::xml_find_all(ex$body, "list", ex$ns)
     #' ex$add_md(
     #'   "# Hello\n\nThis is *new* formatted text from `{tinkr}`!",
     #'   where = 1L
@@ -149,8 +149,8 @@ yarn <- R6::R6Class("yarn",
     #'   where = 2L
     #' )
     #' # three headings
-    #' xml2::xml_find_all(ex$body, "md:heading", ex$ns)
-    #' xml2::xml_find_all(ex$body, "md:list", ex$ns)
+    #' xml2::xml_find_all(ex$body, "heading", ex$ns)
+    #' xml2::xml_find_all(ex$body, "list", ex$ns)
     #' tmp <- tempfile()
     #' ex$write(tmp)
     #' readLines(tmp, n = 20) 

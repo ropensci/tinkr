@@ -31,12 +31,12 @@
 #' res <- find_between(x, ns)
 #' res
 #' xml2::xml_text(res)
-#' xml2::xml_find_all(res, ".//descendant-or-self::md:*", ns = ns)
-find_between <- function(body, ns, pattern = "md:paragraph[md:text[starts-with(text(), ':::')]]", include = FALSE) {
+#' xml2::xml_find_all(res, ".//descendant-or-self::*", ns = ns)
+find_between <- function(body, ns, pattern = "paragraph[text[starts-with(text(), ':::')]]", include = FALSE) {
   after  <- "following-sibling::"
   before <- "preceding-sibling::"
   after_first_pattern <- glue::glue("{after}{pattern}")
-  before_last_pattern <- glue::glue("{before}md:*[{before}{pattern}]")
+  before_last_pattern <- glue::glue("{before}*[{before}{pattern}]")
   prefix <- if (include) glue::glue(".//{pattern} | .//") else ".//"
   xpath <- glue::glue("{prefix}{after_first_pattern}/{before_last_pattern}")
   xml2::xml_find_all(body, xpath, ns = ns)

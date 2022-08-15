@@ -95,7 +95,7 @@ test_that("random markdown can be added", {
     "stop copying me!" # THIS WILL BE COPIED TWICE
   )
   t1$add_md(paste(newmd, collapse = ""))$add_md(toupper(newmd[[3]]), where = 3)
-  expect_length(xml2::xml_find_all(t1$body, "md:link", t1$ns), 0L)
+  expect_length(xml2::xml_find_all(t1$body, "link", t1$ns), 0L)
   
   t1$write(scarf3)
   expect_snapshot_file(scarf3)

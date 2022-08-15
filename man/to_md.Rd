@@ -36,7 +36,7 @@ library("magrittr")
 # transform level 3 headers into level 1 headers
 body <- yaml_xml_list$body
 body \%>\%
-  xml2::xml_find_all(xpath = './/d1:heading',
+  xml2::xml_find_all(xpath = './/heading',
                      xml2::xml_ns(.)) \%>\%
   .[xml2::xml_attr(., "level") == "3"] -> headers3
 xml2::xml_set_attr(headers3, "level", 1)

@@ -14,11 +14,11 @@
 #' tink <- tinkr::to_xml(system.file("extdata", "example1.md", package = "tinkr"))
 #' # with default namespace
 #' xml2::xml_find_all(tink$body, 
-#'   ".//d1:link[starts-with(@destination, 'https://ropensci')]"
+#'   ".//link[starts-with(@destination, 'https://ropensci')]"
 #' )
 #' # with tinkr namespace
 #' xml2::xml_find_all(tink$body, 
-#'   ".//md:link[starts-with(@destination, 'https://ropensci')]",
+#'   ".//link[starts-with(@destination, 'https://ropensci')]",
 #'   tinkr::md_ns()
 #' )
 #'
