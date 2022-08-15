@@ -5,11 +5,15 @@ Commonmark
 commonmark's
 cloneable
 filepath
+flavoured
+funder
+https
 lossy
 md
 munges
 nodeset
 ns
+ORCID
 pandoc
 parsers
 postfix
@@ -17,6 +21,7 @@ pre
 proceded
 readLines
 RMarkdown
+ropensci
 roweb
 runnable
 sourcepos
@@ -30,6 +35,8 @@ unnested
 XPath
 xsl
 XSL
+xslt
 XSLT
 yaml
 YAML
+Zhian
