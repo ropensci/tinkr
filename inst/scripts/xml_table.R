@@ -5,7 +5,7 @@ commonmark::markdown_xml(input, extensions = TRUE) %>%
   xml2::read_xml() -> XML
 
 
-system.file("extdata", "xml2md.xsl",
+system.file("stylesheets", "xml2md.xsl",
             package = "tinkr") %>%
   xml2::read_xml() -> stylesheet
 

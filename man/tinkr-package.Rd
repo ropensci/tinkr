@@ -6,7 +6,7 @@
 \alias{tinkr-package}
 \title{tinkr: Cast '(R)Markdown' Files to 'XML' and Back Again}
 \description{
-Casts '(R)Markdown' files to 'XML' and back to allow in-memory editing via of 'markdown' elements via 'XPath' through the 'R6' class 'yarn'.
+Parsing '(R)Markdown' files with numerous regular expressions can be fraught with peril, but it does not have to be this way. Converting '(R)Markdown' files to 'XML' using the 'commonmark' package allows in-memory editing via of 'markdown' elements via 'XPath' through the extensible 'R6' class called 'yarn'. These modified 'XML' representations can be written to '(R)Markdown' documents via an 'xslt' stylesheet which implements an extended version of 'GitHub'-flavoured 'markdown' so that you can tinker to your hearts content.
 }
 \seealso{
 Useful links:
