@@ -8,7 +8,7 @@
 #' @examples
 #' tinkr::stylesheet()
 stylesheet <- function() {
-  system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")
+  system.file("stylesheets", "xml2md_gfm.xsl", package = "tinkr")
 }
 
 is_stylesheet <- function(stylesheet) {

@@ -2,6 +2,12 @@
 
 First version on CRAN
 
+## BREAKING CHANGE
+
+* The stylesheets now are in the `stylesheets/` path, not `extdata/`. If you
+  have not used `tinkr::stylesheet()` to access the default stylesheet, you will
+  need to modify your code. 
+
 # tinkr 0.0.0.9002
 
 ## BUG FIX

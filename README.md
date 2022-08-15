@@ -260,7 +260,7 @@ If it does, report a bug in the issue tracker!
 
 A solution to not loose your Markdown style, e.g. your preferring “\*”
 over “-” for lists is to tweak [our XSL
-stylesheet](https://github.com/ropensci/tinkr/blob/main/inst/extdata/xml2md_gfm.xsl)
+stylesheet](https://github.com/ropensci/tinkr/blob/main/inst/stylesheets/xml2md_gfm.xsl)
 and provide its filepath as `stylesheet_path` argument to `to_md`.
 
 ### The special case of tables

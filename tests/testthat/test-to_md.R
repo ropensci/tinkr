@@ -4,7 +4,7 @@ tmpdir <- withr::local_tempdir("newdir")
 test_that("to_md works without a file", {
 
   path <- system.file("extdata", "table.md", package = "tinkr")
-  stys <- system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")
+  stys <- system.file("stylesheets", "xml2md_gfm.xsl", package = "tinkr")
   stys <- xml2::read_xml(stys)
 
   yaml_xml_list <- to_xml(path)
