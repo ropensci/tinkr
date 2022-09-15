@@ -1,3 +1,7 @@
+# tinkr (development version)
+
+* New `protect_curly()` function.
+
 # tinkr 0.1.0
 
 First version on CRAN

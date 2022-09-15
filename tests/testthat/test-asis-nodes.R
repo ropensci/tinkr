@@ -78,3 +78,8 @@ test_that("documents with no math do no harm", {
   expect_equal(as.character(x), x1)
 })
 
+test_that("mal-formed inline math throws an informative error", {
+  pathcurly <- system.file("extdata", "basic-curly.md", package = "tinkr")
+  curly <- yarn$new(pathcurly)
+  expect_snapshot(cat(as.character(protect_curly(curly$body))))
+})
