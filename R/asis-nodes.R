@@ -328,7 +328,7 @@ find_curly <- function(body, ns) {
 
 fix_curly <- function(curly) {
   char <- as.character(curly)
-  curlies <- regmatches(char, regexpr("\\{.*?\\}", char))
+  curlies <- regmatches(char, gregexpr("\\{.*?\\}", char))[[1]]
   for (curl in curlies) {
     char <- sub(
       curl,
