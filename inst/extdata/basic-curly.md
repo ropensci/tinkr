@@ -7,3 +7,8 @@ title: basic curly
 hello
 
 I like {xml2} but of course {tinkr} is even cooler!
+
+Images that use pandoc style will have curlies with content that should be translated and should be protected.
+
+![a pretty kitten](https://placekitten.com/200/300){#kitteh alt='a picture of a kitten'}
+
