@@ -37,8 +37,10 @@
             <text xml:space="preserve">a pretty puppy</text>
           </image>
           <text xml:space="preserve"/>
-          <text curly="true" alt="a picture of a dog">{#dog alt="a picture of a dog"}</text>
+          <text curly="true" alt="a picture of a dog">{#dog alt="a picture
+      of a dog"}</text>
           <text/>
+          <softbreak/>
         </paragraph>
         <paragraph>
           <text xml:space="preserve">[a span with attributes]</text>
