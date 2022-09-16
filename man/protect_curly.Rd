@@ -19,7 +19,7 @@ Protect curly elements for further processing
 }
 \details{
 Commonmark will render text such as \code{{.unnumbered}}
-(Quarto option) or
+(Pandoc/Quarto option) or
 \verb{\{#hello .greeting .message style="color: red;"\}}
 (Markdown custom block)
 as normal text which might be problematic if trying to extract

@@ -326,13 +326,21 @@ find_curly <- function(body, ns) {
    xml2::xml_find_all(body, i, ns = ns)
 }
 
-fix_curly <- function(curly) {
+digest_curly <- function(curly) {
   char <- as.character(curly)
   curlies <- regmatches(char, gregexpr("\\{.*?\\}", char))[[1]]
   for (curl in curlies) {
+    attributes <- "curly='true'"
+
+    alt_fragment <- regmatches(curl, gregexpr("alt=['\"].*?['\"]", curl))[[1]]
+    if (length(alt_fragment) > 0) {
+      alt_text <- sub("^alt=", "", alt_fragment)
+      attributes <- sprintf("%s alt=%s", attributes, alt_text)
+    }
+
     char <- sub(
       curl,
-      sprintf("</text><text asis='true' curly='true'>%s</text><text>", curl),
+      sprintf("</text><text %s>%s</text><text>", attributes, curl),
       char,
       fixed = TRUE
     )
@@ -367,7 +375,7 @@ fix_curly <- function(curly) {
 protect_curly <- function(body, ns = md_ns()) {
   body  <- copy_xml(body)
   curly  <- find_curly(body, ns)
-  new_nodes <- purrr::map(curly, fix_curly)
+  new_nodes <- purrr::map(curly, digest_curly)
   # since we split up the nodes, we have to do this node by node
   for (i in seq(new_nodes)) {
     add_node_siblings(curly[[i]], new_nodes[[i]], remove = TRUE)
