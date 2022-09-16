@@ -345,7 +345,7 @@ fix_curly <- function(curly) {
 #' @inheritParams protect_math
 #' @return a copy of the modified XML object
 #' @details Commonmark will render text such as `{.unnumbered}`
-#' (Quarto option) or
+#' (Pandoc/Quarto option) or
 #' `{#hello .greeting .message style="color: red;"}`
 #' (Markdown custom block)
 #' as normal text which might be problematic if trying to extract
