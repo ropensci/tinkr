@@ -25,7 +25,6 @@ find_curly <- function(body, ns) {
 }
 
 digest_curly <- function(curly, ns) {
-  # Make sure we get complete curly things
   char <- as.character(curly)
   curlies <- regmatches(char, gregexpr("\\{.*?\\}", char))[[1]]
   for (curl in curlies) {
