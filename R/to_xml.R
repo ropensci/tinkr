@@ -13,7 +13,7 @@
 #' @param unescaped if `TRUE` (default) AND `sourcepos = TRUE`, square braces
 #'   that were unescaped in the original document will be presered as best as
 #'   possible. If this is `FALSE`, these braces will be escaped in the output
-#'   document. See [protect_squares()] for details.
+#'   document. See [protect_unescaped()] for details.
 #'
 #' @return A list containing the YAML of the file (yaml)
 #'   and its body (body) as XML.

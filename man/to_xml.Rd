@@ -30,7 +30,7 @@ details.}
 \item{unescaped}{if \code{TRUE} (default) AND \code{sourcepos = TRUE}, square braces
 that were unescaped in the original document will be presered as best as
 possible. If this is \code{FALSE}, these braces will be escaped in the output
-document. See \code{\link[=protect_squares]{protect_squares()}} for details.}
+document. See \code{\link[=protect_unescaped]{protect_unescaped()}} for details.}
 }
 \value{
 A list containing the YAML of the file (yaml)
