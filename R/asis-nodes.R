@@ -287,36 +287,103 @@ protect_tickbox <- function(body, ns) {
 }
 
 # FOOTNOTES --------------------------------------------------------------------
-#nocov start
-footnote_check <- function(body, ns = md_ns()) {
-  predicate <- "contains(text(), '[^') and contains(text(), ']')"
-  cascade <- glue::glue(".//md:paragraph[*[{predicate}]]")
-  xml2::xml_find_all(body, cascade, ns = ns)
-}
 
-fix_footnotes <- function(feet) {
-  char <- as.character(feet)
-  char <- gsub(
-    pattern = "([\\[][\\^]|\\])",
-    replacement = "</text><text asis='true'>\\1</text><text>", 
-    x = char,
-    perl = TRUE
-  )
-  make_text_nodes(char)
-}
-
-protect_footnotes <- function(body, ns = md_ns()) {
-  body <- copy_xml(body)
-  
-  feet <- footnote_check(body, ns)
-  if (length(feet) == 0) {
+#' Protect unescaped square brackets from being escaped
+#'
+#' Commonmark allows both `[unescaped]` and `\[escaped\]` square brackets, but
+#' in the XML representation, it makes no note of which square brackets were 
+#' originally escaped and thus will escape both in the output.
+#'
+#' To fix this, we dive back into the source document and find the brackets that
+#' were originally escaped and wrap those characters in protective tags so that
+#' they do not become escaped when the XML is written. This has the benefit of 
+#' protecting footnotes and reference style links for child documents.
+#'
+#' @inheritParams resolve_anchor_links
+#' @param offset the offset in lines of the yaml header defaults to 0,
+#' indicating that the text has the yaml header stripped off. 
+#' @keywords internal
+#' @note This requires documents to be read in with `sourcepos = TRUE`
+#'
+#' @examples
+#' f <- system.file("extdata", "link-test.md", package = "tinkr")
+#' md <- yarn$new(f, sourcepos = TRUE, unescaped = FALSE)
+#' md$show()
+#' if (requireNamespace("withr")) {
+#' lnks <- withr::with_namespace("tinkr", 
+#'   protect_unescaped(md$body, readLines(md$path), offset = length(md$yaml)))
+#' md$body <- lnks
+#' md$show()
+#' }
+protect_unescaped <- function(body, txt, offset = 0L, ns = md_ns()) {
+  has_sourcepos <- xml2::xml_find_lgl(body, "boolean(.//@sourcepos)")
+  if (!has_sourcepos) {
+    warning("`protect_unescaped()` needs to know the source position. No modification taking place.")
     return(body)
   }
-  new_nodes <- fix_footnotes(feet)
-  # since we split up the nodes, we have to do this node by node
-  for (i in seq(new_nodes)) {
-    add_node_siblings(feet[[i]], new_nodes[[i]], remove = TRUE)
-  }
+  body <- copy_xml(body)
+  squares <- find_escaped_squares(txt)
+  escapes <- which(vapply(squares, sum, integer(1)) > 0L)
+  XPATH <- ".//md:text[not(@asis)][contains(text(), '[') or contains(text(), ']')]"
+  snodes <- xml2::xml_find_all(body, XPATH, ns = ns)
+  fix_unescaped_squares(snodes, txt, squares, escapes, offset)
   copy_xml(body)
 }
-#nocov end
+
+find_escaped_squares <- function(txt) {
+  gregexpr("(\\\\\\])|(\\\\\\[)", txt)
+}
+
+fix_unescaped_squares <- function(nodes, txt, squares, escapes, offset) {
+  lines  <- get_linestart(nodes) + offset
+  for (i in seq_along(lines)) {
+    this_line <- lines[[i]]
+    this_node <- nodes[[i]]
+    if (!this_line %in% escapes) {
+      # if there are no existing escaped braces here, we need to protect them
+      fix_unescaped(this_node)
+    } else {
+      # if there are escaped braces, there may be situations where we have
+      # escaped and unescaped braces on the same line (for example a link and
+      # an example of a link). This will tell us if the node we are handling
+      # contain the characters we need to escape (markup splits the nodes).
+      start <- get_colstart(this_node)
+      end   <- get_colend(this_node)
+      escape_sequence <- squares[[this_line]]
+      overlaps <- start <= max(escape_sequence) & end >= min(escape_sequence)
+      if (overlaps) {
+        fix_unescaped(this_node, escape_sequence, offset = start)
+      }
+    }
+  }
+}
+
+fix_unescaped <- function(node, escaped = NULL, offset = 1L) {
+  
+  txt <- as.character(node)
+  # Converted to text, the node becomes <text ...>Actual text</text>
+  # Because the position is based on the actual text, we need to find the start
+  # of the actual text in the node text
+  text_start <- gregexpr("[>]", txt)[[1]][[1]] + 1L
+  if (is.null(escaped)) {
+    unescaped <- TRUE
+  } else {
+    # Because the escaped characters were stripped off, we have to account for 
+    # a rolling count of the number of escapes
+    missing_chars <- seq_along(escaped) - 1L
+    # If the source starts with markup, we have to take into account the offset
+    # position. This will set the escaped to start at the end of the XML markup
+    unescaped <- -(escaped + text_start - offset - missing_chars)
+  }
+  # Here we split the character and exclude the escaped braces, protecting
+  # the unescaped braces.
+  chars <- strsplit(txt, "")[[1]]
+  chars[unescaped] <- sub(
+    pattern = "(\\[|\\])", 
+    replacement = "</text><text asis='true'>\\1</text><text>", 
+    x = chars[unescaped]
+  )
+  new_nodes <- make_text_nodes(paste(chars, collapse = ""))
+  add_node_siblings(node, new_nodes, remove = TRUE)
+}
+
