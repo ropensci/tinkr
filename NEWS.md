@@ -1,3 +1,10 @@
+# tinkr 0.1.0.9000
+
+* unescaped square braces from the source code can now make the roundtrip
+  without extra markup. This is implemented in a new default parameter for
+  `to_xml()` called `unescaped = TRUE`, which indicates that you would like
+  unescaped square braces to remain unescaped. 
+
 # tinkr 0.1.0
 
 First version on CRAN
