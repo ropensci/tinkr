@@ -19,4 +19,5 @@ reference:
   - '`find_between`'
   - '`md_ns`'
   - '`protect_math`'
+  - '`protect_curly`'
   - '`stylesheet`'

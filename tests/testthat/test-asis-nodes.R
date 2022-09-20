@@ -78,7 +78,6 @@ test_that("documents with no math do no harm", {
   expect_equal(as.character(x), x1)
 })
 
-
 test_that("protect_unescaped() will throw a warning if no sourcpos is available", {
   x <- to_xml(m$path)
   expect_warning({
@@ -86,5 +85,4 @@ test_that("protect_unescaped() will throw a warning if no sourcpos is available"
       "sourcepos")
   })
 })
-
 
