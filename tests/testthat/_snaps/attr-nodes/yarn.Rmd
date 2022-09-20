@@ -23,7 +23,7 @@ Images that use pandoc style will have curlies with content that should be trans
 of a dog"}
 
 
-\[a span with attributes\]{.span-with-attributes
+[a span with attributes]{.span-with-attributes
 style='color: red;'}
 
 
