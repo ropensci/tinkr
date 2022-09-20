@@ -10,9 +10,13 @@
 #'   preserved as best as possible. If this is `FASLE`, the anchors disappear
 #'   and the links will appear as normal links. See [resolve_anchor_links()] for
 #'   details.
+#' @param unescaped if `TRUE` (default) AND `sourcepos = TRUE`, square braces
+#'   that were unescaped in the original document will be presered as best as
+#'   possible. If this is `FALSE`, these braces will be escaped in the output
+#'   document. See [protect_squares()] for details.
 #'
 #' @return A list containing the YAML of the file (yaml)
-#' and its body (body) as XML.
+#'   and its body (body) as XML.
 #' 
 #' @details This function will take a (R)markdown file, split the yaml header
 #'   from the body, and read in the body through [commonmark::markdown_xml()].
@@ -20,7 +24,10 @@
 #'   XML and tickboxes (aka checkboxes) in GitHub-flavored markdown will be
 #'   preserved (both modifications from the commonmark standard). 
 #'
-#'   Math elements 
+#' @note
+#'   Math elements are not protected by default. You can use [protect_math()] to
+#'   address this if needed.
+#'
 #' @export
 #'
 #' @examples
@@ -30,7 +37,7 @@
 #' path2 <- system.file("extdata", "example2.Rmd", package = "tinkr")
 #' post_list2 <- to_xml(path2)
 #' post_list2
-to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = TRUE){
+to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = TRUE, unescaped = TRUE){
   content <- readLines(path, encoding = encoding)
 
   splitted_content <- split_yaml_body(content)
@@ -45,6 +52,9 @@ to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = T
   parse_rmd(body)
   if (utils::packageVersion("commonmark") < "1.8.0") {
     body <- protect_tickbox(body, md_ns()) # nocov
+  }
+  if (unescaped && sourcepos) {
+    body <- protect_unescaped(body, splitted_content$body, offset = 0L)
   }
   if (anchor_links) {
     body <- resolve_anchor_links(body, splitted_content$body) 
