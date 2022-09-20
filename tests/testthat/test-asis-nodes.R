@@ -1,7 +1,7 @@
 pathmath <- system.file("extdata", "math-example.md", package = "tinkr")
 patherr  <- system.file("extdata", "basic-math.md", package = "tinkr")
-m <- yarn$new(pathmath)
-me <- yarn$new(patherr)
+m <- yarn$new(pathmath, sourcepos = TRUE)
+me <- yarn$new(patherr, sourcepos = TRUE)
 
 test_that("mal-formed inline math throws an informative error", {
   expect_snapshot_error(me$protect_math())
