@@ -2,6 +2,7 @@
 
 export(find_between)
 export(md_ns)
+export(protect_curly)
 export(protect_math)
 export(stylesheet)
 export(to_md)

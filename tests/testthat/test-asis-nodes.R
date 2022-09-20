@@ -77,4 +77,3 @@ test_that("documents with no math do no harm", {
   # block math does nothing
   expect_equal(as.character(x), x1)
 })
-

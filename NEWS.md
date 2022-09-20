@@ -1,3 +1,8 @@
+# tinkr (development version)
+
+* New `protect_curly()` function will add a `curly='true'` attribute to text wrapped in curly braces ('{', '}') to allow parsing of the XML for sending to external APIs. This function will also parse alt text and place it in an attribute.
+* New `$protect_curly()` method implements `protect_curly()` on yarn objects
+
 # tinkr 0.1.0
 
 First version on CRAN

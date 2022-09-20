@@ -4,13 +4,13 @@
 #' @param ns an XML namespace object (defaults: [md_ns()]).
 #' @return a copy of the modified XML object
 #' @details Commonmark does not know what LaTeX is and will LaTeX equations as
-#' normal text. This means that content surrounded by underscores are 
+#' normal text. This means that content surrounded by underscores are
 #' interpreted as `<emph>` elements and all backslashes are escaped by default.
 #' This function protects inline and block math elements that use `$` and `$$`
-#' for delimiters, respectively. 
-#' 
+#' for delimiters, respectively.
+#'
 #' @note this function is also a method in the [tinkr::yarn] object.
-#' 
+#'
 #' @export
 #' @examples
 #' m <- tinkr::to_xml(system.file("extdata", "math-example.md", package = "tinkr"))
@@ -47,11 +47,11 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
   # any space
   ace   <- "[:space:]"
   punks <- glue::glue("[{ace}[:punct:]]")
-  # Note about this regex: the first part is a lookahead (?=...) that searches 
+  # Note about this regex: the first part is a lookahead (?=...) that searches
   # for the line start, space, or punctuation. Importantly about lookaheads,
-  # they do not consume the string 
+  # they do not consume the string
   # (https://junli.netlify.app/en/overlapping-regular-expression-in-python/)
-  # 
+  #
   # This looks for a potetial minus sign followed by maybe a space to allow for
   # $\beta, $$\beta, $-\beta, $- \beta
   minus_maybe <- glue::glue("(?=([-][{ace}]?)?")
@@ -87,7 +87,7 @@ find_broken_math <- function(math) {
 }
 
 #' Find and protect all inline math elements
-#' 
+#'
 #' @param body an XML document
 #' @param ns an XML namespace
 #' @return a modified _copy_ of the original XML document
@@ -144,10 +144,10 @@ protect_inline_math <- function(body, ns) {
     le <- length(bmath[endless])
     lh <- length(bmath[headless])
     if (le != lh) {
-      unbalanced_math_error(bmath, endless, headless, le, lh) 
+      unbalanced_math_error(bmath, endless, headless, le, lh)
     }
     # assign sequential tags to the pairs of inline math elements
-    tags <- seq(length(bmath[endless]))  
+    tags <- seq(length(bmath[endless]))
     xml2::xml_set_attr(bmath[endless], "latex-pair", tags)
     xml2::xml_set_attr(bmath[headless], "latex-pair", tags)
     for (i in tags) {
@@ -157,13 +157,13 @@ protect_inline_math <- function(body, ns) {
   copy_xml(body)
 }
 
-# Partial inline math are math elements that are not entirely embedded in a 
-# single `<text>` element. There are two reasons for this: 
+# Partial inline math are math elements that are not entirely embedded in a
+# single `<text>` element. There are two reasons for this:
 #
 # 1. Math is split across separate lines in the markdown document
 # 2. There are elements like `_` that are interpreted as markdown elements.
 #
-# To use this function, an inline pair needs to be first tagged with a 
+# To use this function, an inline pair needs to be first tagged with a
 # `latex-pair` attribute that uniquely identifies that pair of tags. It assumes
 # that all of the content between that pair of tags belongs to the math element.
 fix_partial_inline <- function(tag, body, ns) {
@@ -181,7 +181,7 @@ fix_partial_inline <- function(tag, body, ns) {
   char[[n]] <- sub("[<]text ", "<text asis='true' ", char[[n]])
   nodes <- paste(char, collapse = "")
   nodes <- make_text_nodes(nodes)
-  # add the new nodes to the bottom of the existing math lines 
+  # add the new nodes to the bottom of the existing math lines
   last_line <- math_lines[n]
   to_remove <- math_lines[-n]
   add_node_siblings(last_line, nodes, remove = TRUE)
@@ -197,7 +197,7 @@ fix_fully_inline <- function(math) {
   # <text>this is </text><text asis='true'>$\LaTeX$</text><text> text</text>
   char <- gsub(
     pattern = inline_dollars_regex("full"),
-    replacement = "</text><text asis='true'>\\1</text><text>", 
+    replacement = "</text><text asis='true'>\\1</text><text>",
     x = char,
     perl = TRUE
   )
@@ -209,7 +209,7 @@ fix_fully_inline <- function(math) {
 #' This is useful in the case where we want to modify some text content to
 #' split it and label a portion of it 'asis' to protect it from commonmark's
 #' escape processing.
-#' 
+#'
 #' `fix_fully_inline()` uses `make_text_nodes()` to modify a single text node
 #' into several text nodes. It first takes a string of a single text node like
 #' below...
@@ -228,15 +228,15 @@ fix_fully_inline <- function(math) {
 #' The `make_text_nodes()` function takes the above text string and converts it
 #' into nodes so that the original text node can be replaced.
 #'
-#' @param a character vector of modified text nodes 
+#' @param a character vector of modified text nodes
 #' @return a nodeset with no associated namespace
 #' @noRd
 make_text_nodes <- function(txt) {
   # We are hijacking commonmark here to produce an XML markdown document with
   # a single element: {paste(txt, collapse = ''). This gets passed to glue where
-  # it is expanded into nodes that we can read in via {xml2}, strip the 
+  # it is expanded into nodes that we can read in via {xml2}, strip the
   # namespace, and extract all nodes below
-  doc <- glue::glue(commonmark::markdown_xml("{paste(txt, collapse = '')}")) 
+  doc <- glue::glue(commonmark::markdown_xml("{paste(txt, collapse = '')}"))
   nodes <- xml2::xml_ns_strip(xml2::read_xml(doc))
   xml2::xml_find_all(nodes, ".//paragraph/text/*")
 }
@@ -257,7 +257,7 @@ protect_block_math <- function(body, ns) {
   bm <- find_block_math(body, ns)
   # get all of the internal nodes
   bm <- xml2::xml_find_all(bm, ".//descendant-or-self::md:*", ns = ns)
-  set_asis(bm) 
+  set_asis(bm)
 }
 
 # TICK BOXES -------------------------------------------------------------------
@@ -298,7 +298,7 @@ fix_footnotes <- function(feet) {
   char <- as.character(feet)
   char <- gsub(
     pattern = "([\\[][\\^]|\\])",
-    replacement = "</text><text asis='true'>\\1</text><text>", 
+    replacement = "</text><text asis='true'>\\1</text><text>",
     x = char,
     perl = TRUE
   )
@@ -307,7 +307,7 @@ fix_footnotes <- function(feet) {
 
 protect_footnotes <- function(body, ns = md_ns()) {
   body <- copy_xml(body)
-  
+
   feet <- footnote_check(body, ns)
   if (length(feet) == 0) {
     return(body)
