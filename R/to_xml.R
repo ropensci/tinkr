@@ -54,7 +54,7 @@ to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = T
     body <- protect_tickbox(body, md_ns()) # nocov
   }
   if (unescaped && sourcepos) {
-    body <- protect_unescaped(body, splitted_content$body, offset = 0L)
+    body <- protect_unescaped(body, splitted_content$body)
   }
   if (anchor_links) {
     body <- resolve_anchor_links(body, splitted_content$body) 

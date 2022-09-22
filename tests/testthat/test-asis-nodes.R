@@ -81,8 +81,7 @@ test_that("documents with no math do no harm", {
 test_that("protect_unescaped() will throw a warning if no sourcpos is available", {
   x <- to_xml(m$path)
   expect_warning({
-    protect_unescaped(x$body, txt = readLines(m$path), offset = length(m$yaml),
-      "sourcepos")
+    protect_unescaped(x$body, txt = readLines(m$path)[-seq_along(m$yaml)], "sourcepos")
   })
 })
 
