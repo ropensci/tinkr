@@ -297,7 +297,10 @@ protect_tickbox <- function(body, ns) {
 #' To fix this, we dive back into the source document and find the brackets that
 #' were originally escaped and wrap those characters in protective tags so that
 #' they do not become escaped when the XML is written. This has the benefit of 
-#' protecting footnotes and reference style links for child documents.
+#' protecting footnotes and [reference style links](https://spec.commonmark.org/0.30/#reference-link) 
+#' that refer to link definitions in [child documents](https://bookdown.org/yihui/rmarkdown-cookbook/child-document.html)
+#' which are not included in the AST, and not recognised as links
+#' by default.
 #'
 #' @inheritParams resolve_anchor_links
 #' @param offset the offset in lines of the yaml header defaults to 0,
