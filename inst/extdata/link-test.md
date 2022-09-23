@@ -15,7 +15,7 @@ by reference][link4] and if links [can be referenced multiple times][this fun li
 
 This should also [include non-reference links](https://example.com/5)
 
-If you write \[some link text\]\[link2\], that will appear as [some link text][link2]
+If you [write]{.confession} \[some link text\]\[link2\], that will appear as [some link text][link2]
 but you can also [test][racehorse] [sub][sub-link1] [links][sub-link2]
 
 [pizza & icecream][pizzaicecream] = fun

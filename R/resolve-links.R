@@ -203,7 +203,7 @@ al_title <- function(link) {
 get_pos <- function(x, e = 1) {
   as.integer(
     gsub(
-      "^(\\d+?):(\\d+?)[-](\\d+?):(\\d)+?$",
+      "^(\\d+?):(\\d+?)[-](\\d+?):(\\d+?)$",
       glue::glue("\\{e}"),
       xml2::xml_attr(x, "sourcepos")
     )

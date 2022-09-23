@@ -178,6 +178,27 @@ yarn <- R6::R6Class("yarn",
     protect_curly = function() {
       self$body <- protect_curly(self$body, self$ns)
       invisible(self)
+    },
+    #' @description Protect unescaped square braces from being escaped.
+    #' 
+    #' This is applied by default when you use `yarn$new(sourcepos = TRUE)`.
+    #'
+    #' @note this requires the `sourcepos` attribute to be recorded when the
+    #'   object is initialised. See [protect_unescaped()] for details.
+    #'
+    #' @examples
+    #' path <- system.file("extdata", "basic-curly.md", package = "tinkr")
+    #' ex <- tinkr::yarn$new(path, sourcepos = TRUE, unescaped = FALSE)
+    #' ex$tail()
+    #' ex$protect_unescaped()$tail()
+    protect_unescaped = function() {
+      if (private$sourcepos) {
+        txt <- readLines(self$path)[-seq_along(self$yaml)]
+        self$body <- protect_unescaped(self$body, txt, self$ns)
+      } else {
+        message("to use the `protect_unescaped()` method, you will need to re-read your document with `yarn$new(sourcepos = TRUE)`")
+      }
+      invisible(self)
     }
   ),
   private = list(

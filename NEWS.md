@@ -1,5 +1,9 @@
 # tinkr (development version)
 
+* unescaped square braces from the source code can now make the roundtrip
+  without extra markup. This is implemented in a new default parameter for
+  `to_xml()` called `unescaped = TRUE`, which indicates that you would like
+  unescaped square braces to remain unescaped (#78). 
 * New `protect_curly()` function will add a `curly='true'` attribute to text wrapped in curly braces ('{', '}') to allow parsing of the XML for sending to external APIs. This function will also parse alt text and place it in an attribute.
 * New `$protect_curly()` method implements `protect_curly()` on yarn objects
 
