@@ -62,6 +62,25 @@ test_that("a yarn object can be written back to markdown", {
   expect_snapshot_file(scarf2)
 }) 
 
+
+test_that("protect_unescaped() throws a message if sourcepos is not available", {
+  path <- system.file("extdata", "basic-curly.md", package = "tinkr")
+  y1 <- yarn$new(path, sourcepos = FALSE)
+  expect_message(y1$protect_unescaped(), "sourcepos")
+})
+
+
+test_that("protect_unescaped() will work if the user implements it later", {
+  path <- system.file("extdata", "basic-curly.md", package = "tinkr")
+  y1 <- yarn$new(path, sourcepos = TRUE, unescaped = FALSE)
+  old <- y1$tail()
+  new <- y1$protect_unescaped()$tail()
+  expect_snapshot(writeLines(old))
+  expect_snapshot(writeLines(new))
+})
+
+
+
 test_that("a yarn object can be reset", {
 
   scarf1 <- withr::local_tempfile(fileext = "md")
