@@ -7,7 +7,7 @@
 #'   Defaults to `FALSE`.
 #' @param anchor_links if `TRUE` (default), reference-style links with anchors
 #'   (in the style of `[key]: https://example.com/link "title"`) will be 
-#'   preserved as best as possible. If this is `FASLE`, the anchors disappear
+#'   preserved as best as possible. If this is `FALSE`, the anchors disappear
 #'   and the links will appear as normal links. See [resolve_anchor_links()] for
 #'   details.
 #' @param unescaped if `TRUE` (default) AND `sourcepos = TRUE`, square braces
