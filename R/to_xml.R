@@ -6,7 +6,7 @@
 #'   source position of the file will be included as a "sourcepos" attribute.
 #'   Defaults to `FALSE`.
 #' @param anchor_links if `TRUE` (default), reference-style links with anchors
-#'   (in the style of `[key]: https://example.com/link "title"`) will be 
+#'   (in the style of `[key]: https://example.com/link "title"`) will be
 #'   preserved as best as possible. If this is `FALSE`, the anchors disappear
 #'   and the links will appear as normal links. See [resolve_anchor_links()] for
 #'   details.
@@ -17,7 +17,7 @@
 #'
 #' @return A list containing the YAML of the file (yaml)
 #'   and its body (body) as XML.
-#' 
+#'
 #' @details This function will take a (R)markdown file, split the yaml header
 #'   from the body, and read in the body through [commonmark::markdown_xml()].
 #'   Any RMarkdown code fences will be parsed to expose the chunk options in
@@ -90,7 +90,7 @@ transform_block <- function(code_block){
 
   code <- strsplit(xml2::xml_text(code_block), "\n")[[1]]
   inchunk_info <- knitr::partition_chunk("r", code)
-  xml2::xml_text(code_block) <- "code"
+  xml2::xml_text(code_block) <- inchunk_info$code
   inchunk_options <- inchunk_info$options
   names(inchunk_options) <- paste0(names(inchunk_options), "-inchunk")
   info <- c(info, inchunk_options)
