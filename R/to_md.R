@@ -125,4 +125,14 @@ to_info <- function(code_block){
  names(info) <- "info"
 
  xml2::xml_set_attr(code_block, "info", info)
+
+ inchunk_options < options[grepl("-inchunk$", options)]
+ # FIXME: probably some "to-yaml-ing" to do here!
+ inchunk_args <- sprintf("#| %s: %s", names(inchunk_options), inchunk_options)
+
+ xml2::xml_text(code_block) <- paste(
+   inchunk_args,
+   xml2::xml_text(code_block),
+   sep = "\n"
+ )
 }
