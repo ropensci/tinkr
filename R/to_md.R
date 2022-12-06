@@ -13,7 +13,7 @@
 #' the path to your XSL stylesheet as argument.
 #'
 #'
-#' @return the converted document, invisibly. 
+#' @return the converted document, invisibly.
 #'
 #' @export
 #'
@@ -106,19 +106,20 @@ to_info <- function(code_block){
  options <- attrs[!names(attrs) %in%
                   c("language", "name", "space", "sourcepos", "xmlns", "xmlns:xml")]
 
- if(length(options) > 0){
-   options <- glue::glue("{names(options)}={options}") %>%
+ outchunk_options <- options[grepl("-outchunk$", options)]
+ if(length(outchunk_options) > 0){
+   outchunk_options <- glue::glue("{names(outchunk_options)}={outchunk_options}") %>%
      glue::glue_collapse(sep = ", ")
-   options <- paste(",", options)
+   outchunk_options <- paste(",", outchunk_options)
  }else{
-   options <- ""
+   outchunk_options <- ""
  }
 
  if (attrs["name"] != ""){
    attrs["name"] <- paste0(" ", attrs["name"])
  }
 
- info <- glue::glue('{attrs["language"]}{attrs["name"]}{options}')
+ info <- glue::glue('{attrs["language"]}{attrs["name"]}{outchunk_options}')
  info <- paste0("{", info)
  info <- paste0(info, "}")
  names(info) <- "info"
