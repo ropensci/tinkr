@@ -106,7 +106,8 @@ to_info <- function(code_block){
  options <- attrs[!names(attrs) %in%
                   c("language", "name", "space", "sourcepos", "xmlns", "xmlns:xml")]
 
- outchunk_options <- options[grepl("-outchunk$", options)]
+ outchunk_options <- options[grepl("-outchunk$", names(options))]
+ names(outchunk_options) <- gsub("-outchunk$", "", names(outchunk_options))
  if(length(outchunk_options) > 0){
    outchunk_options <- glue::glue("{names(outchunk_options)}={outchunk_options}") %>%
      glue::glue_collapse(sep = ", ")
@@ -114,7 +115,6 @@ to_info <- function(code_block){
  }else{
    outchunk_options <- ""
  }
-
  if (attrs["name"] != ""){
    attrs["name"] <- paste0(" ", attrs["name"])
  }
@@ -126,8 +126,11 @@ to_info <- function(code_block){
 
  xml2::xml_set_attr(code_block, "info", info)
 
- inchunk_options < options[grepl("-inchunk$", options)]
+ inchunk_options < options[grepl("-inchunk$", names(options))]
+
+ names(inchunk_options) <- gsub("-inchunk$", "", names(inchunk_options))
  # FIXME: probably some "to-yaml-ing" to do here!
+browser()
  inchunk_args <- sprintf("#| %s: %s", names(inchunk_options), inchunk_options)
 
  xml2::xml_text(code_block) <- paste(
