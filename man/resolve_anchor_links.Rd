@@ -16,17 +16,21 @@ resolve_anchor_links(body, txt, ns = md_ns())
 }
 \description{
 \href{https://www.markdownguide.org/basic-syntax/#reference-style-links}{Reference style links and images}
-are a form of markdown syntax that reduces dupcliation and makes markdown
+are a form of markdown syntax that reduces duplication and makes markdown
 more readable. They come in two parts:
 \enumerate{
 \item The inline part that uses two pairs of square brackets where the second
 pair of square brackets contains the reference for the anchor part of the
-link. Example:\preformatted{[inline text describing link][link-reference]
-}
+link. Example:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{[inline text describing link][link-reference]
+}\if{html}{\out{</div>}}
 \item The anchor part, which can be anywhere in the document, contains a pair
 of square brackets followed by a colon and space with the link and
-optionally the link title. Example:\preformatted{[link-reference]: https://docs.ropensci.org/tinkr/ 'documentation for tinkr'
-}
+optionally the link title. Example:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{[link-reference]: https://docs.ropensci.org/tinkr/ 'documentation for tinkr'
+}\if{html}{\out{</div>}}
 }
 
 Commonmark treats reference-style links as regular links, which can be a
@@ -53,25 +57,29 @@ A link or image in XML is represented by a node with the following attributes
 \item title: an optional title for the link
 }
 
-For example, this markdown link \verb{[link text](https://example.com "example  link")} is represented in XML as text inside of a link node:\if{html}{\out{<div class="sourceCode r">}}\preformatted{lnk <- "[link text](https://example.com 'example link')"
+For example, this markdown link \verb{[link text](https://example.com "example  link")} is represented in XML as text inside of a link node:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{lnk <- "[link text](https://example.com 'example link')"
 xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
 cat(as.character(xml2::xml_find_first(xml, ".//d1:link")))
-}\if{html}{\out{</div>}}\preformatted{## <link destination="https://example.com" title="example link">
-##   <text xml:space="preserve">link text</text>
-## </link>
-}
+#> <link destination="https://example.com" title="example link">
+#>   <text xml:space="preserve">link text</text>
+#> </link>
+}\if{html}{\out{</div>}}
 
-However, reference-style links are rendered equivalently:\if{html}{\out{<div class="sourceCode r">}}\preformatted{lnk <- "
+However, reference-style links are rendered equivalently:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{lnk <- "
 [link text][link-ref]
 
 [link-ref]: https://example.com 'example link'
 "
 xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
 cat(as.character(xml2::xml_find_first(xml, ".//d1:link")))
-}\if{html}{\out{</div>}}\preformatted{## <link destination="https://example.com" title="example link">
-##   <text xml:space="preserve">link text</text>
-## </link>
-}
+#> <link destination="https://example.com" title="example link">
+#>   <text xml:space="preserve">link text</text>
+#> </link>
+}\if{html}{\out{</div>}}
 }
 
 \subsection{XML attributes of reference-style links}{
@@ -79,16 +87,20 @@ cat(as.character(xml2::xml_find_first(xml, ".//d1:link")))
 To preserve the anchor reference-style links, we search the source document
 for the destination attribute proceded by \verb{]: }, transform that information
 into a new link node with the \code{anchor} attribute, and add it to the end of
-the document. That node looks like this:\preformatted{<link destination="https://example.com" title="example link" anchor="true">
+the document. That node looks like this:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{<link destination="https://example.com" title="example link" anchor="true">
   <text>link-ref</text>
 </link>
-}
+}\if{html}{\out{</div>}}
 
 From there, we add the anchor text to the node that is present in our
-document as the \code{ref} attribute:\preformatted{<link destination="https://example.com" title="example link" rel="link-ref">
+document as the \code{ref} attribute:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{<link destination="https://example.com" title="example link" rel="link-ref">
   <text xml:space="preserve">link text</text>
 </link>
-}
+}\if{html}{\out{</div>}}
 }
 }
 \note{
@@ -98,8 +110,11 @@ this function is internally used in the function \code{\link[=to_xml]{to_xml()}}
 f <- system.file("extdata", "link-test.md", package = "tinkr")
 md <- yarn$new(f, sourcepos = TRUE, anchor_links = FALSE)
 md$show()
-lnks <- tinkr:::resolve_anchor_links(md$body, readLines(md$path))
+if (requireNamespace("withr")) {
+lnks <- withr::with_namespace("tinkr", 
+  resolve_anchor_links(md$body, readLines(md$path)))
 md$body <- lnks
 md$show()
+}
 }
 \keyword{internal}

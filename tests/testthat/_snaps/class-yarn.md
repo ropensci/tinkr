@@ -97,3 +97,27 @@
       blabla
       
 
+# protect_unescaped() will work if the user implements it later
+
+    Code
+      writeLines(old)
+    Output
+      ![a pretty puppy](https://placedog.net/200/300){#dog alt="a picture
+      of a dog"}
+      
+      \[a span with attributes\]{.span-with-attributes
+      style='color: red;'}
+      
+
+---
+
+    Code
+      writeLines(new)
+    Output
+      ![a pretty puppy](https://placedog.net/200/300){#dog alt="a picture
+      of a dog"}
+      
+      [a span with attributes]{.span-with-attributes
+      style='color: red;'}
+      
+

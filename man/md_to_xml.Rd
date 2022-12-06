@@ -16,7 +16,10 @@ an XML nodeset of the markdown text
 Convert markdown to XML
 }
 \examples{
-tinkr:::md_to_xml(c(
+if (requireNamespace("withr")) {
+
+withr::with_namespace("tinkr", {
+md_to_xml(c(
   "## This is a new section of markdown",
   "",
   "Each new element",
@@ -28,5 +31,8 @@ tinkr:::md_to_xml(c(
   "",
   "Neat, right?"
 ))
+})
+
+}
 }
 \keyword{internal}

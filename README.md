@@ -23,9 +23,10 @@ regular expressions. If these words mean nothing to you, see our list of
 
 Possible applications are R scripts using tinkr, and XPath via xml2 to:
 
--   change levels of headers, cf [this
-    script](inst/scripts/roweb2_headers.R) and [this pull request to
-    roweb2](https://github.com/ropensci/roweb2/pull/279);
+-   change levels of headers, cf [our `roweb2_headers.R`
+    script](https://github.com/ropensci/tinkr/blob/main/inst/scripts/roweb2_headers.R)
+    and [pull request \#279 to
+    roweb2](https://github.com/ropensci-archive/roweb2/pull/279);
 -   change chunk labels and options;
 -   extract all runnable code (including inline code);
 -   insert arbitrary Markdown elements;
@@ -37,9 +38,10 @@ Possible applications are R scripts using tinkr, and XPath via xml2 to:
 
 Only the body of the (R) Markdown file is cast to XML, using the
 Commonmark specification via the [`commonmark`
-package](https://github.com/jeroen/commonmark). YAML metadata could be
-edited using the [`yaml` package](https://github.com/viking/r-yaml),
-which is not the goal of this package.
+package](https://github.com/r-lib/commonmark). YAML metadata could be
+edited using the [`yaml`
+package](https://cran.r-project.org/package=yaml), which is not the goal
+of this package.
 
 We have created an [R6 class](https://r6.r-lib.org/) object called
 **yarn** to store the representation of both the YAML and the XML data,
@@ -236,8 +238,8 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly
 lossy because of Markdown syntax redundancy, so the loop from (R)md to
 R(md) via `to_xml` and `to_md` will be a bit lossy. For instance
 
--   lists can be created with either “+”, “-” or "\*“. When using
-    `tinkr`, the (R)md after editing will only use”-" for lists.
+-   lists can be created with either “+”, “-” or “\*“. When using
+    `tinkr`, the (R)md after editing will only use”-” for lists.
 
 -   Links built like `[word][smallref]` with a bottom anchor
     `[smallref]: URL` will have the anchor moved to the bottom of the
@@ -247,8 +249,8 @@ R(md) via `to_xml` and `to_md` will be a bit lossy. For instance
 
 -   [x] GitHub tickboxes are preserved (only for `yarn` objects)
 
--   Block quotes lines all get “&gt;” whereas in the input only the
-    first could have a “&gt;” at the beginning of the first line.
+-   Block quotes lines all get “\>” whereas in the input only the first
+    could have a “\>” at the beginning of the first line.
 
 -   For tables see the next subsection.
 
@@ -256,10 +258,10 @@ Such losses make your (R)md different, and the git diff a bit harder to
 parse, but should *not* change the documents your (R)md is rendered to.
 If it does, report a bug in the issue tracker!
 
-A solution to not loose your Markdown style, e.g. your preferring "\*"
+A solution to not loose your Markdown style, e.g. your preferring “\*”
 over “-” for lists is to tweak [our XSL
-stylesheet](inst/extdata/xml2md_gfm.xsl) and provide its filepath as
-`stylesheet_path` argument to `to_md`.
+stylesheet](https://github.com/ropensci/tinkr/blob/main/inst/stylesheets/xml2md_gfm.xsl)
+and provide its filepath as `stylesheet_path` argument to `to_md`.
 
 ### The special case of tables
 
@@ -276,7 +278,7 @@ commonmark’s desire to escape characters.
 However, if you have LaTeX equations that use either `$` or `$$` to
 delimit them, you can protect them from formatting changes with the
 `$protect_math()` method (for users of the `yarn` object) or the
-`protect_math()` funciton (for those using the output of `to_xml()`).
+`protect_math()` function (for those using the output of `to_xml()`).
 Below is a demonstration using the `yarn` object:
 
 ``` r
@@ -308,8 +310,8 @@ Note, however, that there are a few caveats for this:
     or a Burroughs-Wheeler Transformation demonstration), you must be
     sure to either use punctuation after the trailing dollar sign OR
     format the text as code. (i.e. `` `INKEY$` `` is good, but `INKEY$`
-    by itself is not good and will be interepreted as LaTeX code,
-    throwing an error:
+    by itself is not good and will be interpreted as LaTeX code,
+    throwing an error: ::: {.cell}
 
     ``` r
     path <- system.file("extdata", "basic-math.md", package = "tinkr")
@@ -342,6 +344,8 @@ Note, however, that there are a few caveats for this:
     #|  Give you $2 to ... 2$ verbally.
     #| We write $2 but ...
     ```
+
+    :::
 
 ## Meta
 

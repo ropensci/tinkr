@@ -1,11 +1,10 @@
-tmpdir <- withr::local_file("newdir")
-dir.create(tmpdir)
+tmpdir <- withr::local_tempdir("newdir")
 `%<%` <- magrittr::`%>%`
 
 test_that("to_md works without a file", {
 
   path <- system.file("extdata", "table.md", package = "tinkr")
-  stys <- system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")
+  stys <- system.file("stylesheets", "xml2md_gfm.xsl", package = "tinkr")
   stys <- xml2::read_xml(stys)
 
   yaml_xml_list <- to_xml(path)
@@ -24,7 +23,7 @@ test_that("to_md works without a file", {
 
 test_that("to_md fails if the stylesheet is not correct", {
   
-  tmp  <- withr::local_file("dummy.xml")
+  tmp  <- withr::local_tempfile(fileext = ".xml")
   path <- system.file("extdata", "table.md", package = "tinkr")
   yaml_xml_list <- to_xml(path)
   xml2::write_xml(yaml_xml_list$body, tmp)
@@ -42,7 +41,7 @@ test_that("to_md fails if the stylesheet is not correct", {
     "'stylesheet_path' must be a path to an XSL stylesheet")
   # xml document that is not a stylesheet
   expect_error(to_md(yaml_xml_list, stylesheet_path = tmp), 
-    "'dummy.xml' is not a valid stylesheet")
+    "'*.xml' is not a valid stylesheet")
   # file that doesn't exist
   expect_error(to_md(yaml_xml_list, stylesheet_path = "path/to/stylesheet.xsl"), 
     "The file 'path/to/stylesheet.xsl' does not exist.")
@@ -53,7 +52,7 @@ test_that("to_md fails if the stylesheet is not correct", {
 })
 
 test_that("to_md works", {
-  newmd  <- withr::local_file("to_md-newmd.md")
+  newmd  <- withr::local_file(file.path(tmpdir, "to_md-works.md"))
   path <- system.file("extdata", "example1.md", package = "tinkr")
 
   yaml_xml_list <- to_xml(path)
@@ -83,7 +82,7 @@ test_that("to_md works", {
 
 
 test_that("to_md works for Rmd", {
-  newmd <- withr::local_file("to_md-newmd.Rmd")
+  newmd <- withr::local_file(file.path(tmpdir, "to_md-works-for-Rmd.Rmd"))
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
 
   yaml_xml_list <- to_xml(path, sourcepos = TRUE)
@@ -126,7 +125,7 @@ test_that("to_md works for Rmd", {
 
 test_that("to_md does not break tables", {
   path <- system.file("extdata", "table.md", package = "tinkr")
-  newtable <- file.path(tmpdir, "table.md")
+  newtable <- withr::local_file(file.path(tmpdir, "table.md"))
 
   yaml_xml_list <- to_xml(path)
   to_md(yaml_xml_list, newtable)
@@ -163,4 +162,15 @@ test_that("code chunks can be inserted on round trip", {
   # Convert to markdown and re-test
   to_md(yaml_xml_list, newmd)
   expect_snapshot_file(newmd)
+})
+
+test_that("links that start lines are not escaped", {
+
+  expected <- "## Dataset\n\nThe data used:\n[data](https://example.com)\n"
+  math <- commonmark::markdown_xml(expected)
+  txt <- xml2::read_xml(math)
+  protxt <- protect_inline_math(txt, md_ns())
+  actual <- to_md(list(yaml = NULL, body = protxt))
+  expect_equal(actual, expected)
+
 })

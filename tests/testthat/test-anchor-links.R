@@ -13,7 +13,7 @@ test_that("users can turn off anchor links", {
 test_that("links can go round trip", {
   
   m <- yarn$new(f)
-  withr::local_file(tmp <- tempfile())
+  tmp <- withr::local_tempfile()
   m$write(tmp)
   mt <- yarn$new(tmp)
   expect_equal(m$show(), mt$show())

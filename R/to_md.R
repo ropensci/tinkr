@@ -46,6 +46,7 @@ to_md <- function(yaml_xml_list, path = NULL, stylesheet_path = stylesheet()){
   stylesheet <- read_stylesheet(stylesheet_path)
 
   transform_code_blocks(body)
+  remove_phantom_text(body)
 
   md_out <- transform_to_md(body, yaml, stylesheet)
 
@@ -63,6 +64,22 @@ transform_to_md <- function(body, yaml, stylesheet) {
   yaml <- glue::glue_collapse(yaml, sep = "\n")
 
   c(yaml, body)
+}
+
+# remove phantom text nodes that occur before links, images, and asis nodes that
+# would cause perfectly valid markdown to be escaped.
+remove_phantom_text <- function(body) {
+  # find the nodes we wish to protect. Append this list if there are any other
+  # surprises
+  # to_protect <- xml2::xml_find_all(body,
+  #   ".//md:link | .//md:image | .//md:text[@asis]", ns = md_ns())
+  # # find the nodes that precede these nodes with zero length text
+  to_sever <- xml2::xml_find_all(body,
+    ".//md:text[string-length(text())=0]", ns = md_ns())
+  if (length(to_sever)) {
+    xml2::xml_remove(to_sever)
+  }
+  invisible(body)
 }
 
 copy_xml <- function(xml) {

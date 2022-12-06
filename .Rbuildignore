@@ -7,5 +7,15 @@
 ^tinkr\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
-.ropensci-staff
+^README\.html$
 ^inst/presub\.md$
+^_pkgdown.yml$
+^cran-comments\.md$
+^CRAN-SUBMISSION$
+^inst/scripts/rmd_doc.*$
+^inst/scripts/test.md
+^inst/scripts/unknit.R
+^inst/scripts/xml_table.R
+^inst/scripts/samples.R
+^inst/extdata/bigsample.*$
+^inst/extdata/xml_table.xml$

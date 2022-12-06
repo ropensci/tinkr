@@ -62,22 +62,35 @@
     <xsl:text>&#10;</xsl:text>
     </xsl:template>
 
+    <xsl:template match="md:tasklist">
+      <xsl:apply-templates select="." mode="indent-block"/>
+      <xsl:choose>
+        <xsl:when test="@completed = 'true'">- [x]</xsl:when>
+        <xsl:when test="@completed = 'false'">- [ ]</xsl:when>
+      </xsl:choose>
+      <xsl:text> </xsl:text>
+      <xsl:apply-templates select="md:*"/>
+    </xsl:template>
+
+    <xsl:template match="md:item" mode="indent">
+      <xsl:text>  </xsl:text>
+    </xsl:template>
 
 
     <!-- Table -->
 
     <xsl:template match="md:table">
-        <xsl:apply-templates select="." mode="indent-block"/>
-        <xsl:apply-templates select="md:*"/>
+      <xsl:apply-templates select="." mode="indent-block"/>
+      <xsl:apply-templates select="md:*"/>
     </xsl:template>
 
     <xsl:variable name="minLength">3</xsl:variable>
 
     <xsl:variable name="maxLength">
-        <xsl:for-each select="//md:table_header/md:table_cell">
-            <xsl:variable name="pos" select="position()"/>
-            <!-- EXslt or XSLT 1.1 would be needed to lookup node-sets;
-                thus generating a string (something like CELL1:7|CELL2:5|CELL3:9|CELL4:8|) -->
+      <xsl:for-each select="//md:table_header/md:table_cell">
+        <xsl:variable name="pos" select="position()"/>
+          <!-- EXslt or XSLT 1.1 would be needed to lookup node-sets;
+          thus generating a string (something like CELL1:7|CELL2:5|CELL3:9|CELL4:8|) -->
             <xsl:text>CELL</xsl:text>
             <xsl:value-of select="$pos"/>
             <xsl:text>:</xsl:text>

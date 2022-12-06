@@ -4,7 +4,7 @@
 #'
 #' [Reference style links and
 #' images](https://www.markdownguide.org/basic-syntax/#reference-style-links)
-#' are a form of markdown syntax that reduces dupcliation and makes markdown
+#' are a form of markdown syntax that reduces duplication and makes markdown
 #' more readable. They come in two parts:
 #'
 #' 1. The inline part that uses two pairs of square brackets where the second
@@ -73,7 +73,7 @@
 #'
 #' ```{r, echo = FALSE, comment = NA}
 #' lnk <- "[link-ref]: https://example.com 'example link'"
-#' al <- tinkr:::build_anchor_links(lnk)
+#' al <- withr::with_namespace("tinkr", build_anchor_links(lnk))
 #' cat(as.character(xml2::xml_find_first(al, ".//link")))
 #' ```
 #' 
@@ -102,9 +102,12 @@
 #' f <- system.file("extdata", "link-test.md", package = "tinkr")
 #' md <- yarn$new(f, sourcepos = TRUE, anchor_links = FALSE)
 #' md$show()
-#' lnks <- tinkr:::resolve_anchor_links(md$body, readLines(md$path))
+#' if (requireNamespace("withr")) {
+#' lnks <- withr::with_namespace("tinkr", 
+#'   resolve_anchor_links(md$body, readLines(md$path)))
 #' md$body <- lnks
 #' md$show()
+#' }
 resolve_anchor_links <- function(body, txt, ns = md_ns()) {
   # copy the body so that we can recover from errors
   body <- copy_xml(body)
@@ -169,12 +172,21 @@ build_anchor_links <- function(link) {
 # Helpers for parsing anchor links:
 #
 #   [name]: dest 'title'
+
+escape_ampersand <- function(amp) {
+  # escape ampersands that are not valid code points, though this will still
+  # allow invalid code points, but it's better than nothing
+  gsub("[&](?![#]?[A-Za-z0-9]+?[;])", "&amp;", amp, perl = TRUE)
+}
+
 al_name <- function(link) {
-  sub("^[[\\[](.+?)[\\]]:\\s.+?$", "\\1", link, perl = TRUE)
+  res <- sub("^[[\\[](.+?)[\\]]:\\s.+?$", "\\1", link, perl = TRUE)
+  escape_ampersand(res)
 }
 
 al_dest <- function(link) {
-  sub("^[\\[].+?[\\]]:\\s([^\\s]+?)(\\s['\"]?.*?)?$", "\\1", link, perl = TRUE)
+  res <- sub("^[\\[].+?[\\]]:\\s([^\\s]+?)(\\s['\"]?.*?)?$", "\\1", link, perl = TRUE)
+  escape_ampersand(res)
 }
 
 al_title <- function(link) {
@@ -183,7 +195,7 @@ al_title <- function(link) {
   titles <- sub("^[\\[].+?[\\]]:\\s[^\\s]+?(\\s['\"](.*?)['\"])$", "\\2", 
     link, perl = TRUE)
   titles[titles == link] <- ""
-  titles
+  escape_ampersand(titles)
 }
 
 #nocov start
@@ -191,7 +203,7 @@ al_title <- function(link) {
 get_pos <- function(x, e = 1) {
   as.integer(
     gsub(
-      "^(\\d+?):(\\d+?)[-](\\d+?):(\\d)+?$",
+      "^(\\d+?):(\\d+?)[-](\\d+?):(\\d+?)$",
       glue::glue("\\{e}"),
       xml2::xml_attr(x, "sourcepos")
     )
