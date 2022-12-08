@@ -86,7 +86,9 @@ transform_block <- function(code_block){
   info <- transform_params(info)
   # This prevents partial code blocks that are still apparently valid: ```{r, }
   info <- info[names(info) != ""]
-  names(info)[names(info)!="language"] <- paste0(names(info)[names(info)!="language"], "-outchunk")
+
+  names(info)[!(names(info) %in% c("language", "name"))] <-
+    paste0(names(info)[!(names(info) %in% c("language", "name"))], "-outchunk")
 
   code <- strsplit(xml2::xml_text(code_block), "\n")[[1]]
   inchunk_info <- knitr::partition_chunk("r", code)

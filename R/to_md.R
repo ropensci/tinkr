@@ -97,7 +97,6 @@ transform_code_blocks <- function(xml){
   }
 
   # transform to info string
-  # if it had been parsed
   purrr::walk(code_blocks, to_info)
 }
 
@@ -115,6 +114,7 @@ to_info <- function(code_block){
  }else{
    outchunk_options <- ""
  }
+
  if (attrs["name"] != ""){
    attrs["name"] <- paste0(" ", attrs["name"])
  }
@@ -126,16 +126,15 @@ to_info <- function(code_block){
 
  xml2::xml_set_attr(code_block, "info", info)
 
- inchunk_options < options[grepl("-inchunk$", names(options))]
+ inchunk_options <- options[grepl("-inchunk$", names(options))]
 
  names(inchunk_options) <- gsub("-inchunk$", "", names(inchunk_options))
  # FIXME: probably some "to-yaml-ing" to do here!
-browser()
+
  inchunk_args <- sprintf("#| %s: %s", names(inchunk_options), inchunk_options)
 
  xml2::xml_text(code_block) <- paste(
-   inchunk_args,
-   xml2::xml_text(code_block),
-   sep = "\n"
+   c(inchunk_args, xml2::xml_text(code_block)),
+   collapse = "\n"
  )
 }
