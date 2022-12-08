@@ -106,22 +106,21 @@ to_info <- function(code_block){
       c("language", "name", "space", "sourcepos", "xmlns", "xmlns:xml")]
 
   outchunk_options <- options[grepl("-outchunk$", names(options))]
-  if(length(outchunk_options) > 0){
+  if (length(outchunk_options) > 0) {
     names(outchunk_options) <- gsub("-outchunk$", "", names(outchunk_options))
     outchunk_options <- glue::glue("{names(outchunk_options)}={outchunk_options}") %>%
       glue::glue_collapse(sep = ", ")
     outchunk_options <- paste(",", outchunk_options)
-  }else{
+  } else {
     outchunk_options <- ""
   }
 
-  if (attrs["name"] != ""){
+  if (attrs["name"] != "") {
     attrs["name"] <- paste0(" ", attrs["name"])
   }
 
   info <- glue::glue('{attrs["language"]}{attrs["name"]}{outchunk_options}')
-  info <- paste0("{", info)
-  info <- paste0(info, "}")
+  info <- sprintf("{%s}", info)
   names(info) <- "info"
 
   xml2::xml_set_attr(code_block, "info", info)
