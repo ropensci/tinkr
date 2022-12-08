@@ -11,6 +11,8 @@ output: html_document
 #| echo: FALSE
 #| fig.width: 10
 #| fig.cap: This is a long caption.
+
+plot(cars)
 ```
 
 

@@ -133,8 +133,8 @@ to_info <- function(code_block){
     inchunk_args <- sprintf("#| %s: %s", names(inchunk_options), inchunk_options)
 
     xml2::xml_text(code_block) <- paste(
-      c(inchunk_args, xml2::xml_text(code_block)),
-      collapse = "\n\n"
+      c(inchunk_args, "", xml2::xml_text(code_block)),
+      collapse = "\n"
     )
   }
 }
