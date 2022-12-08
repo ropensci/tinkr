@@ -126,7 +126,6 @@ to_info <- function(code_block){
   xml2::xml_set_attr(code_block, "info", info)
 
   inchunk_options <- options[grepl("-inchunk$", names(options))]
-
   if (length(inchunk_options) > 0) {
     names(inchunk_options) <- gsub("-inchunk$", "", names(inchunk_options))
     # FIXME: probably some "to-yaml-ing" to do here!
@@ -135,7 +134,7 @@ to_info <- function(code_block){
 
     xml2::xml_text(code_block) <- paste(
       c(inchunk_args, xml2::xml_text(code_block)),
-      collapse = "\n"
+      collapse = "\n\n"
     )
   }
 }
