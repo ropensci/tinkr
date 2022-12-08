@@ -90,7 +90,7 @@ transform_code_blocks <- function(xml){
   # Find all code blocks with a language attribute (those without it are not processed)
   code_blocks <- xml %>%
     xml2::xml_find_all(xpath = './/d1:code_block[@language]',
-                       xml2::xml_ns(.))
+      xml2::xml_ns(.))
 
   if(length(code_blocks) == 0){
     return(TRUE)
@@ -101,40 +101,42 @@ transform_code_blocks <- function(xml){
 }
 
 to_info <- function(code_block){
- attrs <- xml2::xml_attrs(code_block)
- options <- attrs[!names(attrs) %in%
-                  c("language", "name", "space", "sourcepos", "xmlns", "xmlns:xml")]
+  attrs <- xml2::xml_attrs(code_block)
+  options <- attrs[!names(attrs) %in%
+      c("language", "name", "space", "sourcepos", "xmlns", "xmlns:xml")]
 
- outchunk_options <- options[grepl("-outchunk$", names(options))]
- names(outchunk_options) <- gsub("-outchunk$", "", names(outchunk_options))
- if(length(outchunk_options) > 0){
-   outchunk_options <- glue::glue("{names(outchunk_options)}={outchunk_options}") %>%
-     glue::glue_collapse(sep = ", ")
-   outchunk_options <- paste(",", outchunk_options)
- }else{
-   outchunk_options <- ""
- }
+  outchunk_options <- options[grepl("-outchunk$", names(options))]
+  if(length(outchunk_options) > 0){
+    names(outchunk_options) <- gsub("-outchunk$", "", names(outchunk_options))
+    outchunk_options <- glue::glue("{names(outchunk_options)}={outchunk_options}") %>%
+      glue::glue_collapse(sep = ", ")
+    outchunk_options <- paste(",", outchunk_options)
+  }else{
+    outchunk_options <- ""
+  }
 
- if (attrs["name"] != ""){
-   attrs["name"] <- paste0(" ", attrs["name"])
- }
+  if (attrs["name"] != ""){
+    attrs["name"] <- paste0(" ", attrs["name"])
+  }
 
- info <- glue::glue('{attrs["language"]}{attrs["name"]}{outchunk_options}')
- info <- paste0("{", info)
- info <- paste0(info, "}")
- names(info) <- "info"
+  info <- glue::glue('{attrs["language"]}{attrs["name"]}{outchunk_options}')
+  info <- paste0("{", info)
+  info <- paste0(info, "}")
+  names(info) <- "info"
 
- xml2::xml_set_attr(code_block, "info", info)
+  xml2::xml_set_attr(code_block, "info", info)
 
- inchunk_options <- options[grepl("-inchunk$", names(options))]
+  inchunk_options <- options[grepl("-inchunk$", names(options))]
 
- names(inchunk_options) <- gsub("-inchunk$", "", names(inchunk_options))
- # FIXME: probably some "to-yaml-ing" to do here!
+  if (length(inchunk_options) > 0) {
+    names(inchunk_options) <- gsub("-inchunk$", "", names(inchunk_options))
+    # FIXME: probably some "to-yaml-ing" to do here!
 
- inchunk_args <- sprintf("#| %s: %s", names(inchunk_options), inchunk_options)
+    inchunk_args <- sprintf("#| %s: %s", names(inchunk_options), inchunk_options)
 
- xml2::xml_text(code_block) <- paste(
-   c(inchunk_args, xml2::xml_text(code_block)),
-   collapse = "\n"
- )
+    xml2::xml_text(code_block) <- paste(
+      c(inchunk_args, xml2::xml_text(code_block)),
+      collapse = "\n"
+    )
+  }
 }

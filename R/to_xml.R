@@ -94,8 +94,11 @@ transform_block <- function(code_block){
   inchunk_info <- knitr::partition_chunk("r", code)
   xml2::xml_text(code_block) <- inchunk_info$code
   inchunk_options <- inchunk_info$options
-  names(inchunk_options) <- paste0(names(inchunk_options), "-inchunk")
-  info <- c(info, inchunk_options)
+
+  if (length(inchunk_options) > 0) {
+    names(inchunk_options) <- paste0(names(inchunk_options), "-inchunk")
+    info <- c(info, inchunk_options)
+  }
 
   xml2::xml_set_attr(code_block, "info", NULL)
   # preserve the original non-info attributes (e.g. sourcepos)
