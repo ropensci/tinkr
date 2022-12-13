@@ -127,10 +127,11 @@ to_info <- function(code_block){
 
   inchunk_options <- options[grepl("-inchunk$", names(options))]
   if (length(inchunk_options) > 0) {
+    # FIXME: less quoting
     names(inchunk_options) <- gsub("-inchunk$", "", names(inchunk_options))
-    # FIXME: probably some "to-yaml-ing" to do here!
-
-    inchunk_args <- sprintf("#| %s: %s", names(inchunk_options), inchunk_options)
+    inchunk_options <- yaml::as.yaml(as.list(inchunk_options))
+    inchunk_options <- strsplit(inchunk_options, split = "\n")[[1]]
+    inchunk_args <- paste("#|", inchunk_options)
 
     xml2::xml_text(code_block) <- paste(
       c(inchunk_args, "", xml2::xml_text(code_block)),
