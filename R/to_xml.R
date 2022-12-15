@@ -95,10 +95,13 @@ transform_block <- function(code_block){
   xml2::xml_text(code_block) <- paste0(inchunk_info$code, "\n")
   inchunk_options <- inchunk_info$options
 
-  if (length(inchunk_options) > 0) {
-    names(inchunk_options) <- paste0(names(inchunk_options), "-inchunk")
-    info <- c(info, inchunk_options)
+  inchunk_options <- if (length(inchunk_options) > 0) {
+    yaml::as.yaml(inchunk_options)
+  } else {
+    ""
   }
+
+  info <- c(info, inchunk_options = inchunk_options)
 
   xml2::xml_set_attr(code_block, "info", NULL)
   # preserve the original non-info attributes (e.g. sourcepos)
