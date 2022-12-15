@@ -6,7 +6,7 @@ test_that("can parse inside chunk options", {
       xml2::xml_ns(.))
   expect_setequal(
     names(xml2::xml_attrs(code_chunks[[1]])),
-    c("space", "language", "name", "message-outchunk", "inchunk_options")
+    c("space", "language", "name", "thing-outchunk", "message-outchunk", "inchunk_options")
   )
   expect_setequal(
     names(xml2::xml_attrs(code_chunks[[2]])),

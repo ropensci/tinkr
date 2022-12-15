@@ -7,7 +7,7 @@ output: html_document
 
 ## R Markdown
 
-```{r, message=FALSE}
+```{r, message=FALSE, thing=c(1, 2)}
 #| echo: no
 #| fig.width: 10.0
 #| fig.cap: This is a long caption.
