@@ -126,7 +126,7 @@ to_info <- function(code_block){
   xml2::xml_set_attr(code_block, "info", info)
 
   inchunk_options <- attrs["inchunk_options"]
-  if (nzchar(inchunk_options)) {
+  if (!is.na(inchunk_options) && nzchar(inchunk_options)) {
     inchunk_args <- paste("#|", strsplit(inchunk_options, "\n")[[1]])
 
     xml2::xml_text(code_block) <- paste(

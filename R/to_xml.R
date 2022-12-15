@@ -95,7 +95,7 @@ transform_block <- function(code_block){
   xml2::xml_text(code_block) <- paste0(inchunk_info$code, "\n")
   inchunk_options <- inchunk_info$options
 
-  inchunk_options <- if (length(inchunk_options) > 0) {
+  inchunk_options <- if (!is.null(inchunk_options) > 0) {
     yaml::as.yaml(inchunk_options)
   } else {
     ""
