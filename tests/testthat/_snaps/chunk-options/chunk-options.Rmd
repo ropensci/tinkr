@@ -26,6 +26,8 @@ This is a chunk for julia that has nested options, which would appear as R objec
 #| layout-ncol: 2
 
 using Plots
+display(plot(sin, x -> sin(2x), 0, 2))
+display(plot(x -> sin(4x), y -> sin(5y), 0, 2))
 ```
 
 
