@@ -92,7 +92,7 @@ transform_block <- function(code_block){
 
   code <- strsplit(xml2::xml_text(code_block), "\n")[[1]]
   inchunk_info <- knitr::partition_chunk(info[["language"]], code)
-  xml2::xml_text(code_block) <- paste0(inchunk_info$code, "\n")
+  xml2::xml_text(code_block) <- paste0(paste(inchunk_info$code, collapse = "\n"), "\n")
   inchunk_options <- inchunk_info$options
 
   inchunk_options <- if (!is.null(inchunk_options) > 0) {
