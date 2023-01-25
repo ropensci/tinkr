@@ -45,7 +45,7 @@
     <xsl:template match="md:link[@anchor]">
       <xsl:if test="self::md:image">!</xsl:if>
       <xsl:text>[</xsl:text>
-      <xsl:apply-templates select="md:*"/>
+      <xsl:value-of select='string(.)'/>
       <xsl:text>]: </xsl:text>
       <xsl:call-template name="escape-text">
           <xsl:with-param name="text" select="string(@destination)"/>
