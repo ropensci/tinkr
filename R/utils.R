@@ -93,7 +93,7 @@ parse_params <- function(params) {
 parse_label <- function(label) {
 
   language_name <- str_replace(label, " ", "\\/")
-  language_name <- str_split(language_name, "\\/", simplify = TRUE)
+  language_name <- str_split(language_name, "\\/")
 
   if(ncol(language_name) == 1){
     list(language = trimws(language_name[1, 1]),
