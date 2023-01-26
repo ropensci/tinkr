@@ -10,11 +10,11 @@ str_remove <- function(string, pattern) {
 }
 
 str_replace <- function(string, pattern, replacement) {
-  sub(pattern, string, replacement)
+  sub(pattern, replacement, string)
 }
 
 str_replace_all <- function(string, pattern, replacement) {
-  gsub(pattern, string, replacement)
+  gsub(pattern, replacement, string)
 }
 
 str_detect <- function(string, pattern) {
