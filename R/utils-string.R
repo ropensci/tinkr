@@ -9,8 +9,12 @@ str_remove <- function(string, pattern) {
   sub(pattern, "", string)
 }
 
+str_replace <- function(string, pattern, replacement) {
+  sub(pattern, string, replacement)
+}
+
 str_replace_all <- function(string, pattern, replacement) {
-  gsub(pattern, replacement, string)
+  gsub(pattern, string, replacement)
 }
 
 str_detect <- function(string, pattern) {
