@@ -6,6 +6,7 @@
   unescaped square braces to remain unescaped (#78). 
 * New `protect_curly()` function will add a `curly='true'` attribute to text wrapped in curly braces ('{', '}') to allow parsing of the XML for sending to external APIs. This function will also parse alt text and place it in an attribute.
 * New `$protect_curly()` method implements `protect_curly()` on yarn objects
+* Relative link anchor keys will no longer have characters escaped (#85).
 
 # tinkr 0.1.0
 

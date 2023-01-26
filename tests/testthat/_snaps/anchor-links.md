@@ -20,7 +20,7 @@
       This should also [include non-reference links](https://example.com/5)
       
       If you [write]{.confession} \[some link text\]\[link2\], that will appear as [some link text][link2]
-      but you can also [test][racehorse] [sub][sub-link1] [links][sub-link2]
+      but you can also [test][racehorse] [sub][sub-link1] [links][sub_link2]
       
       [pizza \& icecream][pizzaicecream] = fun
       
@@ -49,7 +49,7 @@
       [link2]: https://example.com/2 "link with title!"
       [racehorse]: https://example.com/racehorse/
       [sub-link1]: https://example.com/racehorse/1/1 "One One Won One"
-      [sub-link2]: https://example.com/racehorse/2/2/ "Two Two Won One Two"
+      [sub_link2]: https://example.com/racehorse/2/2/ "Two Two Won One Two"
       [pizzaicecream]: https://example.com/pizza&icecream
       [standalone]: https://example.com/standalone
       
