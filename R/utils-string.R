@@ -5,7 +5,7 @@ str_remove_all <- function(string, pattern) {
   gsub(pattern, "", string)
 }
 
-str_remove <- function(x, pattern) {
+str_remove <- function(string, pattern) {
   sub(pattern, "", string)
 }
 
