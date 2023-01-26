@@ -42,7 +42,6 @@ Imports:
     magrittr,
     purrr,
     R6,
-    stringr,
     xml2,
     xslt,
     yaml

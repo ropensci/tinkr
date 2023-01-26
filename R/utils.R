@@ -10,7 +10,7 @@ unbalanced_math_error <- function(bmath, endless, headless, le, lh) {
     Inline math delimiters are not balanced.
 
     HINT: If you are writing BASIC code, make sure you wrap variable
-          names and code in backtics like so: `INKEY$`. 
+          names and code in backtics like so: `INKEY$`.
 
     Below are the pairs that were found:"
   )
@@ -63,7 +63,7 @@ transform_params <- function(params) {
   params_list <- try(parse_params(params), silent = TRUE)
 
   if (inherits(params_list, "try-error")) {
-    params <- stringr::str_replace(params, " ", ", ")
+    params <- str_replace(params, " ", ", ")
     params_list <- parse_params(params)
   }
 
@@ -92,8 +92,8 @@ parse_params <- function(params) {
 
 parse_label <- function(label) {
 
-  language_name <- stringr::str_replace(label, " ", "\\/")
-  language_name <- stringr::str_split(language_name, "\\/", simplify = TRUE)
+  language_name <- str_replace(label, " ", "\\/")
+  language_name <- str_split(language_name, "\\/", simplify = TRUE)
 
   if(ncol(language_name) == 1){
     list(language = trimws(language_name[1, 1]),
