@@ -95,12 +95,16 @@ parse_label <- function(label) {
   language_name <- str_replace(label, " ", "\\/")
   language_name <- str_split(language_name, "\\/")
 
-  if(ncol(language_name) == 1){
-    list(language = trimws(language_name[1, 1]),
-         name = "")
-  }else{
-    list(language = trimws(language_name[1, 1]),
-         name = trimws(language_name[1, 2]))
+  if (length(language_name) == 1) {
+    list(
+      language = trimws(language_name[1]),
+      name = ""
+    )
+  } else {
+    list(
+      language = trimws(language_name[1]),
+      name = trimws(language_name[2])
+    )
   }
 }
 

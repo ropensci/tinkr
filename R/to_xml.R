@@ -102,6 +102,5 @@ parse_rmd <- function(body){
     xml2::xml_find_all(xpath = './/d1:code_block',
                        xml2::xml_ns(.))
 
-  purrr::walk(code_blocks,
-              transform_block)
+  purrr::walk(code_blocks, transform_block)
 }
