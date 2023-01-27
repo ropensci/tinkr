@@ -1,5 +1,7 @@
 # tinkr (development version)
 
+* removed dependency on stringr in favor of base R functions wrapped in internal 
+  functions with a stringr-like interface (#88).
 * unescaped square braces from the source code can now make the roundtrip
   without extra markup. This is implemented in a new default parameter for
   `to_xml()` called `unescaped = TRUE`, which indicates that you would like

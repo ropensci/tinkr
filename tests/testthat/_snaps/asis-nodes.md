@@ -3,7 +3,7 @@
     Inline math delimiters are not balanced.
     
     HINT: If you are writing BASIC code, make sure you wrap variable
-          names and code in backtics like so: `INKEY$`. 
+          names and code in backtics like so: `INKEY$`.
     
     Below are the pairs that were found:
                start...end
