@@ -61,7 +61,9 @@ to_md <- function(yaml_xml_list, path = NULL, stylesheet_path = stylesheet()){
 transform_to_md <- function(body, yaml, stylesheet) {
   body <- xslt::xml_xslt(body, stylesheet = stylesheet)
 
-  yaml <- glue::glue_collapse(yaml, sep = "\n")
+  if (length(yaml) > 0) {
+    yaml <- glue::glue_collapse(yaml, sep = "\n")
+  }
 
   c(yaml, body)
 }
