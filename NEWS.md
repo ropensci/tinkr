@@ -2,8 +2,10 @@
 
 ## BUG FIX
 
-* empty YAML will not prepend with newline in {glue} (> 1.6.2). 
+* Empty YAML will not prepend with newline in {glue} (> 1.6.2). 
   (#93, @jennybc)
+- Relative links whose text and anchor key are identical (e.g. footnotes) are
+  no longer doubled in the output document (issue: #92, fix: #94)
 
 ## NEW FEATURES
 
