@@ -1,5 +1,23 @@
 f <- system.file("extdata", "link-test.md", package = "tinkr")
 
+
+test_that("anchor links with duplicate id and text are not doubled", {
+  # https://github.com/ropensci/tinkr/issues/92
+  lines <- c("[thing]", "lala[^1] blabla", "", "[thing]: what", "[^1]: pof")
+
+  temp_file <- withr::local_tempfile()
+  writeLines(lines, temp_file)
+
+  res <- tinkr::yarn$new(temp_file)$show()
+  expect_equal(res[res != ""], lines[lines != ""])
+  #> [thing] lala[^1] blabla
+  #> 
+  #> [thing]: what
+  #> [^1]: pof
+
+})
+
+
 test_that("anchored links are processed by default", {
   m <- yarn$new(f, sourcepos = TRUE)
   expect_snapshot(show_user(m$show(), force = TRUE))

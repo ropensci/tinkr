@@ -1,14 +1,29 @@
-# tinkr (development version)
+# tinkr 0.2.0 
 
-* removed dependency on stringr in favor of base R functions wrapped in internal 
-  functions with a stringr-like interface (#88).
+## BUG FIX
+
+* Empty YAML will not prepend with newline in {glue} (> 1.6.2). 
+  (#93, @jennybc)
+- Relative links whose text and anchor key are identical (e.g. footnotes) are
+  no longer doubled in the output document (issue: #92, fix: #94)
+
+## NEW FEATURES
+
+* New `protect_curly()` function will add a `curly='true'` attribute to text
+  wrapped in curly braces ('{', '}') to allow parsing of the XML for sending to
+  external APIs. This function will also parse alt text and place it in an
+  attribute.
+* New `$protect_curly()` method implements `protect_curly()` on yarn objects
+* Relative link anchor keys will no longer have characters escaped (#85).
 * unescaped square braces from the source code can now make the roundtrip
   without extra markup. This is implemented in a new default parameter for
   `to_xml()` called `unescaped = TRUE`, which indicates that you would like
   unescaped square braces to remain unescaped (#78). 
-* New `protect_curly()` function will add a `curly='true'` attribute to text wrapped in curly braces ('{', '}') to allow parsing of the XML for sending to external APIs. This function will also parse alt text and place it in an attribute.
-* New `$protect_curly()` method implements `protect_curly()` on yarn objects
-* Relative link anchor keys will no longer have characters escaped (#85).
+
+## DEPENDENCY UPDATE
+
+* removed dependency on stringr in favor of base R functions wrapped in internal 
+  functions with a stringr-like interface (#88).
 
 # tinkr 0.1.0
 

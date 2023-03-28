@@ -33,7 +33,7 @@
       
       ## This is some extended markdown content {#extended .callout}
       
-      This should also include references that use [standalone][standalone] links and
+      This should also include references that use [standalone] links and
       footnotes should not be properly parsed and will be considered 'asis' nodes,
       at least that's what I *believe*[^footy]. Maybe this might not pan out [^but who
       knows? footnotes are **WEIRD**, man].

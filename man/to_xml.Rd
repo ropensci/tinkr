@@ -23,12 +23,12 @@ Defaults to \code{FALSE}.}
 
 \item{anchor_links}{if \code{TRUE} (default), reference-style links with anchors
 (in the style of \verb{[key]: https://example.com/link "title"}) will be
-preserved as best as possible. If this is \code{FASLE}, the anchors disappear
+preserved as best as possible. If this is \code{FALSE}, the anchors disappear
 and the links will appear as normal links. See \code{\link[=resolve_anchor_links]{resolve_anchor_links()}} for
 details.}
 
 \item{unescaped}{if \code{TRUE} (default) AND \code{sourcepos = TRUE}, square braces
-that were unescaped in the original document will be presered as best as
+that were unescaped in the original document will be preserved as best as
 possible. If this is \code{FALSE}, these braces will be escaped in the output
 document. See \code{\link[=protect_unescaped]{protect_unescaped()}} for details.}
 }
