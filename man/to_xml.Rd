@@ -28,7 +28,7 @@ and the links will appear as normal links. See \code{\link[=resolve_anchor_links
 details.}
 
 \item{unescaped}{if \code{TRUE} (default) AND \code{sourcepos = TRUE}, square braces
-that were unescaped in the original document will be presered as best as
+that were unescaped in the original document will be preserved as best as
 possible. If this is \code{FALSE}, these braces will be escaped in the output
 document. See \code{\link[=protect_unescaped]{protect_unescaped()}} for details.}
 }

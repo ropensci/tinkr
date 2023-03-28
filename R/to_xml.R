@@ -11,7 +11,7 @@
 #'   and the links will appear as normal links. See [resolve_anchor_links()] for
 #'   details.
 #' @param unescaped if `TRUE` (default) AND `sourcepos = TRUE`, square braces
-#'   that were unescaped in the original document will be presered as best as
+#'   that were unescaped in the original document will be preserved as best as
 #'   possible. If this is `FALSE`, these braces will be escaped in the output
 #'   document. See [protect_unescaped()] for details.
 #'
