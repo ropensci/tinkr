@@ -23,7 +23,7 @@ Defaults to \code{FALSE}.}
 
 \item{anchor_links}{if \code{TRUE} (default), reference-style links with anchors
 (in the style of \verb{[key]: https://example.com/link "title"}) will be
-preserved as best as possible. If this is \code{FASLE}, the anchors disappear
+preserved as best as possible. If this is \code{FALSE}, the anchors disappear
 and the links will appear as normal links. See \code{\link[=resolve_anchor_links]{resolve_anchor_links()}} for
 details.}
 
