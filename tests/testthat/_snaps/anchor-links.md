@@ -101,3 +101,17 @@
       should be preserved
       
 
+# footnotes square brackets are not escaped
+
+    Code
+      cat(tinkr::yarn$new(temp_file, anchor_links = TRUE)$head())
+    Output
+      something\[^1\] nice anything\[^ouch\] good  \[^1\]: a thing \[^ouch\]: another thing 
+
+---
+
+    Code
+      cat(tinkr::yarn$new(temp_file, anchor_links = FALSE)$head())
+    Output
+      something\[^1\] nice anything\[^ouch\] good  \[^1\]: a thing \[^ouch\]: another thing 
+
