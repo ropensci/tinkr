@@ -63,7 +63,7 @@ test_that("singluar nodes can be added to the body", {
 test_that("footnotes square brackets are not escaped", {
   lines <- c(
     "something[^1] nice", "anything[^ouch] good", "", "",
-    "[^1]: athing", "[^ouch]: anotherthing"
+    "[^1]: a thing", "[^ouch]: another thing"
     )
   temp_file <- withr::local_tempfile()
   writeLines(lines, temp_file)
