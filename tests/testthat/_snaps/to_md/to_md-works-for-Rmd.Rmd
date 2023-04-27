@@ -33,7 +33,7 @@ plot(pressure)
 
 Non-RMarkdown blocks are also considered
 
-```{julia, info=bash}
+```{julia}
 echo "this is an unevaluted bash block"
 ```
 

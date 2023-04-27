@@ -13,7 +13,7 @@
 #' the path to your XSL stylesheet as argument.
 #'
 #'
-#' @return the converted document, invisibly. 
+#' @return the converted document, invisibly.
 #'
 #' @export
 #'
@@ -92,38 +92,48 @@ transform_code_blocks <- function(xml){
   # Find all code blocks with a language attribute (those without it are not processed)
   code_blocks <- xml %>%
     xml2::xml_find_all(xpath = './/d1:code_block[@language]',
-                       xml2::xml_ns(.))
+      xml2::xml_ns(.))
 
   if(length(code_blocks) == 0){
     return(TRUE)
   }
 
   # transform to info string
-  # if it had been parsed
   purrr::walk(code_blocks, to_info)
 }
 
 to_info <- function(code_block){
- attrs <- xml2::xml_attrs(code_block)
- options <- attrs[!names(attrs) %in%
-                  c("language", "name", "space", "sourcepos", "xmlns", "xmlns:xml")]
+  attrs <- xml2::xml_attrs(code_block)
+  options <- attrs[!names(attrs) %in%
+      c("language", "name", "space", "sourcepos", "xmlns", "xmlns:xml")]
 
- if(length(options) > 0){
-   options <- glue::glue("{names(options)}={options}") %>%
-     glue::glue_collapse(sep = ", ")
-   options <- paste(",", options)
- }else{
-   options <- ""
- }
+  outchunk_options <- options[grepl("-outchunk$", names(options))]
+  if (length(outchunk_options) > 0) {
+    names(outchunk_options) <- gsub("-outchunk$", "", names(outchunk_options))
+    outchunk_options <- glue::glue("{names(outchunk_options)}={outchunk_options}") %>%
+      glue::glue_collapse(sep = ", ")
+    outchunk_options <- paste(",", outchunk_options)
+  } else {
+    outchunk_options <- ""
+  }
 
- if (attrs["name"] != ""){
-   attrs["name"] <- paste0(" ", attrs["name"])
- }
+  if (attrs["name"] != "") {
+    attrs["name"] <- paste0(" ", attrs["name"])
+  }
 
- info <- glue::glue('{attrs["language"]}{attrs["name"]}{options}')
- info <- paste0("{", info)
- info <- paste0(info, "}")
- names(info) <- "info"
+  info <- glue::glue('{attrs["language"]}{attrs["name"]}{outchunk_options}')
+  info <- sprintf("{%s}", info)
+  names(info) <- "info"
 
- xml2::xml_set_attr(code_block, "info", info)
+  xml2::xml_set_attr(code_block, "info", info)
+
+  inchunk_options <- attrs["inchunk_options"]
+  if (!is.na(inchunk_options) && nzchar(inchunk_options)) {
+    inchunk_args <- paste("#|", strsplit(inchunk_options, "\n")[[1]])
+
+    xml2::xml_text(code_block) <- paste(
+      c(inchunk_args, "", xml2::xml_text(code_block)),
+      collapse = "\n"
+    )
+  }
 }

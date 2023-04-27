@@ -1,0 +1,33 @@
+---
+title: "Untitled"
+author: "M. Salmon"
+date: "September 6, 2018"
+output: html_document
+---
+
+## R Markdown
+
+```{r, message=FALSE, thing=c(1, 2)}
+#| echo: no
+#| fig.width: 10.0
+#| fig.cap: This is a long caption.
+
+plot(cars)
+```
+
+This is a chunk for julia that has nested options, which would appear as R objects in a normal chunk.
+
+```{julia}
+#| label: fig-plots
+#| fig.cap: Multiple Plots
+#| fig.alt:
+#| - 'A blue arc: labelled as y1 that starts at 0,0 and ends at 0.9,-0.75'
+#| - 'A blue curve: labelled as y1 twisted like a pretzel'
+#| layout-ncol: 2
+
+using Plots
+display(plot(sin, x -> sin(2x), 0, 2))
+display(plot(x -> sin(4x), y -> sin(5y), 0, 2))
+```
+
+

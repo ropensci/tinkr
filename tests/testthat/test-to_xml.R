@@ -28,11 +28,11 @@ test_that("to_xml will not convert numeric options to character", {
   con <- textConnection(txt)
   code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
   attrs <- xml2::xml_attrs(code)
-  expect_equal(attrs[["fig.width"]], "4.2") 
-  expect_equal(attrs[["fig.height"]], "4.2") 
+  expect_equal(attrs[["fig.width-outchunk"]], "4.2")
+  expect_equal(attrs[["fig.height-outchunk"]], "4.2")
   # out.width is the only one that's quoted
-  expect_equal(attrs[["out.width"]], shQuote("100%", type = "cmd"))
-  expect_equal(attrs[["purl"]], "TRUE")
+  expect_equal(attrs[["out.width-outchunk"]], shQuote("100%", type = "cmd"))
+  expect_equal(attrs[["purl-outchunk"]], "TRUE")
   expect_equal(attrs[["name"]], "txt")
 })
 
@@ -44,8 +44,8 @@ test_that("to_xml will not convert chunk options as r objects to character", {
   code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
   attrs <- xml2::xml_attrs(code)
   expect_equal(attrs[["name"]], "txt")
-  expect_equal(attrs[["R.options"]], "list(width = 100)")
-  expect_equal(attrs[["eval"]], "eval_param")
+  expect_equal(attrs[["R.options-outchunk"]], "list(width = 100)")
+  expect_equal(attrs[["eval-outchunk"]], "eval_param")
 
 })
 
@@ -56,9 +56,9 @@ test_that("to_xml will respect logicals for custom chunk options", {
   code <- xml2::xml_find_first(to_xml(con)$body, "d1:code_block")
   attrs <- xml2::xml_attrs(code)
   expect_equal(attrs[["name"]], "txt")
-  expect_equal(attrs[["coffee"]], "TRUE")
-  expect_equal(attrs[["tea"]], "FALSE")
-  expect_equal(attrs[["fun"]], shQuote("pizza+icecream", type = "cmd"))
+  expect_equal(attrs[["coffee-outchunk"]], "TRUE")
+  expect_equal(attrs[["tea-outchunk"]], "FALSE")
+  expect_equal(attrs[["fun-outchunk"]], shQuote("pizza+icecream", type = "cmd"))
 
 })
 
@@ -96,6 +96,6 @@ test_that("to_xml works with sourcepos for Rmd", {
   expect_match(xml2::xml_attr(first_block, "sourcepos"), "^\\d+?:\\d+?-\\d+?:\\d+$")
   expect_match(xml2::xml_attr(first_block, "language"), "r")
   expect_match(xml2::xml_attr(first_block, "name"), "setup")
-  expect_match(xml2::xml_attr(first_block, "include"), "FALSE")
-  expect_match(xml2::xml_attr(first_block, "eval"), "TRUE")
+  expect_match(xml2::xml_attr(first_block, "include-outchunk"), "FALSE")
+  expect_match(xml2::xml_attr(first_block, "eval-outchunk"), "TRUE")
 })
