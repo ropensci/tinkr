@@ -1,4 +1,3 @@
-
 test_that("str_replace_all() replaces all", {
   txt <- "I have a tall order and a tall tale"
   expects <- "I have a short order and a short tale"
