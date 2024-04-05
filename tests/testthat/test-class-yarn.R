@@ -1,7 +1,3 @@
-pathmd  <- system.file("extdata", "example1.md", package = "tinkr")
-pathrmd <- system.file("extdata", "example2.Rmd", package = "tinkr")
-`%<%` <- magrittr::`%>%`
-
 test_that("an empty yarn object can be created", {
   y1 <- yarn$new()
   expect_s3_class(y1, "yarn")
@@ -13,6 +9,7 @@ test_that("an empty yarn object can be created", {
 
 
 test_that("yarn can be created from markdown", {
+  pathmd  <- system.file("extdata", "example1.md", package = "tinkr")
   y1 <- yarn$new(pathmd)
   t1 <- to_xml(pathmd)
   expect_s3_class(y1, "yarn")
@@ -22,10 +19,10 @@ test_that("yarn can be created from markdown", {
 })
 
 test_that("yarn show, head, and tail methods work", {
-
+  pathrmd <- system.file("extdata", "example2.Rmd", package = "tinkr")
   y1 <- yarn$new(pathrmd)
   expect_snapshot(show_user(res <- y1$show(), TRUE))
-  expect_type(res, "character") 
+  expect_type(res, "character")
 
   expect_snapshot(show_user(res <- y1$head(10), TRUE))
   expect_length(res, 10) %>%
@@ -38,6 +35,7 @@ test_that("yarn show, head, and tail methods work", {
 })
 
 test_that("yarn can be created from Rmarkdown", {
+  pathrmd <- system.file("extdata", "example2.Rmd", package = "tinkr")
   y1 <- yarn$new(pathrmd)
   t1 <- to_xml(pathrmd)
   expect_s3_class(y1, "yarn")
@@ -47,6 +45,7 @@ test_that("yarn can be created from Rmarkdown", {
 })
 
 test_that("the write method needs a filename", {
+  pathmd <- system.file("extdata", "example1.md", package = "tinkr")
   expect_error(yarn$new(pathmd)$write(), "Please provide a file path")
 })
 
@@ -54,13 +53,15 @@ test_that("a yarn object can be written back to markdown", {
   tmpdir <- withr::local_tempdir()
   scarf1 <- withr::local_file(file.path(tmpdir, "yarn.md"))
   scarf2 <- withr::local_file(file.path(tmpdir, "yarn.Rmd"))
+  pathrmd <- system.file("extdata", "example2.Rmd", package = "tinkr")
+  pathmd <- system.file("extdata", "example1.md", package = "tinkr")
   y1 <- yarn$new(pathmd)
   y2 <- yarn$new(pathrmd)
-  y1$write(scarf1) 
-  y2$write(scarf2) 
+  y1$write(scarf1)
+  y2$write(scarf2)
   expect_snapshot_file(scarf1)
   expect_snapshot_file(scarf2)
-}) 
+})
 
 
 test_that("protect_unescaped() throws a message if sourcepos is not available", {
@@ -79,11 +80,9 @@ test_that("protect_unescaped() will work if the user implements it later", {
   expect_snapshot(writeLines(new))
 })
 
-
-
 test_that("a yarn object can be reset", {
-
   scarf1 <- withr::local_tempfile(fileext = "md")
+  pathmd  <- system.file("extdata", "example1.md", package = "tinkr")
   y1 <- yarn$new(pathmd, sourcepos = TRUE, encoding = "utf-8")
 
   expect_equal(y1$.__enclos_env__$private$encoding, "utf-8")
@@ -110,14 +109,14 @@ test_that("random markdown can be added", {
   t1 <- yarn$new(mdtable)
   expect_equal(xml2::xml_name(xml2::xml_child(t1$body)), "table")
   expect_length(xml2::xml_find_all(t1$body, "link", t1$ns), 0L)
-  
-  newmd <- c("# TABLE HERE\n\n", 
+
+  newmd <- c("# TABLE HERE\n\n",
     "[KILROY](https://en.wikipedia.org/wiki/Kilroy_was_here) WAS **HERE**\n\n",
     "stop copying me!" # THIS WILL BE COPIED TWICE
   )
   t1$add_md(paste(newmd, collapse = ""))$add_md(toupper(newmd[[3]]), where = 3)
   expect_length(xml2::xml_find_all(t1$body, "md:link", t1$ns), 0L)
-  
+
   t1$write(scarf3)
   expect_snapshot_file(scarf3)
 
