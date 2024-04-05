@@ -52,7 +52,7 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
   # they do not consume the string
   # (https://junli.netlify.app/en/overlapping-regular-expression-in-python/)
   #
-  # This looks for a potetial minus sign followed by maybe a space to allow for
+  # This looks for a potential minus sign followed by maybe a space to allow for
   # $\beta, $$\beta, $-\beta, $- \beta
   minus_maybe <- glue::glue("(?=([-][{ace}]?)?")
   # punctuation marks that should _not_ occur after the dollar sign. I'm listing
@@ -64,7 +64,7 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
   switch(type,
     start = start,
     stop = stop,
-    full = glue::glue('({start}.+?{stop})')
+    full = glue::glue('({start}.*?{stop})')
   )
 }
 
@@ -109,6 +109,7 @@ protect_inline_math <- function(body, ns) {
   if (length(math) == 0) {
     return(body)
   }
+
   broke <- find_broken_math(math)
 
   bespoke  <- !(broke$no_end | broke$no_beginning | broke$ambiguous)
@@ -289,7 +290,7 @@ protect_tickbox <- function(body, ns) {
 #' Protect unescaped square brackets from being escaped
 #'
 #' Commonmark allows both `[unescaped]` and `\[escaped\]` square brackets, but
-#' in the XML representation, it makes no note of which square brackets were 
+#' in the XML representation, it makes no note of which square brackets were
 #' originally escaped and thus will escape both in the output. This function
 #' protects brackets that were unescaped in the source document from being
 #' escaped.
@@ -297,12 +298,12 @@ protect_tickbox <- function(body, ns) {
 #' @inheritParams resolve_anchor_links
 #' @keywords internal
 #'
-#' @details 
+#' @details
 #'
 #' This is an **internal function** that is run by default via `to_xml()` and
 #' `yarn$new()`. It uses the original document, parsed as text, to find and
 #' protect unescaped square brackets from being escaped in the output.
-#' 
+#'
 #' ## Example: child documents and footnotes
 #'
 #' For example, let's say you have two R Markdown documents, one references the
@@ -328,7 +329,7 @@ protect_tickbox <- function(body, ns) {
 #' ...
 #' [reflink]: https://example.com
 #' ```
-#' 
+#'
 #' Without protection, the roundtripped index.Rmd document would look like this:
 #'
 #' ````markdown
@@ -349,7 +350,7 @@ protect_tickbox <- function(body, ns) {
 #'
 #' @note Because the This `body` to be an XML document with `sourcepos` attributes on the
 #'   nodes, which is achieved by using `sourcepos = TRUE` with [to_xml()] or
-#'   [yarn]. 
+#'   [yarn].
 #'
 #' @examples
 #' f <- system.file("extdata", "link-test.md", package = "tinkr")
@@ -357,7 +358,7 @@ protect_tickbox <- function(body, ns) {
 #' md$show()
 #' if (requireNamespace("withr")) {
 #' lines <- readLines(f)[-length(md$yaml)]
-#' lnks <- withr::with_namespace("tinkr", 
+#' lnks <- withr::with_namespace("tinkr",
 #'   protect_unescaped(body = md$body, txt = lines))
 #' md$body <- lnks
 #' md$show()
@@ -384,7 +385,7 @@ protect_unescaped <- function(body, txt, ns = md_ns()) {
 #' @param txt a vector of text
 #' @return the same output as [base::gregexpr()]: a list the same length as
 #' `txt` with integer vectors indicating the character positions of the matches
-#' with attributes: 
+#' with attributes:
 #'   1. match.length the length of the match (will be '2')
 #' @noRd
 find_escaped_squares <- function(txt) {
@@ -409,7 +410,7 @@ find_escaped_squares <- function(txt) {
 #' Knowing this, we can process each node by its line number and wrap all
 #' unescpaed square braces in text nodes with the `@asis` attribute, which is
 #' performed with the [fix_unescaped()] function.
-#' 
+#'
 #' @return nothing, invisibly. This function is called for its side-effect.
 #' @noRd
 fix_unescaped_squares <- function(nodes, txt) {
@@ -445,13 +446,13 @@ fix_unescaped_squares <- function(nodes, txt) {
 #'
 #' This will convert unescaped square braces to individual text nodes with an
 #' `asis` attribute to prevent these from being escaped in the output.
-#' 
+#'
 #' For example, markdown like this:
 #'
 #' ```markdown
 #' this is [unescaped] and this is \[escaped\]
 #' ```
-#' 
+#'
 #' will produce a text node like this:
 #'
 #' ```html
@@ -467,7 +468,7 @@ fix_unescaped_squares <- function(nodes, txt) {
 #' <text asis='true'>]</text>
 #' <text> and this is [escaped]</text>
 #' ```
-#' 
+#'
 #' This will ensure that the unescaped markdown remains unescaped.
 #'
 #' @param node a text node that contains square braces
@@ -481,7 +482,7 @@ fix_unescaped_squares <- function(nodes, txt) {
 #' @return new XML nodes, invisibly
 #' @noRd
 fix_unescaped <- function(node, escaped = integer(0), offset = 1L) {
-  
+
   txt <- as.character(node)
   if (length(escaped) == 0) {
     # If we have no escaped characters, then we can do a broad substitution
@@ -491,7 +492,7 @@ fix_unescaped <- function(node, escaped = integer(0), offset = 1L) {
     # the position is based on the actual text, we need to find the start of
     # the actual text in the node text
     text_start <- gregexpr("[>]", txt)[[1]][[1]] + 1L
-    # Because the escaped characters were stripped off, we have to account for 
+    # Because the escaped characters were stripped off, we have to account for
     # a rolling count of the number of escapes
     missing_chars <- seq_along(escaped) - 1L
     # If the source starts with markup, we have to take into account the offset
@@ -502,8 +503,8 @@ fix_unescaped <- function(node, escaped = integer(0), offset = 1L) {
   # the unescaped braces.
   chars <- strsplit(txt, "")[[1]]
   chars[unescaped] <- sub(
-    pattern = "(\\[|\\])", 
-    replacement = "</text><text asis='true'>\\1</text><text>", 
+    pattern = "(\\[|\\])",
+    replacement = "</text><text asis='true'>\\1</text><text>",
     x = chars[unescaped]
   )
   new_nodes <- make_text_nodes(paste(chars, collapse = ""))
