@@ -1,9 +1,6 @@
-pathmath <- system.file("extdata", "math-example.md", package = "tinkr")
-patherr  <- system.file("extdata", "basic-math.md", package = "tinkr")
-m <- yarn$new(pathmath, sourcepos = TRUE)
-me <- yarn$new(patherr, sourcepos = TRUE)
-
 test_that("mal-formed inline math throws an informative error", {
+  patherr  <- system.file("extdata", "basic-math.md", package = "tinkr")
+  me <- yarn$new(patherr, sourcepos = TRUE)
   expect_snapshot_error(me$protect_math())
 })
 
@@ -53,6 +50,8 @@ test_that("math that starts a line will be protected", {
 
 
 test_that("block math can be protected", {
+  pathmath <- system.file("extdata", "math-example.md", package = "tinkr")
+  m <- yarn$new(pathmath, sourcepos = TRUE)
   expect_length(xml2::xml_ns(m$body), 1L)
   expect_equal(md_ns()[[1]], xml2::xml_ns(m$body)[[1]])
   expect_snapshot(show_user(m$protect_math()$tail(48), force = TRUE))
@@ -61,6 +60,9 @@ test_that("block math can be protected", {
 })
 
 test_that("tick boxes are protected by default", {
+  pathmath <- system.file("extdata", "math-example.md", package = "tinkr")
+  m <- yarn$new(pathmath, sourcepos = TRUE)
+  m$protect_math()
   expect_length(xml2::xml_ns(m$body), 1L)
   expect_equal(md_ns()[[1]], xml2::xml_ns(m$body)[[1]])
   expect_snapshot(show_user(m$head(15), force = TRUE))
@@ -79,6 +81,8 @@ test_that("documents with no math do no harm", {
 })
 
 test_that("protect_unescaped() will throw a warning if no sourcpos is available", {
+  pathmath <- system.file("extdata", "math-example.md", package = "tinkr")
+  m <- yarn$new(pathmath, sourcepos = TRUE)
   x <- to_xml(m$path)
   expect_warning({
     protect_unescaped(x$body, txt = readLines(m$path)[-seq_along(m$yaml)], "sourcepos")
