@@ -1,6 +1,3 @@
-tmpdir <- withr::local_tempdir("newdir")
-`%<%` <- magrittr::`%>%`
-
 test_that("to_md works without a file", {
 
   path <- system.file("extdata", "table.md", package = "tinkr")
@@ -22,36 +19,37 @@ test_that("to_md works without a file", {
 })
 
 test_that("to_md fails if the stylesheet is not correct", {
-  
+
   tmp  <- withr::local_tempfile(fileext = ".xml")
   path <- system.file("extdata", "table.md", package = "tinkr")
   yaml_xml_list <- to_xml(path)
   xml2::write_xml(yaml_xml_list$body, tmp)
   # NULL for stylesheet
-  expect_error(to_md(yaml_xml_list, stylesheet_path = NULL), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = NULL),
     "'stylesheet_path' must be a path to an XSL stylesheet")
   # NA for stylesheet
-  expect_error(to_md(yaml_xml_list, stylesheet_path = NA), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = NA),
     "'stylesheet_path' must be a path to an XSL stylesheet")
   # multi-element vector
-  expect_error(to_md(yaml_xml_list, stylesheet_path = letters), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = letters),
     "'stylesheet_path' must be a path to an XSL stylesheet")
   # zero-element vector
-  expect_error(to_md(yaml_xml_list, stylesheet_path = character(0)), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = character(0)),
     "'stylesheet_path' must be a path to an XSL stylesheet")
   # xml document that is not a stylesheet
-  expect_error(to_md(yaml_xml_list, stylesheet_path = tmp), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = tmp),
     "'*.xml' is not a valid stylesheet")
   # file that doesn't exist
-  expect_error(to_md(yaml_xml_list, stylesheet_path = "path/to/stylesheet.xsl"), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = "path/to/stylesheet.xsl"),
     "The file 'path/to/stylesheet.xsl' does not exist.")
   # xml object
-  expect_error(to_md(yaml_xml_list, stylesheet_path = yaml_xml_list$body), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = yaml_xml_list$body),
     "'stylesheet_path' must be a path to an XSL stylesheet")
 
 })
 
 test_that("to_md works", {
+  tmpdir <- withr::local_tempdir("newdir")
   newmd  <- withr::local_file(file.path(tmpdir, "to_md-works.md"))
   path <- system.file("extdata", "example1.md", package = "tinkr")
 
@@ -82,6 +80,7 @@ test_that("to_md works", {
 
 
 test_that("to_md works for Rmd", {
+  tmpdir <- withr::local_tempdir("newdir")
   newmd <- withr::local_file(file.path(tmpdir, "to_md-works-for-Rmd.Rmd"))
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
 
@@ -125,6 +124,7 @@ test_that("to_md works for Rmd", {
 
 test_that("to_md does not break tables", {
   path <- system.file("extdata", "table.md", package = "tinkr")
+  tmpdir <- withr::local_tempdir("newdir")
   newtable <- withr::local_file(file.path(tmpdir, "table.md"))
 
   yaml_xml_list <- to_xml(path)
@@ -133,10 +133,10 @@ test_that("to_md does not break tables", {
 })
 
 test_that("code chunks can be inserted on round trip", {
-
+  tmpdir <- withr::local_tempdir("newdir")
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
   newmd <- file.path(tmpdir, "new-code-chunk.Rmd")
-  
+
   # read in document
   yaml_xml_list <- to_xml(path)
 
