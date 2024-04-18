@@ -1,3 +1,15 @@
+# tinkr 0.2.0.9000
+
+## BUG FIX
+
+* Inline math with single characters will no longer cause an error (issue: #101,
+  fix: #103, @maelle)
+
+## MISC
+
+* Testing code outside of `test_that()` has been removed (issue: #83, fix: #102,
+  @maelle)
+
 # tinkr 0.2.0 
 
 ## BUG FIX
