@@ -121,11 +121,12 @@ protect_inline_math <- function(body, ns) {
 
   # protect math that is strictly inline
   if (length(imath)) {
-    new_nodes <- purrr::map(imath, fix_fully_inline)
+    purrr::map(imath, label_fully_inline)
+    # new_nodes <- purrr::map(imath, fix_fully_inline)
     # since we split up the nodes, we have to do this node by node
-    for (i in seq(new_nodes)) {
-      add_node_siblings(imath[[i]], new_nodes[[i]], remove = TRUE)
-    }
+    # for (i in seq(new_nodes)) {
+    #   add_node_siblings(imath[[i]], new_nodes[[i]], remove = TRUE)
+    # }
   }
 
   # protect math that is broken across lines or markdown elements
@@ -203,6 +204,19 @@ fix_fully_inline <- function(math) {
     perl = TRUE
   )
   make_text_nodes(char)
+}
+
+label_fully_inline <- function(math) {
+  char <- xml2::xml_text(math)
+  locations <- gregexpr(pattern = inline_dollars_regex("full"), 
+    char, 
+    perl = TRUE
+  )
+  pos <- paste(locations[[1]], collapse = " ")
+  len <- paste(attr(locations[[1]], "match.len"),  collapse = " ")
+  xml2::xml_set_attr(math, "protect.pos", pos)
+  xml2::xml_set_attr(math, "protect.len", len)
+  
 }
 
 #' Transform a character vector of XML into text nodes

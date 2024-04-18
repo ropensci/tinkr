@@ -8,6 +8,7 @@
     <!-- Import commonmark XSL -->
 
     <xsl:import href="xml2md.xsl"/>
+
     <xsl:template match="/">
         <xsl:apply-imports/>
     </xsl:template>
@@ -16,7 +17,64 @@
 
     <xsl:output method="text" encoding="utf-8"/>
 
+
+    <xsl:template name="escape-text-protect">
+      <xsl:param name="text"/>
+      <xsl:param name="escape" select="'*_`&lt;[]&amp;'"/>
+      <xsl:param name="pos" select="0"/>
+      <xsl:param name="protect.pos" select="0"/>
+      <xsl:param name="protect.len" select="0"/>
+
+      <xsl:variable name="trans" select="translate($text, $escape, '\\\\\\\')"/>
+      <xsl:choose>
+        <xsl:when test="contains($trans, '\')">
+          <xsl:variable name="start" select="substring-before($protect.pos, ' ')"/>
+          <xsl:variable name="len" select="substring-before($protect.len, ' ')"/>
+          <xsl:variable name="end" select="$start + $len - 1"/>
+          <xsl:variable name="safe" select="substring-before($trans, '\')"/>
+          <xsl:variable name="l" select="string-length($safe)"/>
+          <xsl:variable name="newpos" select="$pos + $l - 1"/>
+          <xsl:message terminate="no">
+            <xsl:text>&#10;safe: </xsl:text>
+            <xsl:value-of select="$safe"/>
+            <xsl:text>&#10;length: </xsl:text>
+            <xsl:value-of select="$l"/>
+            <xsl:text>&#9;position: </xsl:text>
+            <xsl:value-of select="$newpos"/>
+            <xsl:text>&#9;range: </xsl:text>
+            <xsl:value-of select="$start"/>
+            <xsl:text> .. </xsl:text>
+            <xsl:value-of select="$end"/>
+            <xsl:text>&#10;translated: </xsl:text>
+            <xsl:value-of select="$trans"/>
+            <xsl:text>&#10;</xsl:text>
+          </xsl:message>
+          <xsl:value-of select="$safe"/>
+          <xsl:if test="($newpos &lt; $start) and ($newpos &gt; $end)">
+            <xsl:text>\</xsl:text>
+          </xsl:if>
+          <xsl:value-of select="substring($text, $l + 1, 1)"/>
+          <xsl:call-template name="escape-text-protect">
+            <xsl:with-param name="text" select="substring($text, $l + 2)"/>
+            <xsl:with-param name="escape" select="$escape"/>
+            <xsl:with-param name="pos" select="$newpos"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$text"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:template>
+
       <!-- Text that needs to be preserved (e.g. math/checkboxes) -->
+
+    <xsl:template match="md:text[@protect.pos]">
+      <xsl:call-template name="escape-text-protect">
+          <xsl:with-param name="text" select="string(.)"/>
+          <xsl:with-param name="protect.pos" select="string(@protect.pos)"/>
+          <xsl:with-param name="protect.len" select="string(@protect.len)"/>
+      </xsl:call-template>
+    </xsl:template>
 
     <xsl:template match="md:emph[@asis='true']">
       <!-- 
