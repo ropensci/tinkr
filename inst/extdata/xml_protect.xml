@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document SYSTEM "CommonMark.dtd">
+<document xmlns="http://commonmark.org/xml/1.0">
+  <paragraph>
+    <text xml:space="preserve" protect.pos="27 47 57 89" protect.end="31 51 71 103">This is a thing with some $x_i$ math elements $x_j$ and $let x_i = x_j$ [not math] with $\frac{i}{\pi}$ after all.</text>
+  </paragraph>
+</document>

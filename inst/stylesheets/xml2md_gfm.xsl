@@ -17,23 +17,92 @@
 
     <xsl:output method="text" encoding="utf-8"/>
 
+    <xsl:template name="adjust-range">
+      <xsl:param name="current" select="0"/>
+      <xsl:param name="list" select="0"/>
+      <xsl:param name="end" select="0"/>
+      <xsl:choose>
+        <xsl:when test="contains($list, ' ') and ($current &gt; $end)">
+          <xsl:call-template name="adjust-range">
+            <xsl:with-param name="current" select="$current"/>
+            <xsl:with-param name="list">
+              <xsl:call-template name="trim">
+                <xsl:with-param name="list" select="$list"/>
+              </xsl:call-template>
+            </xsl:with-param>
+            <xsl:with-param name="end" select="$current + $end"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$list"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="peek">
+      <xsl:param name="list" select="0"/>
+      <xsl:choose>
+        <xsl:when test="contains($list, ' ')">
+          <xsl:value-of select="substring-before($list, ' ')"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$list"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="trim">
+      <xsl:param name="list" select="0"/>
+      <xsl:choose>
+        <xsl:when test="contains($list, ' ')">
+          <xsl:value-of select="substring-after($list, ' ')"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$list"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:template>
+
 
     <xsl:template name="escape-text-protect">
       <xsl:param name="text"/>
       <xsl:param name="escape" select="'*_`&lt;[]&amp;'"/>
-      <xsl:param name="pos" select="0"/>
+      <xsl:param name="pos" select="1"/>
       <xsl:param name="protect.pos" select="0"/>
-      <xsl:param name="protect.len" select="0"/>
+      <xsl:param name="protect.end" select="0"/>
 
       <xsl:variable name="trans" select="translate($text, $escape, '\\\\\\\')"/>
       <xsl:choose>
         <xsl:when test="contains($trans, '\')">
-          <xsl:variable name="start" select="substring-before($protect.pos, ' ')"/>
-          <xsl:variable name="len" select="substring-before($protect.len, ' ')"/>
-          <xsl:variable name="end" select="$start + $len - 1"/>
+          <xsl:variable name="i" select="substring-before($protect.pos, ' ')"/>
+          <xsl:variable name="k" select="substring-before($protect.end, ' ')"/>
           <xsl:variable name="safe" select="substring-before($trans, '\')"/>
           <xsl:variable name="l" select="string-length($safe)"/>
-          <xsl:variable name="newpos" select="$pos + $l - 1"/>
+          <xsl:variable name="newpos" select="$pos + $l"/>
+          <xsl:variable name="new.pos">
+            <xsl:call-template name="adjust-range">
+              <xsl:with-param name="current" select="$newpos"/>
+              <xsl:with-param name="list" select="$protect.pos"/>
+              <xsl:with-param name="end" select="$k"/>
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:variable name="new.end">
+            <xsl:call-template name="adjust-range">
+              <xsl:with-param name="current" select="$newpos"/>
+              <xsl:with-param name="list" select="$protect.end"/>
+              <xsl:with-param name="end" select="$k"/>
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:variable name="start">
+            <xsl:call-template name="peek">
+              <xsl:with-param name="list" select="$new.pos"/>
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:variable name="end">
+            <xsl:call-template name="peek">
+              <xsl:with-param name="list" select="$new.end"/>
+            </xsl:call-template>
+          </xsl:variable>
           <xsl:message terminate="no">
             <xsl:text>&#10;safe: </xsl:text>
             <xsl:value-of select="$safe"/>
@@ -45,19 +114,36 @@
             <xsl:value-of select="$start"/>
             <xsl:text> .. </xsl:text>
             <xsl:value-of select="$end"/>
+            <xsl:text>&#10;positions: </xsl:text>
+            <xsl:text>(</xsl:text>
+            <xsl:value-of select="$new.pos"/>
+            <xsl:text>) </xsl:text>
+            <xsl:text> (</xsl:text>
+            <xsl:value-of select="$new.end"/>
+            <xsl:text>)</xsl:text>
             <xsl:text>&#10;translated: </xsl:text>
             <xsl:value-of select="$trans"/>
             <xsl:text>&#10;</xsl:text>
           </xsl:message>
+          <!-- print the first part of the string which needs no escaping -->
           <xsl:value-of select="$safe"/>
-          <xsl:if test="($newpos &lt; $start) and ($newpos &gt; $end)">
+          <!-- escape -->
+          <xsl:if test="($newpos &lt; $start) or ($newpos &gt; $end)">
+            <xsl:message>
+              <xsl:text>===>Escaping</xsl:text>
+              <xsl:text>&#10;</xsl:text>
+            </xsl:message>
             <xsl:text>\</xsl:text>
           </xsl:if>
+          <!-- print the escaped character -->
           <xsl:value-of select="substring($text, $l + 1, 1)"/>
+          <!-- recurse until the string is complete -->
           <xsl:call-template name="escape-text-protect">
             <xsl:with-param name="text" select="substring($text, $l + 2)"/>
             <xsl:with-param name="escape" select="$escape"/>
-            <xsl:with-param name="pos" select="$newpos"/>
+            <xsl:with-param name="pos" select="$newpos + 1"/>
+            <xsl:with-param name="protect.pos" select="$new.pos"/>
+            <xsl:with-param name="protect.end" select="$new.end"/>
           </xsl:call-template>
         </xsl:when>
         <xsl:otherwise>
@@ -72,7 +158,7 @@
       <xsl:call-template name="escape-text-protect">
           <xsl:with-param name="text" select="string(.)"/>
           <xsl:with-param name="protect.pos" select="string(@protect.pos)"/>
-          <xsl:with-param name="protect.len" select="string(@protect.len)"/>
+          <xsl:with-param name="protect.end" select="string(@protect.end)"/>
       </xsl:call-template>
     </xsl:template>
 

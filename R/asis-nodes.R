@@ -212,10 +212,10 @@ label_fully_inline <- function(math) {
     char, 
     perl = TRUE
   )
-  pos <- paste(locations[[1]], collapse = " ")
-  len <- paste(attr(locations[[1]], "match.len"),  collapse = " ")
-  xml2::xml_set_attr(math, "protect.pos", pos)
-  xml2::xml_set_attr(math, "protect.len", len)
+  pos <- locations[[1]]
+  len <- attr(locations[[1]], "match.len")
+  xml2::xml_set_attr(math, "protect.pos", paste(pos, collapse = " "))
+  xml2::xml_set_attr(math, "protect.end", paste(pos + len, collapse = " "))
   
 }
 
