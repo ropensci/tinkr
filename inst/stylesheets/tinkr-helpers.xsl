@@ -12,10 +12,11 @@
       <xsl:param name="escape" select="'*_`&lt;[]&amp;'"/>
       <!-- the current position of the text string (defaults to 1) -->
       <xsl:param name="pos" select="1"/>
+      <!-- the index of the current protection -->
       <xsl:param name="index" select="1"/>
-      <!-- a space-separated list of starting positions to protect (defaults to 0) -->
+      <!-- nodeset of tokens generated from tokenizing a list of numbers -->
       <xsl:param name="protect.pos" select="0"/>
-      <!-- a space-separated list of ending positions to protect (defaults to 0) -->
+      <!-- nodeset of tokens generated from tokenizing a list of numbers -->
       <xsl:param name="protect.end" select="0"/>
 
 
@@ -26,11 +27,15 @@
           <xsl:variable name="l" select="string-length($safe)"/>
           <xsl:variable name="newpos" select="$pos + $l"/>
           <!-- Update the index variable for the protection -->
+          <!-- NOTE: it's strange, but the value of the index must be converted to -->
+          <!-- a number with a math operation -->
           <xsl:variable name="idx">
             <xsl:choose>
+              <!-- when the index is at the end of the list, we increment no more -->
               <xsl:when test="count($protect.end) = $index">
                 <xsl:value-of select="$index + 0"/>
               </xsl:when>
+              <!-- if our position extends beyond the boundary of the last protection, we increment -->
               <xsl:when test="$newpos &gt; $protect.end[$index + 0]">
                 <xsl:value-of select="$index + 1"/>
               </xsl:when>
@@ -42,6 +47,7 @@
           <!-- create a start and end variable for testing -->
           <xsl:variable name="start" select="$protect.pos[$idx + 0]"/>
           <xsl:variable name="end" select="$protect.end[$idx + 0]"/>
+
           <xsl:value-of select="$safe"/>
           <!-- escape if we are in range -->
           <xsl:if test="($newpos &lt; $start) or ($newpos &gt; $end)">
@@ -49,6 +55,7 @@
           </xsl:if>
           <!-- print the escaped character -->
           <xsl:value-of select="substring($text, $l + 1, 1)"/>
+
           <!-- recurse until the string is complete -->
           <xsl:call-template name="escape-text-protect">
             <xsl:with-param name="text" select="substring($text, $l + 2)"/>
