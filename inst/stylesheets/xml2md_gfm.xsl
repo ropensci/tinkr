@@ -2,6 +2,7 @@
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:str="http://exslt.org/strings"
     xmlns:md="http://commonmark.org/xml/1.0">
 
 
@@ -18,13 +19,16 @@
 
     <xsl:output method="text" encoding="utf-8"/>
 
-      <!-- Text that needs to be preserved (e.g. math/checkboxes) -->
-
+    <!-- Text that needs to be preserved (e.g. math/checkboxes) -->
+    <!-- We use tokenization -->
+    <!-- https://developer.mozilla.org/en-US/docs/Web/EXSLT/str/tokenize -->
     <xsl:template match="md:text[@protect.pos]">
       <xsl:call-template name="escape-text-protect">
           <xsl:with-param name="text" select="string(.)"/>
-          <xsl:with-param name="protect.pos" select="string(@protect.pos)"/>
-          <xsl:with-param name="protect.end" select="string(@protect.end)"/>
+          <xsl:with-param name="protect.pos" 
+            select="str:tokenize(@protect.pos, ' ')"/>
+          <xsl:with-param name="protect.end" 
+            select="str:tokenize(@protect.end, ' ')"/>
       </xsl:call-template>
     </xsl:template>
 
