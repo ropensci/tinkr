@@ -206,19 +206,6 @@ fix_fully_inline <- function(math) {
   make_text_nodes(char)
 }
 
-label_fully_inline <- function(math) {
-  char <- xml2::xml_text(math)
-  locations <- gregexpr(pattern = inline_dollars_regex("full"), 
-    char, 
-    perl = TRUE
-  )
-  pos <- locations[[1]]
-  len <- attr(locations[[1]], "match.len")
-  xml2::xml_set_attr(math, "protect.pos", paste(pos, collapse = " "))
-  xml2::xml_set_attr(math, "protect.end", paste(pos + len, collapse = " "))
-  
-}
-
 #' Transform a character vector of XML into text nodes
 #'
 #' This is useful in the case where we want to modify some text content to
