@@ -12,7 +12,7 @@
 #'     `end` if the node is protected, otherwise, it returns NULL
 #' @rdname protected_ranges
 add_protected_ranges <- function(node, start, end) {
-  if (any(start < 1)) {
+  if (length(start) == 0 || any(start < 1)) {
     # return early if there are no ranges to protect
     return(node)
   }
