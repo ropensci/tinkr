@@ -87,3 +87,13 @@
       - [This is a link](https://ropensci.org)
       - \[this is an example\]
 
+# (105) protection of one element does not impede protection of another
+
+    Code
+      show_user(wool$show(), force = TRUE)
+    Output
+      example
+      
+      $a_{ij}$
+      
+

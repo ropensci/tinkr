@@ -7,13 +7,13 @@
       <!DOCTYPE document SYSTEM "CommonMark.dtd">
       <document xmlns="http://commonmark.org/xml/1.0" sourcepos="1:1-16:20">
         <heading sourcepos="2:1-2:33" level="1">
-          <text sourcepos="2:3-2:33" xml:space="preserve" protect.pos="9" protect.end="32">preface {#pre-face .unnumbered}</text>
+          <text sourcepos="2:3-2:33" xml:space="preserve" protect.pos="9" protect.end="31">preface {#pre-face .unnumbered}</text>
         </heading>
         <paragraph sourcepos="4:1-4:5">
           <text sourcepos="4:1-4:5" xml:space="preserve">hello</text>
         </paragraph>
         <paragraph sourcepos="6:1-6:51">
-          <text sourcepos="6:1-6:51" xml:space="preserve" protect.pos="8 29" protect.end="14 36">I like {xml2} but of course {tinkr} is even cooler!</text>
+          <text sourcepos="6:1-6:51" xml:space="preserve" protect.pos="8 29" protect.end="13 35">I like {xml2} but of course {tinkr} is even cooler!</text>
         </paragraph>
         <paragraph sourcepos="8:1-8:110">
           <text sourcepos="8:1-8:110" xml:space="preserve">Images that use pandoc style will have curlies with content that should be translated and should be protected.</text>
@@ -22,7 +22,7 @@
           <image sourcepos="10:1-10:51" destination="https://placekitten.com/200/300" title="">
             <text sourcepos="10:3-10:17" xml:space="preserve">a pretty kitten</text>
           </image>
-          <text sourcepos="10:52-10:88" xml:space="preserve" protect.pos="1" protect.end="38" alt="'a picture of a kitten'">{#kitteh alt='a picture of a kitten'}</text>
+          <text sourcepos="10:52-10:88" xml:space="preserve" protect.pos="1" protect.end="37" alt="'a picture of a kitten'">{#kitteh alt='a picture of a kitten'}</text>
         </paragraph>
         <paragraph sourcepos="12:1-13:10">
           <image sourcepos="12:1-12:47" destination="https://placedog.net/200/300" title="">
