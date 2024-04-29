@@ -11,6 +11,7 @@
 #'   - `get_protected_ranges()` a list containing integer vectors `start` and
 #'     `end` if the node is protected, otherwise, it returns NULL
 #' @rdname protected_ranges
+#' @export
 add_protected_ranges <- function(node, start, end) {
   if (length(start) == 0 || any(start < 1)) {
     # return early if there are no ranges to protect
@@ -30,12 +31,14 @@ add_protected_ranges <- function(node, start, end) {
 }
 
 #' @rdname protected_ranges
+#' @export
 is_protected <- function(node) {
   xml2::xml_has_attr(node, "protect.pos") && 
     xml2::xml_has_attr(node, "protect.end")
 }
 
 #' @rdname protected_ranges
+#' @export
 get_protected_ranges <- function(node) {
   if (is_protected(node)) {
     start <- strsplit(xml2::xml_attr(node, "protect.pos"), " ")[[1]]
@@ -47,6 +50,7 @@ get_protected_ranges <- function(node) {
 }
 
 #' @rdname protected_ranges
+#' @export
 remove_protected_ranges <- function(node) {
   xml2::xml_set_attr(node, "protect.pos", NULL)
   xml2::xml_set_attr(node, "protect.end", NULL)
