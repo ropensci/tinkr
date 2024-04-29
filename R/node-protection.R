@@ -1,41 +1,99 @@
-label_fully_inline <- function(math) {
-  char <- xml2::xml_text(math)
-  locations <- gregexpr(pattern = inline_dollars_regex("full"), 
-    char, 
-    perl = TRUE
-  )
-  add_protection(math, locations)
-}
-
-add_protection <- function(node, locations) {
-  start <- locations[[1]]
-  end <- start + attr(locations[[1]], "match.len")
-  if (xml2::xml_has_attr(node, "protect.pos")) {
+#' Handle protected ranges for a node
+#'
+#' @param node an XML `<text>` node.
+#' @param start `\[integer\]` a vector of starting indices of a set of ranges
+#' @param end `\[integer\]` a vector of ending indices that are paired with
+#'   `start`
+#' @return 
+#'   - `add_protected_ranges()`: the modified node
+#'   - `remove_protected_ranges()`: the modified node
+#'   - `is_protected()`: `TRUE` if the node has protection attributes
+#'   - `get_protected_ranges()` a list containing integer vectors `start` and
+#'     `end` if the node is protected, otherwise, it returns NULL
+#' @rdname protected_ranges
+add_protected_ranges <- function(node, start, end) {
+  if (any(start < 1)) {
+    # return early if there are no ranges to protect
+    return(node)
+  }
+  if (is_protected(node)) {
     # extract the ranges from the attributes
-    ostart <- strsplit(xml2::xml_attr(node, "protect.pos"), " ")[[1]]
-    oend <- strsplit(xml2::xml_attr(node, "protect.end"), " ")[[1]]
+    orig <- get_protected_ranges(node)
     # update the ranges and the variables
-    new_ranges <- update_ranges(
-      start = c(as.integer(ostart), start),
-      end = c(as.integer(oend), end),
-    )
-    start <- new_ranges$start
-    end <- new_ranges$end
+    new <- update_ranges(start = c(start, orig$start), end = c(end, orig$end))
+    start <- new$start
+    end <- new$end
   }
   xml2::xml_set_attr(node, "protect.pos", paste(start, collapse = " "))
   xml2::xml_set_attr(node, "protect.end", paste(end, collapse = " "))
+  return(node)
 }
 
-inrange <- function(s1, e1, s2, e2) {
-  s1 <= s2 & e1 >= e2
+#' @rdname protected_ranges
+is_protected <- function(node) {
+  xml2::xml_has_attr(node, "protect.pos") && 
+    xml2::xml_has_attr(node, "protect.end")
 }
 
+#' @rdname protected_ranges
+get_protected_ranges <- function(node) {
+  if (is_protected(node)) {
+    start <- strsplit(xml2::xml_attr(node, "protect.pos"), " ")[[1]]
+    end <- strsplit(xml2::xml_attr(node, "protect.end"), " ")[[1]]
+  } else {
+    return(NULL)
+  }
+  return(list(start = start, end = end))
+}
+
+#' @rdname protected_ranges
+remove_protected_ranges <- function(node) {
+  xml2::xml_set_attr(node, "protect.pos", NULL)
+  xml2::xml_set_attr(node, "protect.end", NULL)
+  return(node)
+}
+
+#' Detect if two ranges are overlapping
+#' 
+#' @param s1 \[integer\] starting index of first range
+#' @param e1 \[integer\] ending index of first range
+#' @param s2 \[integer\] starting index of second range
+#' @param e2 \[integer\] ending index of second range
+#' @return `TRUE` if the ranges overlap and `FALSE` if they do not
+#'
+#' @noRd
+#' @examples
+#' overlap(1, 10, 5, 15) # TRUE
+#' overlap(1, 4, 5, 15) # FALSE
 overlap <- function(s1, e1, s2, e2) {
   s1 <= e2 & s2 <= e1
 }
 
-
-# https://www.geeksforgeeks.org/merging-intervals/
+#' Update a set of ranges
+#' 
+#' @param start `\[integer\]` a vector of starting indices of a set of ranges
+#' @param end `\[integer\]` a vector of ending indices that are paired with
+#'   `start`
+#' @return a list of two integer vectors each with a length of at least one and
+#'   at most the same length as the input. 
+#'   - `start`
+#'   - `end`
+#'
+#' @details
+#' This function merges a set of ranges based on the algorithm presented in
+#' <https://www.geeksforgeeks.org/merging-intervals/>. If none of the intervals
+#' overlap, then the original `start` and `end` variables are returned sorted by
+#' the starting order.
+#'
+#' If there are overlaps, they will be condensed, removing up to n - 1 intervals
+#'
+#' @noRd
+#' @examples
+#' # in this example, the ranges of [10, 20] overlaps with [5, 15]
+#' ranges <- data.frame(start = c(1, 10, 100), end = c(2, 20, 200))
+#' new <- data.frame(start = c(5, 50, 500), end = c(15, 150, 1500))
+#' # thus they become [5, 20]
+#' update_ranges(c(ranges$start, new$start), c(ranges$end, new$end))
 update_ranges <- function(start, end) {
   # Sort the intervals based on the increasing order of starting time.
   ord <- order(start)

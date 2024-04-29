@@ -104,7 +104,6 @@ find_broken_math <- function(math) {
 #' cat(tinkr::to_md(list(body = protxt, yaml = "")), sep = "\n")
 #' }
 protect_inline_math <- function(body, ns) {
-  body  <- copy_xml(body)
   math  <- find_inline_math(body, ns)
   if (length(math) == 0) {
     return(body)
@@ -120,17 +119,12 @@ protect_inline_math <- function(body, ns) {
   bmath   <- math[!bespoke]
 
   # protect math that is strictly inline
-  if (length(imath)) {
-    purrr::map(imath, label_fully_inline)
-    # new_nodes <- purrr::map(imath, fix_fully_inline)
-    # since we split up the nodes, we have to do this node by node
-    # for (i in seq(new_nodes)) {
-    #   add_node_siblings(imath[[i]], new_nodes[[i]], remove = TRUE)
-    # }
+  if (length(imath) > 0L) {
+    purrr::walk(imath, label_fully_inline)
   }
 
   # protect math that is broken across lines or markdown elements
-  if (length(bmath)) {
+  if (length(bmath) > 0L) {
     if (any(broke$ambiguous)) {
       # ambiguous math may be due to inline r code that produces an answer:
       # $R^2 = `r runif(1)`$
@@ -156,7 +150,7 @@ protect_inline_math <- function(body, ns) {
       fix_partial_inline(i, body, ns)
     }
   }
-  copy_xml(body)
+  body
 }
 
 # Partial inline math are math elements that are not entirely embedded in a
@@ -172,38 +166,61 @@ fix_partial_inline <- function(tag, body, ns) {
   # find everything between the tagged pair
   math_lines <- find_between_inlines(body, ns, tag)
   # make sure everything between the tagged pair is labeled as 'asis'
+  # this is explicitly for symbols like `_`, which denote subscripts in LaTeX,
+  # but make _emph_ text in markdown.
   filling <- math_lines[is.na(xml2::xml_attr(math_lines, "latex-pair"))]
   set_asis(filling)
   filling <- xml2::xml_find_all(filling, ".//node()")
   set_asis(filling)
-  # paste the lines together and create new nodes
-  n <- length(math_lines)
-  char <- as.character(math_lines)
-  char[[1]] <- sub("[$]", "$</text><text asis='true'>", char[[1]])
-  char[[n]] <- sub("[<]text ", "<text asis='true' ", char[[n]])
-  nodes <- paste(char, collapse = "")
-  nodes <- make_text_nodes(nodes)
-  # add the new nodes to the bottom of the existing math lines
-  last_line <- math_lines[n]
-  to_remove <- math_lines[-n]
-  add_node_siblings(last_line, nodes, remove = TRUE)
-  # remove the duplicate lines
-  xml2::xml_remove(to_remove)
+  purrr::walk(math_lines, label_partial_inline)
 }
 
-fix_fully_inline <- function(math) {
-  char <- as.character(math)
-  # Find inline math that is complete and wrap it in text with asis
-  # <text>this is $\LaTeX$ text</text>
-  #   becomes
-  # <text>this is </text><text asis='true'>$\LaTeX$</text><text> text</text>
-  char <- gsub(
-    pattern = inline_dollars_regex("full"),
-    replacement = "</text><text asis='true'>\\1</text><text>",
-    x = char,
+label_partial_inline <- function(math) {
+  char <- xml2::xml_text(math)
+  # find lines that begin with `$` but do not have an end.
+  start <- gregexpr(inline_dollars_regex("start"),
+    char,
     perl = TRUE
   )
-  make_text_nodes(char)
+  # find lines that end with `$` but do not have a beginning.
+  stop <- gregexpr(inline_dollars_regex("stop"),
+    char,
+    perl = TRUE
+  )
+  has_start <- start[[1]][1] > 0
+  has_end <- stop[[1]][1] > 0
+  if (has_start) {
+    # if the line contains the beginning of an inline math fragment,
+    # we start at the match and end at the end of the string
+    begin <- start[[1]]
+    end <- nchar(char)
+  } else if (has_end) {
+    # if the line contains the end of an inline math fragment,
+    # we start at the beginning of the string and end at the end of the match
+    begin <- 1
+    end <- stop[[1]] + attr(stop[[1]], "match.len")
+  } else {
+    # otherwise, the entire range should be protected.
+    begin <- 1
+    end <- nchar(char)
+  }
+  add_protected_ranges(math, begin, end)
+}
+
+label_fully_inline <- function(math) {
+  char <- xml2::xml_text(math)
+  # Find the locations of inline math that is complete
+  locations <- gregexpr(pattern = inline_dollars_regex("full"),
+    char,
+    perl = TRUE
+  )
+  # add the ranges to the attributes
+  # <text>this is $\LaTeX$ text</text>
+  #   becomes
+  # <text protect.start='9' protect.end='16'>this is $\LaTeX$ text</text>
+  start <- locations[[1]]
+  end <- start + attr(locations[[1]], "match.len")
+  add_protected_ranges(math, start, end)
 }
 
 #' Transform a character vector of XML into text nodes
