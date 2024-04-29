@@ -391,11 +391,10 @@ protect_unescaped <- function(body, txt, ns = md_ns()) {
     warning(msg, call. = FALSE)
     return(body)
   }
-  body <- copy_xml(body)
   XPATH <- ".//md:text[not(@asis)][contains(text(), '[') or contains(text(), ']')]"
   snodes <- xml2::xml_find_all(body, XPATH, ns = ns)
   fix_unescaped_squares(snodes, txt)
-  copy_xml(body)
+  return(body)
 }
 
 #' Find the escaped square braces in text vector
@@ -425,9 +424,8 @@ find_escaped_squares <- function(txt) {
 #' not represented as markup, we use their `sourcepos` attributes to determine
 #' the lines and columns of the `txt` where _escaped_ square braces are.
 #'
-#' Knowing this, we can process each node by its line number and wrap all
-#' unescpaed square braces in text nodes with the `@asis` attribute, which is
-#' performed with the [fix_unescaped()] function.
+#' Knowing this, we can add protection attributes to the positions that should
+#' not be escaped.
 #'
 #' @return nothing, invisibly. This function is called for its side-effect.
 #' @noRd
@@ -456,7 +454,7 @@ fix_unescaped_squares <- function(nodes, txt) {
       }
     }
   }
-  invisible()
+  return(invisible())
 }
 
 
@@ -474,17 +472,17 @@ fix_unescaped_squares <- function(nodes, txt) {
 #' will produce a text node like this:
 #'
 #' ```html
-#' <text sourcepos='1:1-1:43'>this is [unescaped] and this is [escaped]</text>
+#' <text sourcepos='1:1-1:43'>
+#' this is [unescaped] and this is [escaped]
+#' </text>
 #' ```
 #'
 #' This function will replace the text node with this:
 #'
 #' ```html
-#' <text sourcepos='1:1-1:43'>this is </text>
-#' <text asis='true'>[</text>
-#' <text>unescaped</text>
-#' <text asis='true'>]</text>
-#' <text> and this is [escaped]</text>
+#' <text sourcepos='1:1-1:43' protect.pos='9 19' protect.end='9 19'>
+#' this is [unescaped] and this is [escaped]
+#' </text>
 #' ```
 #'
 #' This will ensure that the unescaped markdown remains unescaped.
@@ -497,35 +495,37 @@ fix_unescaped_squares <- function(nodes, txt) {
 #'   list items will have an offset of 4L because they are preceeded by ` - `.
 #'   Defaults to `1L`, indicating that this text node starts as a paragraph
 #'   whose parent is the root of the document.
-#' @return new XML nodes, invisibly
+#' @return modified XML nodes, invisibly
 #' @noRd
 fix_unescaped <- function(node, escaped = integer(0), offset = 1L) {
 
   txt <- as.character(node)
-  if (length(escaped) == 0) {
-    # If we have no escaped characters, then we can do a broad substitution
-    unescaped <- TRUE
-  } else {
-    # Converted to text, the node becomes <text ...>Actual text</text> Because
-    # the position is based on the actual text, we need to find the start of
-    # the actual text in the node text
-    text_start <- gregexpr("[>]", txt)[[1]][[1]] + 1L
+  if (length(escaped) > 0) {
     # Because the escaped characters were stripped off, we have to account for
     # a rolling count of the number of escapes
     missing_chars <- seq_along(escaped) - 1L
-    # If the source starts with markup, we have to take into account the offset
-    # position. This will set the escaped to start at the end of the XML markup
-    unescaped <- -(escaped + text_start - offset - missing_chars)
+    # If the source starts with markup (e.g. a list item), we have to take into
+    # account the offset position. This will set the escaped to start at the
+    # end of the XML markup
+    escaped <- escaped - missing_chars - offset + 1L
   }
-  # Here we split the character and exclude the escaped braces, protecting
-  # the unescaped braces.
-  chars <- strsplit(txt, "")[[1]]
-  chars[unescaped] <- sub(
-    pattern = "(\\[|\\])",
-    replacement = "</text><text asis='true'>\\1</text><text>",
-    x = chars[unescaped]
-  )
-  new_nodes <- make_text_nodes(paste(chars, collapse = ""))
-  add_node_siblings(node, new_nodes, remove = TRUE)
+  return(label_unescaped(node, except = escaped))
 }
 
+
+label_unescaped <- function(node, except = integer(0)) {
+  char <- xml2::xml_text(node)
+  # Find the locations of inline chars that is complete
+  locations <- gregexpr(
+    pattern = "(\\[|\\])",
+    char,
+    perl = TRUE
+  )
+  # add the ranges to the attributes
+  # <text>this is $\LaTeX$ text</text>
+  #   becomes
+  # <text protect.start='9' protect.end='16'>this is $\LaTeX$ text</text>
+  pos <- locations[[1]]
+  pos <- pos[!pos %in% except]
+  return(add_protected_ranges(node, pos, pos))
+}
