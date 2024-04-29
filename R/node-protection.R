@@ -46,7 +46,7 @@ get_protected_ranges <- function(node) {
   } else {
     return(NULL)
   }
-  return(list(start = start, end = end))
+  return(list(start = as.integer(start), end = as.integer(end)))
 }
 
 #' @rdname protected_ranges
