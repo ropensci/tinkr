@@ -1,3 +1,32 @@
+# tinkr 1.0.0 
+
+## BREAKING CHANGES
+
+Node protection will no longer fragment text nodes into groups of 'asis' and
+regular text nodes. Instead, two attributes `protect.pos` and `protect.end`
+are added that record the ranges of the protected characters. If you have been
+relying on using `@asis` nodes to manipulate your documents, your code will
+break. We are instead exporting helper functions to handle this.
+
+ - `protect_math()`, `protect_curly()`, and `protect_unescaped()` now modify
+   the document in place.
+
+## NEW FUNCTIONS
+
+ - `add_protected_ranges()` adds and updates protected ranges for a given text
+   node
+ - `is_protected()` an indicator if a node has protection or not
+ - `get_protected_ranges()` returns a list of integer vectors that indicate the
+   protected ranges
+ - `remove_protected_ranges()` removes the `protect.pos` and `protect.end`
+   attributes from a node
+
+## BUG FIX
+
+ - `protect_math()` no longer failes if `protect_curly()` was run before it
+   (reported: @maelle, #105; fixed: @zkamvar)
+
+
 # tinkr 0.2.0 
 
 ## BUG FIX
