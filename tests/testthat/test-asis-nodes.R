@@ -100,3 +100,26 @@ test_that("protect_unescaped() will throw a warning if no sourcpos is available"
   })
 })
 
+
+test_that("(105) protection of one element does not impede protection of another", {
+  
+  expected <- "example\n\n$a_{ij}$ \n"
+
+  temp_file <- withr::local_tempfile()
+  brio::write_lines(expected, temp_file)
+  wool <- tinkr::yarn$new(temp_file)
+  n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.pos]", ns = md_ns())
+  expect_length(n, 0)
+
+  wool$protect_curly()
+
+  n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.pos]", ns = md_ns())
+  expect_length(n, 1)
+  expect_equal(get_protected_ranges(n[[1]]), list(start = 4L, end = 7L))
+  expect_no_error(wool$protect_math())
+  n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.pos]", ns = md_ns())
+  expect_length(n, 1)
+  expect_equal(get_protected_ranges(n[[1]]), list(start = 1L, end = 8L))
+  expect_snapshot(show_user(wool$show(), force = TRUE))
+})
+
