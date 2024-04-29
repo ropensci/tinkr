@@ -26,6 +26,17 @@ break. We are instead exporting helper functions to handle this.
  - `protect_math()` no longer failes if `protect_curly()` was run before it
    (reported: @maelle, #105; fixed: @zkamvar)
 
+# tinkr 0.2.0.9000
+
+## BUG FIX
+
+* Inline math with single characters will no longer cause an error (issue: #101,
+  fix: #103, @maelle)
+
+## MISC
+
+* Testing code outside of `test_that()` has been removed (issue: #83, fix: #102,
+  @maelle)
 
 # tinkr 0.2.0 
 
