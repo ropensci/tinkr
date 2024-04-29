@@ -198,7 +198,7 @@ label_partial_inline <- function(math) {
     # if the line contains the end of an inline math fragment,
     # we start at the beginning of the string and end at the end of the match
     begin <- 1
-    end <- stop[[1]] + attr(stop[[1]], "match.len")
+    end <- stop[[1]] + attr(stop[[1]], "match.len") - 1L
   } else {
     # otherwise, the entire range should be protected.
     begin <- 1
@@ -219,7 +219,7 @@ label_fully_inline <- function(math) {
   #   becomes
   # <text protect.start='9' protect.end='16'>this is $\LaTeX$ text</text>
   start <- locations[[1]]
-  end <- start + attr(locations[[1]], "match.len")
+  end <- start + attr(locations[[1]], "match.len") - 1L
   add_protected_ranges(math, start, end)
 }
 
@@ -403,7 +403,7 @@ protect_unescaped <- function(body, txt, ns = md_ns()) {
 #' @return the same output as [base::gregexpr()]: a list the same length as
 #' `txt` with integer vectors indicating the character positions of the matches
 #' with attributes:
-#'   1. match.length the length of the match (will be '2')
+#'   1. match.len the length of the match (will be '2')
 #' @noRd
 find_escaped_squares <- function(txt) {
   gregexpr("(\\\\\\])|(\\\\\\[)", txt, useBytes = FALSE)

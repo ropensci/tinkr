@@ -43,7 +43,7 @@ label_curly_nodes <- function(node) {
     perl = TRUE
   )
   start <- locations[[1]]
-  end   <- start + attr(locations[[1]], "match.len")
+  end   <- start + attr(locations[[1]], "match.len") - 1L
   return(add_protected_ranges(node, start, end))
 
 }
