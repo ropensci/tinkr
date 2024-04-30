@@ -22,11 +22,11 @@
     <!-- Text that needs to be preserved (e.g. math/checkboxes) -->
     <!-- We use tokenization -->
     <!-- https://developer.mozilla.org/en-US/docs/Web/EXSLT/str/tokenize -->
-    <xsl:template match="md:text[@protect.pos]">
+    <xsl:template match="md:text[@protect.start]">
       <xsl:call-template name="escape-text-protect">
           <xsl:with-param name="text" select="string(.)"/>
-          <xsl:with-param name="protect.pos" 
-            select="str:tokenize(@protect.pos, ' ')"/>
+          <xsl:with-param name="protect.start" 
+            select="str:tokenize(@protect.start, ' ')"/>
           <xsl:with-param name="protect.end" 
             select="str:tokenize(@protect.end, ' ')"/>
       </xsl:call-template>

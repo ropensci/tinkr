@@ -15,7 +15,7 @@
       <!-- the index of the current protection -->
       <xsl:param name="index" select="1"/>
       <!-- nodeset of tokens generated from tokenizing a list of numbers -->
-      <xsl:param name="protect.pos" select="0"/>
+      <xsl:param name="protect.start" select="0"/>
       <!-- nodeset of tokens generated from tokenizing a list of numbers -->
       <xsl:param name="protect.end" select="0"/>
 
@@ -45,7 +45,7 @@
             </xsl:choose>
           </xsl:variable>
           <!-- create a start and end variable for testing -->
-          <xsl:variable name="start" select="$protect.pos[$idx + 0]"/>
+          <xsl:variable name="start" select="$protect.start[$idx + 0]"/>
           <xsl:variable name="end" select="$protect.end[$idx + 0]"/>
 
           <xsl:value-of select="$safe"/>
@@ -63,7 +63,7 @@
             <!-- do not forget to advance the position -->
             <xsl:with-param name="pos" select="$newpos + 1"/>
             <xsl:with-param name="index" select="$idx"/>
-            <xsl:with-param name="protect.pos" select="$protect.pos"/>
+            <xsl:with-param name="protect.start" select="$protect.start"/>
             <xsl:with-param name="protect.end" select="$protect.end"/>
           </xsl:call-template>
         </xsl:when>

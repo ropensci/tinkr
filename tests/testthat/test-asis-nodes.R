@@ -16,7 +16,7 @@ test_that("multi-line inline math can have punctutation after", {
     nodes <- xml2::xml_find_all(txt, ".//md:text", ns = md_ns())
     # no protection initially
     expect_equal(
-      xml2::xml_attr(nodes, "protect.pos"),
+      xml2::xml_attr(nodes, "protect.start"),
       c(NA_character_, NA_character_)
     )
     protxt <- protect_inline_math(txt, md_ns())
@@ -24,7 +24,7 @@ test_that("multi-line inline math can have punctutation after", {
     expect_identical(txt, protxt)
     # protection exists
     expect_equal(
-      xml2::xml_attr(nodes, "protect.pos"),
+      xml2::xml_attr(nodes, "protect.start"),
       c('4', '1')
     )
     expect_equal(
@@ -131,20 +131,20 @@ test_that("(105) protection of one element does not impede protection of another
   brio::write_lines(expected, temp_file)
   wool <- tinkr::yarn$new(temp_file)
   # no protection initially 
-  n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.pos]", ns = md_ns())
+  n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.start]", ns = md_ns())
   expect_length(n, 0)
 
   wool$protect_curly()
 
   # protection exists
-  n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.pos]", ns = md_ns())
+  n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.start]", ns = md_ns())
   expect_length(n, 1)
   # the ranges are initially betwen the curly braces
   expect_equal(get_protected_ranges(n[[1]]), list(start = 4L, end = 7L))
 
   # protecting for math does not throw an error
   expect_no_error(wool$protect_math())
-  n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.pos]", ns = md_ns())
+  n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.start]", ns = md_ns())
   expect_length(n, 1)
   # the protected range now extends to the whole line
   expect_equal(get_protected_ranges(n[[1]]), list(start = 1L, end = 8L))

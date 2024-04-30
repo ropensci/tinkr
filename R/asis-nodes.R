@@ -480,7 +480,7 @@ fix_unescaped_squares <- function(nodes, txt) {
 #' This function will replace the text node with this:
 #'
 #' ```html
-#' <text sourcepos='1:1-1:43' protect.pos='9 19' protect.end='9 19'>
+#' <text sourcepos='1:1-1:43' protect.start='9 19' protect.end='9 19'>
 #' this is [unescaped] and this is [escaped]
 #' </text>
 #' ```

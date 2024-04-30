@@ -3,7 +3,7 @@
 ## BREAKING CHANGES
 
 Node protection will no longer fragment text nodes into groups of 'asis' and
-regular text nodes. Instead, two attributes `protect.pos` and `protect.end`
+regular text nodes. Instead, two attributes `protect.start` and `protect.end`
 are added that record the ranges of the protected characters. If you have been
 relying on using `@asis` nodes to manipulate your documents, your code will
 break. We are instead exporting helper functions to handle this.
@@ -18,7 +18,7 @@ break. We are instead exporting helper functions to handle this.
  - `is_protected()` an indicator if a node has protection or not
  - `get_protected_ranges()` returns a list of integer vectors that indicate the
    protected ranges
- - `remove_protected_ranges()` removes the `protect.pos` and `protect.end`
+ - `remove_protected_ranges()` removes the `protect.start` and `protect.end`
    attributes from a node
 
 ## BUG FIX

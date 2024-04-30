@@ -72,7 +72,7 @@ add_protected_ranges <- function(node, start, end) {
     start <- new$start
     end <- new$end
   }
-  xml2::xml_set_attr(node, "protect.pos", paste(start, collapse = " "))
+  xml2::xml_set_attr(node, "protect.start", paste(start, collapse = " "))
   xml2::xml_set_attr(node, "protect.end", paste(end, collapse = " "))
   return(node)
 }
@@ -86,7 +86,7 @@ not_text_node <- Negate(is_text_node)
 #' @rdname protected_ranges
 #' @export
 is_protected <- function(node) {
-  xml2::xml_has_attr(node, "protect.pos") && 
+  xml2::xml_has_attr(node, "protect.start") && 
     xml2::xml_has_attr(node, "protect.end")
 }
 
@@ -94,7 +94,7 @@ is_protected <- function(node) {
 #' @export
 get_protected_ranges <- function(node) {
   if (is_text_node(node) && is_protected(node)) {
-    start <- strsplit(xml2::xml_attr(node, "protect.pos"), " ")[[1]]
+    start <- strsplit(xml2::xml_attr(node, "protect.start"), " ")[[1]]
     end <- strsplit(xml2::xml_attr(node, "protect.end"), " ")[[1]]
   } else {
     return(NULL)
@@ -105,7 +105,7 @@ get_protected_ranges <- function(node) {
 #' @rdname protected_ranges
 #' @export
 remove_protected_ranges <- function(node) {
-  xml2::xml_set_attr(node, "protect.pos", NULL)
+  xml2::xml_set_attr(node, "protect.start", NULL)
   xml2::xml_set_attr(node, "protect.end", NULL)
   return(node)
 }
