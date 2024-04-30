@@ -14,8 +14,7 @@
 #' @export
 add_protected_ranges <- function(node, start, end) {
   no_beginning <- length(start) == 0 || any(start < 1)
-  can_protect <- inherits(node, "xml_node") && xml2::xml_name(node) == "text"
-  if (no_beginning || !can_protect) {
+  if (no_beginning || not_text_node(node)) {
     # return early if there are no ranges to protect
     return(node)
   }
@@ -32,6 +31,12 @@ add_protected_ranges <- function(node, start, end) {
   return(node)
 }
 
+is_text_node <- function(node) {
+  inherits(node, "xml_node") && xml2::xml_name(node) == "text"
+}
+
+not_text_node <- Negate(is_text_node)
+
 #' @rdname protected_ranges
 #' @export
 is_protected <- function(node) {
@@ -42,7 +47,7 @@ is_protected <- function(node) {
 #' @rdname protected_ranges
 #' @export
 get_protected_ranges <- function(node) {
-  if (is_protected(node)) {
+  if (is_text_node(node) && is_protected(node)) {
     start <- strsplit(xml2::xml_attr(node, "protect.pos"), " ")[[1]]
     end <- strsplit(xml2::xml_attr(node, "protect.end"), " ")[[1]]
   } else {
