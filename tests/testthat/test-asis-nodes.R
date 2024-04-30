@@ -130,17 +130,23 @@ test_that("(105) protection of one element does not impede protection of another
   temp_file <- withr::local_tempfile()
   brio::write_lines(expected, temp_file)
   wool <- tinkr::yarn$new(temp_file)
+  # no protection initially 
   n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.pos]", ns = md_ns())
   expect_length(n, 0)
 
   wool$protect_curly()
 
+  # protection exists
   n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.pos]", ns = md_ns())
   expect_length(n, 1)
+  # the ranges are initially betwen the curly braces
   expect_equal(get_protected_ranges(n[[1]]), list(start = 4L, end = 7L))
+
+  # protecting for math does not throw an error
   expect_no_error(wool$protect_math())
   n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.pos]", ns = md_ns())
   expect_length(n, 1)
+  # the protected range now extends to the whole line
   expect_equal(get_protected_ranges(n[[1]]), list(start = 1L, end = 8L))
   expect_snapshot(show_user(wool$show(), force = TRUE))
 })
