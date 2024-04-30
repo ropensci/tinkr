@@ -13,7 +13,9 @@
 #' @rdname protected_ranges
 #' @export
 add_protected_ranges <- function(node, start, end) {
-  if (length(start) == 0 || any(start < 1)) {
+  no_beginning <- length(start) == 0 || any(start < 1)
+  can_protect <- inherits(node, "xml_node") && xml2::xml_name(node) == "text"
+  if (no_beginning || !can_protect) {
     # return early if there are no ranges to protect
     return(node)
   }
