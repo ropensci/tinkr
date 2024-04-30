@@ -5,14 +5,36 @@ test_that("mal-formed inline math throws an informative error", {
 })
 
 test_that("multi-line inline math can have punctutation after", {
-  template <- "C) $E(\\text{Weight}) = 81.37 + 1.26 \\times x_1 +\n2.65 \\times x_2$punk\n"
-  for (punk in c('--', '---', ',', ';', '.', '?', ')', ']', '}', '>')) {
-    expected <- sub("punk", punk, template)
+  template <- c(
+    "C) $E(\\text{Weight}) = 81.37 + 1.26 \\times x_1 +",
+    "2.65 \\times x_2$punk\n"
+  )
+  for (punk in c('--', '---', ',', ';', '.', '?', ')', '\\\\]', '}', '>')) {
+    expected <- paste(sub("punk", punk, template), collapse = "\n")
     math <- commonmark::markdown_xml(expected)
     txt <- xml2::read_xml(math)
+    nodes <- xml2::xml_find_all(txt, ".//md:text", ns = md_ns())
+    # no protection initially
+    expect_equal(
+      xml2::xml_attr(nodes, "protect.pos"),
+      c(NA_character_, NA_character_)
+    )
     protxt <- protect_inline_math(txt, md_ns())
+    # the transformed content is identical.
+    expect_identical(txt, protxt)
+    # protection exists
+    expect_equal(
+      xml2::xml_attr(nodes, "protect.pos"),
+      c('4', '1')
+    )
+    expect_equal(
+      xml2::xml_attr(nodes, "protect.end"),
+      c('48', '16')
+    )
     actual <- to_md(list(yaml = NULL, body = protxt))
-    expect_equal(actual, expected)
+    act <- substring(actual, nchar(actual) - 2, nchar(actual) - 1)
+
+    expect_equal(actual, expected, label = act, expected.label = punk)
   }
 })
 
