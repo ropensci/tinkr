@@ -35,3 +35,50 @@ remove_protected_ranges(node)
 \description{
 Handle protected ranges for a node
 }
+\examples{
+# example of text to protect
+# SETUP ---------------------
+expected <- c(
+  "\\\\a\\\\b\\\\c\\\\d",
+  "\\\\e\\\\f\\\\g\\\\h",
+  ""
+)
+temp_file <- tempfile()
+writeLines(expected, temp_file)
+wool <- tinkr::yarn$new(temp_file)
+nodes <- xml2::xml_find_all(wool$body, ".//md:text", ns = md_ns())
+writeLines(expected) # this is how it should appear
+wool$show() # nothing is protected, so the '\' are escaped
+# ADDING PROTECTION ----------
+# protections are added _per node_
+add_protected_ranges(nodes[[1]], start = 1, end = 8) # protect whole range
+add_protected_ranges(nodes[[2]], start = c(1, 7), end = c(2, 8)) # partial
+wool$show() # the first row and "\e" and "\h" are protected
+
+# extract the ranges
+is_protected(nodes[[1]])
+is_protected(nodes[[2]])
+get_protected_ranges(nodes[[1]])
+get_protected_ranges(nodes[[2]])
+
+# Add additional protection that overlaps.
+# The current range is [1, 2] and [7, 8]. If we add [5, 8], the range
+# will be updated
+add_protected_ranges(nodes[[2]], start = 5, end = 8) 
+get_protected_ranges(nodes[[2]])
+
+# overlapping protection is not duplicated
+add_protected_ranges(nodes[[1]], start = 1, end = 4) 
+get_protected_ranges(nodes[[1]])
+
+wool$show() # the first row and "\e", "\g", and "\h" are protected
+
+# REMOVING PROTECTION --------
+remove_protected_ranges(nodes[[2]])
+is_protected(nodes[[2]])
+get_protected_ranges(nodes[[2]])
+wool$show()
+
+# CLEAN UP -------------------
+if (file.exists(temp_file)) unlink(temp_file)
+}
