@@ -33,7 +33,7 @@ get_protected_nodes(body)
 \item{end}{\verb{\[integer\]} a vector of ending indices that are paired with
 \code{start}}
 
-\item{find}{all nodes that}
+\item{body}{an XML document}
 }
 \value{
 \itemize{
@@ -42,6 +42,7 @@ get_protected_nodes(body)
 \item \code{is_protected()}: \code{TRUE} if the node has protection attributes
 \item \code{get_protected_ranges()} a list containing integer vectors \code{start} and
 \code{end} if the node is protected, otherwise, it returns NULL
+\item \code{get_protected_nodes()} a nodelist
 }
 }
 \description{
@@ -84,6 +85,7 @@ add_protected_ranges(nodes[[1]], start = 1, end = 4)
 get_protected_ranges(nodes[[1]])
 
 wool$show() # the first row and "\e", "\g", and "\h" are protected
+get_protected_nodes(wool$body) # showing the nodes that are protected
 
 # REMOVING PROTECTION --------
 remove_protected_ranges(nodes[[2]])

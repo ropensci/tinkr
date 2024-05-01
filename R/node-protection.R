@@ -4,12 +4,14 @@
 #' @param start `\[integer\]` a vector of starting indices of a set of ranges
 #' @param end `\[integer\]` a vector of ending indices that are paired with
 #'   `start`
+#' @param body an XML document
 #' @return 
 #'   - `add_protected_ranges()`: the modified node
 #'   - `remove_protected_ranges()`: the modified node
 #'   - `is_protected()`: `TRUE` if the node has protection attributes
 #'   - `get_protected_ranges()` a list containing integer vectors `start` and
 #'     `end` if the node is protected, otherwise, it returns NULL
+#'   - `get_protected_nodes()` a nodelist
 #' @rdname protected_ranges
 #' @export
 #' @examples
@@ -49,6 +51,7 @@
 #' get_protected_ranges(nodes[[1]])
 #'
 #' wool$show() # the first row and "\e", "\g", and "\h" are protected
+#' get_protected_nodes(wool$body) # showing the nodes that are protected
 #' 
 #' # REMOVING PROTECTION --------
 #' remove_protected_ranges(nodes[[2]])
@@ -115,7 +118,6 @@ remove_protected_ranges <- function(node) {
 }
 
 #' @rdname protected_ranges
-#' @param find all nodes that 
 #' @export
 get_protected_nodes <- function(body) {
   xml2::xml_find_all(body, xpath_protected)
