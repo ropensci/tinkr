@@ -391,7 +391,7 @@ protect_unescaped <- function(body, txt, ns = md_ns()) {
     warning(msg, call. = FALSE)
     return(body)
   }
-  XPATH <- ".//md:text[not(@asis)][contains(text(), '[') or contains(text(), ']')]"
+  XPATH <- ".//md:text[contains(text(), '[') or contains(text(), ']')]"
   snodes <- xml2::xml_find_all(body, XPATH, ns = ns)
   fix_unescaped_squares(snodes, txt)
   return(body)

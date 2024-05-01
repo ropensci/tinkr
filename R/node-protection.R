@@ -92,6 +92,10 @@ is_protected <- function(node) {
 
 #' @rdname protected_ranges
 #' @export
+xpath_protected <- ".//node()[@protect.start and @protect.end]"
+
+#' @rdname protected_ranges
+#' @export
 get_protected_ranges <- function(node) {
   if (is_text_node(node) && is_protected(node)) {
     start <- strsplit(xml2::xml_attr(node, "protect.start"), " ")[[1]]
@@ -109,6 +113,26 @@ remove_protected_ranges <- function(node) {
   xml2::xml_set_attr(node, "protect.end", NULL)
   return(node)
 }
+
+#' @rdname protected_ranges
+#' @param find all nodes that 
+#' @export
+get_protected_nodes <- function(body) {
+  xml2::xml_find_all(body, xpath_protected)
+}
+
+get_full_ranges <- function(node) {
+  if (!is_protected(node)) {
+    return(node)
+  }
+  ranges <- get_protected_ranges(node)
+  txt <- xml2::xml_text(node)
+  inv <- inverse_ranges(nchar(txt), ranges$start, ranges$end)
+  full <- update_ranges(c(inv$start, ranges$start), c(inv$end, ranges$end))
+  full$protected <- full$start %in% ranges$start
+  return(full)
+}
+
 
 #' Detect if two ranges are overlapping
 #' 
@@ -183,4 +207,37 @@ update_ranges <- function(start, end) {
   keep <- seq(j)
   return(list(start = nstart[keep], end = nend[keep]))
 
+}
+
+inverse_ranges <- function(upper, start, end) {
+  original <- seq.int(upper)
+  n <- length(start) + 1
+  res <- list(start = integer(n), end = integer(n))
+  i <- 1
+  j <- 1
+  # create a mask to kee track of where we have been
+  mask <- original > 0
+  while (i < n) {
+    mask <- mask & (original > end[i] | original < start[i])
+    keep <- mask & original < end[i]
+    if (!any(keep)) {
+      i <- i + 1
+      next
+    }
+    rng <- range(original[keep])
+    res$start[j] <- rng[1]
+    res$end[j] <- rng[2]
+    # update the mask to make sure we do not add this again
+    mask[rng[1]:rng[2]] <- FALSE
+    j <- j + 1
+    i <- i + 1
+  }
+  if (end[n - 1] < upper) {
+    res$start[j] <- end[n - 1] + 1
+    res$end[j] <- upper
+  }
+  # remove any empty cells
+  res$start <- res$start[res$start != 0]
+  res$end <- res$end[res$end != 0]
+  return(res)
 }
