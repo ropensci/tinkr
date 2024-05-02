@@ -46,4 +46,7 @@ join_split_nodes(m$body)
 m$head(10)
 get_protected_nodes(m$body)
 get_protected_nodes(original_body)
+
+# the context is identical even after transformation
+identical(as.character(m$body), as.character(original_body))
 }

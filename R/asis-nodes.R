@@ -32,6 +32,10 @@ set_asis <- function(nodes) {
   xml2::xml_set_attr(nodes[xml2::xml_name(nodes) != "softbreak"], "asis", "true")
 }
 
+is_asis <- function(node) {
+  xml2::xml_has_attr(node, "asis")
+}
+
 # INLINE MATH ------------------------------------------------------------------
 
 # finding inline math consists of searching for $ and excluding $$
@@ -222,44 +226,6 @@ label_fully_inline <- function(math) {
   end <- start + attr(locations[[1]], "match.len") - 1L
   add_protected_ranges(math, start, end)
 }
-
-#' Transform a character vector of XML into text nodes
-#'
-#' This is useful in the case where we want to modify some text content to
-#' split it and label a portion of it 'asis' to protect it from commonmark's
-#' escape processing.
-#'
-#' `fix_fully_inline()` uses `make_text_nodes()` to modify a single text node
-#' into several text nodes. It first takes a string of a single text node like
-#' below...
-#'
-#' ```html
-#' <text>this is $\LaTeX$ text</text>
-#' ```
-#'
-#' ...and splits it into three text nodes, surrounding the LaTeX math with text
-#' tags that have the 'asis' attribute.
-#'
-#' ```html
-#' <text>this is </text><text asis='true'>$\LaTeX$</text><text> text</text>
-#' ```
-#'
-#' The `make_text_nodes()` function takes the above text string and converts it
-#' into nodes so that the original text node can be replaced.
-#'
-#' @param a character vector of modified text nodes
-#' @return a nodeset with no associated namespace
-#' @noRd
-make_text_nodes <- function(txt) {
-  # We are hijacking commonmark here to produce an XML markdown document with
-  # a single element: {paste(txt, collapse = ''). This gets passed to glue where
-  # it is expanded into nodes that we can read in via {xml2}, strip the
-  # namespace, and extract all nodes below
-  doc <- glue::glue(commonmark::markdown_xml("{paste(txt, collapse = '')}"))
-  nodes <- xml2::xml_ns_strip(xml2::read_xml(doc))
-  xml2::xml_find_all(nodes, ".//paragraph/text/*")
-}
-
 
 # BLOCK MATH ------------------------------------------------------------------
 

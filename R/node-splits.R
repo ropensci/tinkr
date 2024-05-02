@@ -1,3 +1,40 @@
+#' Transform a character vector of XML into text nodes
+#'
+#' This is useful in the case where we want to modify some text content to
+#' split it and label a portion of it 'asis' to protect it from commonmark's
+#' escape processing.
+#'
+#' `fix_fully_inline()` uses `make_text_nodes()` to modify a single text node
+#' into several text nodes. It first takes a string of a single text node like
+#' below...
+#'
+#' ```html
+#' <text>this is $\LaTeX$ text</text>
+#' ```
+#'
+#' ...and splits it into three text nodes, surrounding the LaTeX math with text
+#' tags that have the 'asis' attribute.
+#'
+#' ```html
+#' <text>this is </text><text asis='true'>$\LaTeX$</text><text> text</text>
+#' ```
+#'
+#' The `make_text_nodes()` function takes the above text string and converts it
+#' into nodes so that the original text node can be replaced.
+#'
+#' @param a character vector of modified text nodes
+#' @return a nodeset with no associated namespace
+#' @noRd
+make_text_nodes <- function(txt) {
+  # We are hijacking commonmark here to produce an XML markdown document with
+  # a single element: {paste(txt, collapse = ''). This gets passed to glue where
+  # it is expanded into nodes that we can read in via {xml2}, strip the
+  # namespace, and extract all nodes below
+  doc <- glue::glue(commonmark::markdown_xml("{paste(txt, collapse = '')}"))
+  nodes <- xml2::xml_ns_strip(xml2::read_xml(doc))
+  xml2::xml_find_all(nodes, ".//paragraph/text/*")
+}
+
 #' Split and Join nodes that have been protected
 #'
 #' @param body an `xml_document` class object
@@ -31,6 +68,9 @@
 #' m$head(10)
 #' get_protected_nodes(m$body)
 #' get_protected_nodes(original_body)
+#' 
+#' # the context is identical even after transformation
+#' identical(as.character(m$body), as.character(original_body))
 split_protected_nodes <- function(body) {
   body <- copy_xml(body)
   protected <- get_protected_nodes(body)
@@ -47,6 +87,14 @@ split_node <- function(node, id) {
     return(node)
   }
   frag <- split_node_text(node)
+  if (length(frag$string) == 1) {
+    # If we have a single fragment, we can label it "asis" and be on our way
+    # This is likely the situation where a math equation contains 
+    # two underscores, which the interpreter reads as <emph> nodes.
+    xml2::xml_set_attr(node, "asis", "true")
+    remove_protected_ranges(node)
+    return(node)
+  }
   new_nodes <- glue::glue("<text>{frag$string}</text>")
   new_nodes <- make_text_nodes(new_nodes)
   attrs <- xml2::xml_attrs(node)
@@ -96,44 +144,25 @@ join_split_nodes <- function(body) {
 join_text_nodes <- function(nodes) {
   nodetxt <- xml2::xml_text(nodes)
   asis_nodes <- xml2::xml_has_attr(nodes, "asis")
-  # if there is a single node (e.g. it was part of a multiline math problem)
-  # and it was _all_ protected, then we need to catch it and return it early
-  if (length(nodes) == 1) {
-    new_node <- nodes[[1]]
-    if (has_sourcepos(nodes)) {
-      start <- 1
-      end <- get_colend(nodes)[asis_nodes] - get_colstart(nodes)[asis_nodes] + 1
-    } else {
-      start <- 1
-      end <- nchar(nodetxt)
-    }
-    add_protected_ranges(new_node, start, end)
-    xml2::xml_set_attr(new_node, "split-id", NULL)
-    xml2::xml_set_attr(new_node, "asis", NULL)
-    return(new_node)
-  }
   # In this nodeset, we need to make sure to relabel the asis nodes 
   txt <- paste(nodetxt, collapse = "")
   # our new node is the donor for all other nodes
   new_node <- nodes[[1]]
   xml2::xml_set_text(new_node, txt)
   if (has_sourcepos(new_node)) {
+    # restore the sourcepos of the original nodes
     pos <- join_sourcepos(nodes)
-    offset <- get_colstart(new_node) - 1
-    start <- get_colstart(nodes)[asis_nodes] - offset
-    end <- get_colend(nodes)[asis_nodes] - offset
     xml2::xml_set_attr(new_node, "sourcepos", pos)
-  } else {
-    # compute the protection from the string lengths
-    n <- cumsum(nchar(nodetxt))
-    start <- n[!asis_nodes] + 1
-    end <- n[asis_nodes]
-    # if the first node is an asis node, th
-    if (isTRUE(asis_nodes[1])) {
-      start <- c(1, n[!asis_nodes] + 1)
-    }
-    start <- start[seq_along(end)]
   }
+  # compute the protection from the string lengths
+  n <- cumsum(nchar(nodetxt))
+  start <- n[!asis_nodes] + 1
+  end <- n[asis_nodes]
+  # if the first node is an asis node, th
+  if (isTRUE(asis_nodes[1])) {
+    start <- c(1, n[!asis_nodes] + 1)
+  }
+  start <- start[seq_along(end)]
   add_protected_ranges(new_node, start, end)
   xml2::xml_set_attr(new_node, "split-id", NULL)
   xml2::xml_set_attr(new_node, "asis", NULL)

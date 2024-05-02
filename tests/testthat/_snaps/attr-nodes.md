@@ -22,7 +22,7 @@
           <image sourcepos="10:1-10:51" destination="https://placekitten.com/200/300" title="">
             <text sourcepos="10:3-10:17" xml:space="preserve">a pretty kitten</text>
           </image>
-          <text sourcepos="10:52-10:88" xml:space="preserve" protect.start="1" protect.end="37" alt="'a picture of a kitten'">{#kitteh alt='a picture of a kitten'}</text>
+          <text sourcepos="10:52-10:88" xml:space="preserve" asis="true" alt="'a picture of a kitten'">{#kitteh alt='a picture of a kitten'}</text>
         </paragraph>
         <paragraph sourcepos="12:1-13:10">
           <image sourcepos="12:1-12:47" destination="https://placedog.net/200/300" title="">

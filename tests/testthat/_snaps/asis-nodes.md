@@ -92,7 +92,7 @@
     Code
       show_user(wool$show(), force = TRUE)
     Output
-      example
+      example inline $b_{ij}$
       
       $a_{ij}$
       

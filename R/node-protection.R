@@ -63,8 +63,9 @@
 #' if (file.exists(temp_file)) unlink(temp_file)
 add_protected_ranges <- function(node, start, end) {
   no_beginning <- length(start) == 0 || any(start < 1)
-  if (no_beginning || not_text_node(node)) {
-    # return early if there are no ranges to protect
+  if (is_asis(node) || no_beginning || not_text_node(node)) {
+    # return early if node is already protected
+    # or there are no ranges to protect
     return(node)
   }
   if (is_protected(node)) {
@@ -74,6 +75,14 @@ add_protected_ranges <- function(node, start, end) {
     new <- update_ranges(start = c(start, orig$start), end = c(end, orig$end))
     start <- new$start
     end <- new$end
+  }
+  n <- nchar(xml2::xml_text(node))
+  if (length(end) == 1 && start == 1 && end == n ) {
+    # if the protection ends up spanning the entire node, just return asis
+    xml2::xml_set_attr(node, "asis", "true")
+    xml2::xml_set_attr(node, "protect.start", NULL)
+    xml2::xml_set_attr(node, "protect.end", NULL)
+    return(node)
   }
   xml2::xml_set_attr(node, "protect.start", paste(start, collapse = " "))
   xml2::xml_set_attr(node, "protect.end", paste(end, collapse = " "))

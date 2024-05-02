@@ -32,10 +32,17 @@ make_sourcepos <- function(pos) {
 
 split_sourcepos <- function(node) {
   pos <- get_sourcepos(node)
+  # sometimes the source position will run beyond the ranges of the node
+  # this preserves the original end for the source position
+  original_end <- pos$colend
   ranges <- get_full_ranges(node)
+  # the colstart and ends should be offset by the original colstart 
+  # in the case of lists or indented paragraphs
   offset <- pos$colstart - 1L
   pos$colstart <- ranges$start + offset
-  pos$colend <- ranges$end
+  pos$colend <- ranges$end + offset
+  # we append the original end
+  pos$colend[length(pos$colend)] <- original_end
   make_sourcepos(pos)
 }
 

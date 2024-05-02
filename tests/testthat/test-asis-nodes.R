@@ -125,7 +125,7 @@ test_that("protect_unescaped() will throw a warning if no sourcpos is available"
 
 test_that("(105) protection of one element does not impede protection of another", {
   
-  expected <- "example\n\n$a_{ij}$ \n"
+  expected <- "example inline $b_{ij}$\n\n$a_{ij}$ \n"
 
   temp_file <- withr::local_tempfile()
   brio::write_lines(expected, temp_file)
@@ -137,17 +137,17 @@ test_that("(105) protection of one element does not impede protection of another
   wool$protect_curly()
 
   # protection exists
-  n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.start]", ns = md_ns())
-  expect_length(n, 1)
+  the_nodes <- xml2::xml_find_all(wool$body, ".//node()[@protect.start]")
+  expect_length(the_nodes, 2)
   # the ranges are initially betwen the curly braces
-  expect_equal(get_protected_ranges(n[[1]]), list(start = 4L, end = 7L))
+  expect_equal(get_protected_ranges(the_nodes[[1]]), list(start = 19L, end = 22L))
+  expect_equal(get_protected_ranges(the_nodes[[2]]), list(start = 4L, end = 7L))
 
   # protecting for math does not throw an error
   expect_no_error(wool$protect_math())
-  n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.start]", ns = md_ns())
-  expect_length(n, 1)
-  # the protected range now extends to the whole line
-  expect_equal(get_protected_ranges(n[[1]]), list(start = 1L, end = 8L))
+  # the protected range now extends to the whole line without the trailing space
+  expect_equal(get_protected_ranges(the_nodes[[1]]), list(start = 16L, end = 23L))
+  expect_equal(get_protected_ranges(the_nodes[[2]]), NULL)
   expect_snapshot(show_user(wool$show(), force = TRUE))
 })
 

@@ -6,6 +6,7 @@ test_that("splitting and joining protected nodes will work round trip", {
   m$protect_math()
   # protection gives us protected nodes
   protected <- length(get_protected_nodes(m$body))
+  orig <- m$body
   expect_gt(protected, 0)
   # ---- splitting --------------------------------------------
   # splitting transforms those nodes into split text nodes
@@ -32,6 +33,7 @@ test_that("splitting and joining protected nodes will work round trip", {
   h3 <- m$head(10)
   expect_equal(h1, h3)
   expect_equal(length(get_protected_nodes(m$body)), protected)
+  expect_equal(as.character(m$body), as.character(orig))
 
 })
 
@@ -41,6 +43,7 @@ test_that("splitting and joining protected nodes will work round trip with sourc
   ex <- system.file("extdata", "math-example.md", package = "tinkr")
   m <- tinkr::yarn$new(ex, sourcepos = TRUE)
   m$protect_math()
+  orig <- m$body
   # the source positions exist
   expect_true(has_sourcepos(m$body))
   # protection gives us protected nodes
@@ -71,5 +74,6 @@ test_that("splitting and joining protected nodes will work round trip with sourc
   h3 <- m$head(10)
   expect_equal(h1, h3)
   expect_equal(length(get_protected_nodes(m$body)), protected)
+  expect_equal(object = as.character(m$body), expected = as.character(orig))
 
 })

@@ -115,14 +115,14 @@ test_that("protection can be added and removed", {
 
   add_protected_ranges(nodes[[2]], start = 1, end = 8)
 
-  expect_true(is_protected(nodes[[2]]))
+  expect_false(is_protected(nodes[[2]]))
+  expect_true(is_asis(nodes[[2]]))
 
   expect_equal(get_protected_ranges(nodes[[1]]),
     list(start = c(3, 7), end = c(4, 8))
   )
-  expect_equal(get_protected_ranges(nodes[[2]]),
-    list(start = 1, end = 8)
-  )
+  expect_equal(get_protected_ranges(nodes[[2]]), NULL)
+
   some_protection <- wool$show()
   # we expect all but the first and third entities to be protected
   some_expected <- gsub("\\\\([ac])", "\\\\\\\\\\1", expected)
@@ -135,10 +135,10 @@ test_that("protection can be added and removed", {
     list(start = c(3, 7), end = c(4, 8))
   )
   # adding completely overlapping protections does not cause an error
-  add_protected_ranges(nodes[[1]], start = c(3, 7), end = c(4, 8))
-  expect_equal(get_protected_ranges(nodes[[2]]),
-    list(start = 1, end = 8)
-  )
+  add_protected_ranges(nodes[[2]], start = c(3, 7), end = c(4, 8))
+  expect_true(is_asis(nodes[[2]]))
+  expect_equal(get_protected_ranges(nodes[[2]]), NULL)
+
   some_protection <- wool$show()
   # we expect all but the first and third entities to be protected
   some_expected <- gsub("\\\\([ac])", "\\\\\\\\\\1", expected)
