@@ -142,30 +142,32 @@ join_split_nodes <- function(body) {
 }
 
 join_text_nodes <- function(nodes) {
-  nodetxt <- xml2::xml_text(nodes)
-  asis_nodes <- is_asis(nodes)
-  # In this nodeset, we need to make sure to relabel the asis nodes 
-  txt <- paste(nodetxt, collapse = "")
+  txt <- paste(xml2::xml_text(nodes), collapse = "")
+  prtct <- protected_ranges_from_fragments(nodes)
   # our new node is the donor for all other nodes
   new_node <- nodes[[1]]
+  xml2::xml_set_attr(new_node, "asis", NULL)
+  add_protected_ranges(new_node, prtct$start, prtct$end)
   xml2::xml_set_text(new_node, txt)
   if (has_sourcepos(new_node)) {
     # restore the sourcepos of the original nodes
     pos <- join_sourcepos(nodes)
     xml2::xml_set_attr(new_node, "sourcepos", pos)
   }
-  # compute the protection from the string lengths
-  n <- cumsum(nchar(nodetxt))
-  start <- n[!asis_nodes] + 1
-  end <- n[asis_nodes]
-  # if the first node is an asis node, th
-  if (isTRUE(asis_nodes[1])) {
-    start <- c(1, n[!asis_nodes] + 1)
-  }
-  start <- start[seq_along(end)]
-  add_protected_ranges(new_node, start, end)
+  # need to remove 'asis' before setting the protected range
   xml2::xml_set_attr(new_node, "split-id", NULL)
-  xml2::xml_set_attr(new_node, "asis", NULL)
   xml2::xml_remove(nodes[-1])
+}
+
+protected_ranges_from_fragments <- function(nodes) {
+  txt <- xml2::xml_text(nodes)
+  asis_nodes <- is_asis(nodes)
+  # number of characters
+  N <- nchar(txt)
+  # ending positions of the characters
+  P <- cumsum(N)
+  start <- P[asis_nodes] - N[asis_nodes] + 1
+  end <- P[asis_nodes]
+  return(list(start = start, end = end))
 }
 
