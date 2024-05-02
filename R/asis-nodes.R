@@ -208,6 +208,9 @@ label_partial_inline <- function(math) {
     begin <- 1
     end <- nchar(char)
   }
+  # if any of the nodes have been set as curly, unset
+  xml2::xml_set_attr(math, "curly", NULL)
+  xml2::xml_set_attr(math, "curly-id", NULL)
   add_protected_ranges(math, begin, end)
 }
 
@@ -224,6 +227,9 @@ label_fully_inline <- function(math) {
   # <text protect.start='9' protect.end='16'>this is $\LaTeX$ text</text>
   start <- locations[[1]]
   end <- start + attr(locations[[1]], "match.len") - 1L
+  # if any of the nodes have been set as curly, unset
+  xml2::xml_set_attr(math, "curly", NULL)
+  xml2::xml_set_attr(math, "curly-id", NULL)
   add_protected_ranges(math, start, end)
 }
 
@@ -242,6 +248,9 @@ protect_block_math <- function(body, ns) {
   bm <- find_block_math(body, ns)
   # get all of the internal nodes
   bm <- xml2::xml_find_all(bm, ".//descendant-or-self::md:*", ns = ns)
+  # if any of the nodes have been set as curly, unset
+  xml2::xml_set_attr(bm, "curly", NULL)
+  xml2::xml_set_attr(math, "curly-id", NULL)
   set_asis(bm)
 }
 
