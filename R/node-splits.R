@@ -91,7 +91,7 @@ split_node <- function(node, id) {
     # If we have a single fragment, we can label it "asis" and be on our way
     # This is likely the situation where a math equation contains 
     # two underscores, which the interpreter reads as <emph> nodes.
-    xml2::xml_set_attr(node, "asis", "true")
+    set_asis(node)
     remove_protected_ranges(node)
     return(node)
   }
@@ -143,7 +143,7 @@ join_split_nodes <- function(body) {
 
 join_text_nodes <- function(nodes) {
   nodetxt <- xml2::xml_text(nodes)
-  asis_nodes <- xml2::xml_has_attr(nodes, "asis")
+  asis_nodes <- is_asis(nodes)
   # In this nodeset, we need to make sure to relabel the asis nodes 
   txt <- paste(nodetxt, collapse = "")
   # our new node is the donor for all other nodes
