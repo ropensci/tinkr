@@ -44,7 +44,8 @@ digest_curly <- function(curly, id, ns) {
 }
 
 label_alt <- function(curly) {
-  char <- paste(trimws(xml2::xml_text(curly)), collapse = " ")
+  char <- trimws(xml2::xml_text(curly))
+  char <- paste(char[char != ""], collapse = " ")
   res <- if (inherits(curly, "xml_node")) curly else curly[[1]]
   alt_fragment <- regmatches(char, gregexpr("alt=['\"].*?['\"]", char))[[1]]
   if (length(alt_fragment) > 0) {
