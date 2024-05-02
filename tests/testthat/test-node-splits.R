@@ -33,6 +33,8 @@ test_that("splitting and joining protected nodes will work round trip", {
   h3 <- m$head(10)
   expect_equal(h1, h3)
   expect_equal(length(get_protected_nodes(m$body)), protected)
+
+  # CONFIRM ROUND TRIP ----------------------------------------
   expect_equal(as.character(m$body), as.character(orig))
 
 })
@@ -49,7 +51,7 @@ test_that("splitting and joining protected nodes will work round trip with sourc
   # protection gives us protected nodes
   protected <- length(get_protected_nodes(m$body))
   expect_gt(protected, 0)
-  # ---- splitting --------------------------------------------
+  # ---- splitting ---------------------------------------------
   # splitting transforms those nodes into split text nodes
   split_body <- split_protected_nodes(m$body)
   # no protected nodes exist
@@ -74,6 +76,8 @@ test_that("splitting and joining protected nodes will work round trip with sourc
   h3 <- m$head(10)
   expect_equal(h1, h3)
   expect_equal(length(get_protected_nodes(m$body)), protected)
+
+  # CONFIRM ROUND TRIP ----------------------------------------
   expect_equal(object = as.character(m$body), expected = as.character(orig))
 
 })
