@@ -250,7 +250,7 @@ protect_block_math <- function(body, ns) {
   bm <- xml2::xml_find_all(bm, ".//descendant-or-self::md:*", ns = ns)
   # if any of the nodes have been set as curly, unset
   xml2::xml_set_attr(bm, "curly", NULL)
-  xml2::xml_set_attr(math, "curly-id", NULL)
+  xml2::xml_set_attr(bm, "curly-id", NULL)
   set_asis(bm)
 }
 
