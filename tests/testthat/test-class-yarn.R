@@ -24,8 +24,21 @@ test_that("yarn show, head, and tail methods work", {
   expect_snapshot(show_user(res <- y1$show(), TRUE))
   expect_type(res, "character")
 
+  # the head method is identical to subsetting 10 lines
+  expect_snapshot(show_user(res_11 <- y1$show(11:20), TRUE))
+  expect_length(res_11, 10) %>%
+    expect_identical(res[11:20]) %>%
+    expect_type("character")
+
+  # a subset from the top has 10 lines
+  expect_snapshot(show_user(res_1 <- y1$show(1:10), TRUE))
+  expect_length(res_1, 10) %>%
+    expect_type("character")
+
+  # the head method is identical to subsetting 10 lines
   expect_snapshot(show_user(res <- y1$head(10), TRUE))
   expect_length(res, 10) %>%
+    expect_identical(res_1) %>%
     expect_type("character")
 
   expect_snapshot(show_user(res <- y1$tail(11), TRUE))

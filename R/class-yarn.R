@@ -96,6 +96,8 @@ yarn <- R6::R6Class("yarn",
 
     #' @description show the markdown contents on the screen
     #'
+    #' @param lines a subset of elements to show. Defaults to `TRUE`, which
+    #'    shows all lines of the output. This can be either logical or numeric.
     #' @param stylesheet_path path to the xsl stylesheet to convert XML to markdown.
     #' @return a character vector with one line for each line in the output
     #' @examples
@@ -104,8 +106,8 @@ yarn <- R6::R6Class("yarn",
     #' ex2$head(5)
     #' ex2$tail(5)
     #' ex2$show()
-    show = function(stylesheet_path = stylesheet() ) {
-      show_user(private$md_lines(stylesheet = stylesheet_path))
+    show = function(lines = TRUE, stylesheet_path = stylesheet()) {
+      show_user(private$md_lines(stylesheet = stylesheet_path)[lines])
     },
 
     #' @description show the head of the markdown contents on the screen
