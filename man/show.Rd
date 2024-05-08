@@ -49,6 +49,6 @@ show_context(code[1:10])
 # show the items in the full document censored:
 show_censor(links)
 # you can set the mark to censor by using the `tinkr.censor option`
-option(tinkr.censor = ".")
+options(tinkr.censor = ".")
 show_censor(links)
 }
