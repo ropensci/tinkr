@@ -24,10 +24,10 @@ test_that("show_censor() will censor elements", {
   # give us the original for comparison
   orig <- y$show()
   n <- length(orig) - length(y$yaml) + 1
-  lnks <- show_censor(links)
-  cd <- show_censor(code)
   # the censor option can be adjusted
   withr::local_options(list(tinkr.censor = "."))
+  lnks <- show_censor(links)
+  cd <- show_censor(code)
   blks <- show_censor(blocks)
 
   # the length of the documents are identical
