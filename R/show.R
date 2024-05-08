@@ -17,13 +17,19 @@
 #' show_list(code[1:10])
 #' show_list(blocks[1:2])
 #' 
-#' # show the items in the structure of the document
+#' # show the items in their local structure
 #' show_bare(items)
 #' show_bare(links)
 #'
 #' # show the items with context markers ([...]) in the structure of the document
 #' show_context(links[20:31])
 #' show_context(code[1:10])
+#' 
+#' # show the items in the full document censored:
+#' show_censor(links)
+#' # you can set the mark to censor by using the `tinkr.censor option`
+#' option(tinkr.censor = ".")
+#' show_censor(links)
 #' @rdname show
 #' @export
 show_list <- function(nodelist) {
@@ -34,20 +40,30 @@ show_list <- function(nodelist) {
 #' @rdname show
 #' @export
 show_bare <- function(nodelist) {
-  res <- isolate_nodes(nodelist)
+  res <- isolate_nodes(nodelist, type = "context")
   return(show_user(print_lines(res$doc)))
 }
 
 #' @rdname show
 #' @export
 show_context <- function(nodelist) {
-  res <- isolate_nodes(nodelist)
+  res <- isolate_nodes(nodelist, type = "context")
   res <- add_isolation_context(nodelist, res)
   return(show_user(print_lines(res$doc)))
 }
 
+#' @rdname show
+#' @export
+show_censor <- function(nodelist) {
+  res <- isolate_nodes(nodelist, type = "censor")
+  return(show_user(print_lines(res$doc)))
+}
+
+
+
 isolate_nodes <- function(nodelist, type = "context") {
   switch(type,
+    "censor" = isolate_nodes_censor(nodelist),
     "context" = isolate_nodes_in_context(nodelist),
     "list" = isolate_nodes_a_la_carte(nodelist),
   )
@@ -68,6 +84,22 @@ isolate_nodes_a_la_carte <- function(nodelist) {
     }
   }
   return(list(doc = doc, key = NULL))
+}
+
+
+isolate_nodes_in_context <- function(nodelist) {
+  res <- provision_isolation(nodelist)
+  xml2::xml_remove(res$parents)
+  return(list(doc = res$doc, key = res$key))
+}
+
+isolate_nodes_censor <- function(nodelist) {
+  res <- provision_isolation(nodelist)
+  censor_attr(res$parents, "destination")
+  censor_attr(res$parents, "title")
+  txt <- xml2::xml_find_all(res$parents, ".//text()")
+  xml2::xml_set_text(txt, censor(xml2::xml_text(txt)))
+  return(list(doc = res$doc, key = res$key))
 }
 
 provision_isolation <- function(nodelist) {
@@ -91,18 +123,13 @@ provision_isolation <- function(nodelist) {
 
 }
 
-isolate_nodes_in_context <- function(nodelist) {
-  res <- provision_isolation(nodelist)
-  xml2::xml_remove(res$parents)
-  return(list(doc = res$doc, key = res$key))
-}
-
 add_isolation_context <- function(nodelist, isolated) {
+  sib <- sprintf("sibling::*[1][not(@label=%s)]", isolated$key)
   pretext <- xml2::xml_find_lgl(nodelist, 
-    "boolean(count(preceding-sibling::*)!=0)"
+    sprintf("boolean(count(preceding-%s)!=0)", sib)
   )
   postext <- xml2::xml_find_lgl(nodelist, 
-    "boolean(count(following-sibling::*)!=0)"
+    sprintf("boolean(count(following-%s)!=0)", sib)
   )
   xpath <- sprintf(".//node()[@label=%s]", isolated$key)
   labelled <- xml2::xml_find_all(isolated$doc, xpath)
@@ -118,6 +145,20 @@ add_isolation_context <- function(nodelist, isolated) {
   })
   return(isolated)
 } 
+
+
+censor_attr <- function(nodes, attr) {
+  attrs <- xml2::xml_attr(nodes, attr)
+  nomiss <- !is.na(attrs)
+  xml2::xml_set_attr(nodes[nomiss], attr, 
+    censor(attrs[nomiss])
+  )
+}
+
+censor <- function(x) {
+  item <- getOption("tinkr.censor", default = "\u2587")
+  gsub("[^[:space:]]", item, x, perl = TRUE)
+}
 
 print_lines <- function(xml, path = NULL, stylesheet = NULL) {
   if (inherits(xml, "xml_document")) {

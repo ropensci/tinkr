@@ -4,6 +4,7 @@
 \alias{show_list}
 \alias{show_bare}
 \alias{show_context}
+\alias{show_censor}
 \title{Display a node or nodelist as markdown}
 \usage{
 show_list(nodelist)
@@ -11,6 +12,8 @@ show_list(nodelist)
 show_bare(nodelist)
 
 show_context(nodelist)
+
+show_censor(nodelist)
 }
 \arguments{
 \item{nodelist}{an object of class \code{xml_nodelist} OR \code{xml_node} OR a list of
@@ -35,11 +38,17 @@ show_list(links[1:10])
 show_list(code[1:10])
 show_list(blocks[1:2])
 
-# show the items in the structure of the document
+# show the items in their local structure
 show_bare(items)
 show_bare(links)
 
 # show the items with context markers ([...]) in the structure of the document
 show_context(links[20:31])
 show_context(code[1:10])
+
+# show the items in the full document censored:
+show_censor(links)
+# you can set the mark to censor by using the `tinkr.censor option`
+option(tinkr.censor = ".")
+show_censor(links)
 }

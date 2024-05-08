@@ -2,9 +2,9 @@
 
 ## NEW FEATURES
 
-* `show_list()`, `show_bare()`, and `show_context()` will show the markdown
-  content of a node, nodelist, or list of nodes without needing to print the
-  entire document.
+* `show_list()`, `show_bare()`, `show_context()`, and `show_censor()` will show
+  the markdown content of a node, nodelist, or list of nodes without needing to
+  print the entire document.
 * `yarn$show()` method now gains the `lines` parameter, which allows you to
   subset the output by the lines of text.
 

@@ -156,6 +156,84 @@
       
       
 
+# show_censor() will censor elements
+
+    Code
+      show_user(lnks[1:10], force = TRUE)
+    Output
+      
+      
+      ▇▇ ▇▇▇ [second post of the series where we obtained data from
+      eBird](https://ropensci.org/blog/2018/08/21/birds-radolfzell/) ▇▇
+      ▇▇▇▇▇▇▇▇▇▇ ▇▇▇▇ ▇▇▇▇▇ ▇▇▇▇ ▇▇▇▇▇▇▇▇ ▇▇ ▇▇▇ ▇▇▇▇▇▇ ▇▇ ▇▇▇▇▇▇▇▇▇▇ ▇▇▇ ▇▇
+      ▇▇▇▇▇▇▇▇▇▇▇▇ ▇▇▇▇ ▇▇▇▇▇▇▇▇▇ ▇▇▇▇ ▇▇▇▇ ▇▇▇▇▇▇▇▇▇ ▇▇▇ ▇▇▇▇▇ ▇▇▇▇▇▇▇▇▇▇▇ ▇▇
+      [the fourth post of the
+      series](https://ropensci.org/blog/2018/09/04/birds-taxo-traits/)▇ ▇▇▇▇
+      ▇▇ ▇▇▇▇▇ ▇▇ ▇▇▇▇▇▇▇ ▇▇▇▇▇ ▇▇▇ ▇▇▇▇▇▇▇▇▇▇ ▇▇ ▇▇▇▇▇ ▇▇▇▇▇ ▇▇ *▇▇▇▇▇▇▇▇▇▇
+      ▇▇▇▇*▇ ▇▇ ▇▇▇▇ ▇▇▇▇▇ ▇▇ ▇▇▇▇ ▇▇▇▇▇ ▇▇▇ ▇▇▇▇▇▇▇▇▇▇ ▇▇▇▇▇▇▇▇▇▇ ▇▇▇ ▇▇ ▇▇▇▇
+
+---
+
+    Code
+      show_user(tail(cd, 20), force = TRUE)
+    Output
+      
+      - [▇▇▇ ▇▇ ▇▇▇▇▇▇▇ ▇▇▇▇ ▇▇▇▇ ▇▇▇ ▇▇▇▇▇▇▇ ▇▇▇▇▇▇▇
+        ▇▇▇▇▇▇▇▇](▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇)▇
+        ▇▇▇▇▇▇▇▇▇ `magick` ▇▇▇ ▇▇▇▇▇ ▇▇▇▇▇▇▇▇▇▇▇▇▇ `tesseract` ▇▇▇ ▇▇▇▇▇▇▇
+        ▇▇▇▇▇▇▇▇▇ ▇▇▇▇▇▇▇▇▇▇▇▇ `cld2` ▇▇▇ `cld3` ▇▇▇ ▇▇▇▇▇▇▇▇ ▇▇▇▇▇▇▇▇▇▇ ▇▇▇
+        `taxize::gnr_resolve` ▇▇▇ ▇▇▇▇▇▇▇▇▇ ▇▇▇▇ ▇▇▇▇▇▇▇▇▇▇▇
+      
+      - [▇▇▇ ▇▇ ▇▇▇▇▇▇▇▇▇▇ ▇▇ ▇▇▇▇▇▇▇▇▇▇ ▇▇▇▇▇▇▇ ▇▇▇▇ ▇▇▇▇▇▇▇▇ ▇▇▇ ▇▇▇▇▇
+        ▇▇▇▇▇▇▇▇▇▇▇](▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇)▇
+        ▇▇▇▇▇▇▇▇▇ `taxize`▇ ▇▇▇▇▇▇▇▇▇ ▇▇▇▇▇▇▇▇ ▇▇▇ ▇▇ ▇▇▇ `traits`▇
+        ▇▇▇▇▇▇▇▇▇ ▇▇▇▇▇▇ ▇▇ ▇▇▇▇▇▇▇ ▇▇▇▇▇▇ ▇▇▇▇▇
+      
+      - ▇▇▇ ▇▇ ▇▇▇▇▇ ▇▇▇ ▇▇▇▇▇▇▇▇▇▇ ▇▇▇▇▇▇▇▇▇▇ ▇▇▇ ▇▇▇▇▇▇▇▇▇▇ ▇▇▇▇ ▇▇▇▇
+        ▇▇▇▇▇▇▇▇▇▇▇▇▇ ▇▇▇▇ ▇▇ ▇▇▇ ▇▇▇▇ ▇▇▇▇▇▇ ▇▇▇▇ ▇▇▇▇▇
+      
+      ▇▇▇▇▇▇ ▇ ▇▇▇▇▇ ▇▇▇ ▇▇▇▇ ▇▇▇▇▇ *▇▇▇* ▇▇▇▇▇▇▇▇ ▇▇ ▇▇▇▇▇▇▇ ▇▇▇ ▇▇▇▇▇▇▇▇
+      ▇▇▇▇▇ ▇▇▇ ▇▇▇▇ ▇▇▇ ▇▇▇▇▇▇ ▇▇▇ ▇▇ ▇▇▇▇▇ ▇▇▇▇▇ ▇▇▇▇ ▇▇▇ ▇▇▇▇▇ ▇▇ ▇▇▇▇▇▇▇▇
+      ▇▇▇▇▇▇▇▇ ▇▇ ▇ ▇▇▇▇▇▇ ▇▇ ▇▇▇ ▇▇▇ [▇▇▇ ▇▇▇▇▇▇▇▇ ▇▇▇▇▇▇▇▇▇▇
+      ▇▇▇▇▇](▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇)▇ ▇▇▇▇▇ ▇▇▇▇▇▇▇▇
+      
+
+---
+
+    Code
+      show_user(blks[19:48], force = TRUE)
+    Output
+      ... ...... .......... .. ... ...... . .... .. .... .... .... ... ...
+      .... ...... ......
+      
+      ```r
+      # polygon for filtering
+      landkreis_konstanz <- osmdata::getbb("Landkreis Konstanz",
+                                   format_out = "sf_polygon")
+      crs <- sf::st_crs(landkreis_konstanz)
+      
+      # get and filter data
+      f_out_ebd <- "ebird/ebd_lk_konstanz.txt"
+      
+      library("magrittr")
+      
+      ebd <- auk::read_ebd(f_out_ebd) %>%
+        sf::st_as_sf(coords = c("longitude", "latitude"),
+                      crs = crs)
+      
+      in_indices <- sf::st_within(ebd, landkreis_konstanz)
+      
+      ebd <- dplyr::filter(ebd, lengths(in_indices) > 0)
+      
+      ebd <- as.data.frame(ebd)
+      
+      ebd <- dplyr::filter(ebd, approved, lubridate::year(observation_date) > 2010)
+      ```
+      
+      ... ... .... .. ........... .. ..... .... ... ... .. ....... ........
+      ... .... ......
+      
+
 # show context will provide context for the elements
 
     Code
