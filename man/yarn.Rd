@@ -251,12 +251,15 @@ unlink(tmp)
 \subsection{Method \code{show()}}{
 show the markdown contents on the screen
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{yarn$show(stylesheet_path = stylesheet())}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{yarn$show(lines = TRUE, stylesheet_path = stylesheet())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{lines}}{a subset of elements to show. Defaults to \code{TRUE}, which
+shows all lines of the output. This can be either logical or numeric.}
+
 \item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.}
 }
 \if{html}{\out{</div>}}

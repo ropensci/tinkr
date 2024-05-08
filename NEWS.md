@@ -1,5 +1,13 @@
 # tinkr 0.2.0.9000
 
+## NEW FEATURES
+
+* `show_list()`, `show_bare()`, and `show_context()` will show the markdown
+  content of a node, nodelist, or list of nodes without needing to print the
+  entire document.
+* `yarn$show()` method now gains the `lines` parameter, which allows you to
+  subset the output by the lines of text.
+
 ## BUG FIX
 
 * Inline math with single characters will no longer cause an error (issue: #101,

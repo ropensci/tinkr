@@ -208,21 +208,7 @@ yarn <- R6::R6Class("yarn",
     encoding  = "UTF-8",
     # converts the document to markdown and separates the output into lines
     md_lines = function(path = NULL, stylesheet = NULL) {
-      if (is.null(stylesheet)) {
-        md <- to_md(self, path)
-      } else {
-        md <- to_md(self, path, stylesheet)
-      }
-      if (!is.null(path) && !is.null(stylesheet)) {
-        return(md)
-      }
-      # Make sure that the yaml is not sitting on top of the first markdown line
-      if (length(md) == 2) {
-        md[1] <- paste0(md[1], "\n")
-      }
-      f  <- textConnection(md)
-      on.exit(close(f))
-      readLines(f)
+      print_lines(self, path = path, stylesheet = stylesheet)
     }
   )
 )
