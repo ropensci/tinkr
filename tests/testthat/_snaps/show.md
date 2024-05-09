@@ -156,6 +156,26 @@
       
       
 
+# show_list() will isolate groups of elements
+
+    Code
+      show_user(show_list(list(links[1:3], links[4:5])), force = TRUE)
+    Output
+      
+      
+      [second post of the series where we obtained data from
+      eBird](https://ropensci.org/blog/2018/08/21/birds-radolfzell/)
+      [the fourth post of the
+      series](https://ropensci.org/blog/2018/09/04/birds-taxo-traits/)
+      [previous post
+      of the series](https://ropensci.org/blog/2018/08/21/birds-radolfzell/)
+      
+      
+      [(`glue::glue_collapse(species, sep = ", ", last = " and ")`)](https://twitter.com/LucyStats/status/1031938964796657665?s=19)
+      [`taxize`](https://github.com/ropensci/taxize)
+      
+      
+
 # show_censor() will censor elements
 
     Code

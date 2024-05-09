@@ -13,6 +13,19 @@ test_that("show_list() will isolate elements", {
   
 })
 
+test_that("show_list() will isolate groups of elements", {
+  
+  path <- system.file("extdata", "example1.md", package = "tinkr")
+  y <- tinkr::yarn$new(path, sourcepos = TRUE)
+  items <- xml2::xml_find_all(y$body, ".//md:item", tinkr::md_ns())
+  links <- xml2::xml_find_all(y$body, ".//md:link", tinkr::md_ns())
+  code <- xml2::xml_find_all(y$body, ".//md:code", tinkr::md_ns())
+  blocks <- xml2::xml_find_all(y$body, ".//md:code_block", tinkr::md_ns())
+  # show a list of items 
+  expect_snapshot(show_user(show_list(list(links[1:3], links[4:5])), force = TRUE))
+  
+})
+
 
 test_that("show_censor() will censor elements", {
   path <- system.file("extdata", "example1.md", package = "tinkr")

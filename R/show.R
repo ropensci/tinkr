@@ -76,7 +76,10 @@ isolate_nodes_a_la_carte <- function(nodelist) {
     if (inherits(node, "xml_node")) {
       xml2::xml_add_child(parent, node)
     } else {
-      purrr::walk(node, function(n) xml2::xml_add_child(parent, n))
+      purrr::walk(node, function(n) {
+        xml2::xml_add_child(parent, n)
+        xml2::xml_add_child(parent, "softbreak")
+      })
     }
   }
   return(list(doc = doc, key = NULL))
@@ -182,14 +185,4 @@ label_nodes <- function(xpath, doc, label = "save") {
     xml2::xml_find_all(doc, xpath, ns = md_ns()), 
     "label", label)
 }
-
-add_context_siblings <- function(node, where = "after") {
-  xml2::xml_add_sibling(node, .where = "after",
-    "text", " [...] ", asis = "true"
-  )
-  xml2::xml_add_sibling(node, .where = "before",
-    "text", "[...] ", asis = "true"
-  )
-}
-
 
