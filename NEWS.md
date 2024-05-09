@@ -2,6 +2,8 @@
 
 ## NEW FEATURES
 
+* `to_md_vec()` takes an xml node or nodelist and returns a character vector of
+  the markdown produced.
 * `show_list()`, `show_bare()`, `show_context()`, and `show_censor()` will show
   the markdown content of a node, nodelist, or list of nodes without needing to
   print the entire document.

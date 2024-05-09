@@ -132,6 +132,8 @@ test_that("to_md does not break tables", {
   expect_snapshot_file(newtable)
 })
 
+
+
 test_that("code chunks can be inserted on round trip", {
   tmpdir <- withr::local_tempdir("newdir")
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
@@ -174,3 +176,38 @@ test_that("links that start lines are not escaped", {
   expect_equal(actual, expected)
 
 })
+
+
+test_that("to_md_vec() returns a vector of the same length as the nodelist", {
+
+  path <- system.file("extdata", "example1.md", package = "tinkr")
+  y <- tinkr::yarn$new(path, sourcepos = TRUE)
+  items <- xml2::xml_find_all(y$body, ".//md:item", tinkr::md_ns())
+  links <- xml2::xml_find_all(y$body, ".//md:link", tinkr::md_ns())
+  code <- xml2::xml_find_all(y$body, ".//md:code", tinkr::md_ns())
+  blocks <- xml2::xml_find_all(y$body, ".//md:code_block", tinkr::md_ns())
+  # no tables
+  tables <- xml2::xml_find_all(y$body, ".//md:table", tinkr::md_ns())
+
+  # each item is a character vector of equal length to the nodelist
+  expect_length(to_md_vec(items), length(items)) %>%
+    expect_type("character")
+  expect_length(to_md_vec(links), length(links)) %>%
+    expect_type("character")
+  expect_length(to_md_vec(code), length(code)) %>%
+    expect_type("character")
+  expect_length(to_md_vec(blocks), length(blocks)) %>%
+    expect_type("character")
+  expect_length(to_md_vec(tables), 0) %>%
+    expect_type("character")
+
+  # single elements work as well
+  expect_length(to_md_vec(blocks[[1]]), 1) %>%
+    expect_type("character")
+
+  # the output is as expected
+  expect_snapshot(show_user(to_md_vec(blocks[5:6]), force = TRUE))
+
+
+})
+
