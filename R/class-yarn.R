@@ -199,6 +199,32 @@ yarn <- R6::R6Class("yarn",
         message("to use the `protect_unescaped()` method, you will need to re-read your document with `yarn$new(sourcepos = TRUE)`")
       }
       invisible(self)
+    },
+    #' @description Return nodes whose contents are protected from being escaped
+    #' @param type a character vector listing the protections to be included.
+    #'   Defaults to `NULL`, which includes all protected nodes:
+    #'   - math: via the `protect_math()` function
+    #'   - curly: via the `protect_curly()` function
+    #'   - unescaped: via the `protect_unescaped()` function
+    #'
+    #' @examples
+    #' path <- system.file("extdata", "basic-curly.md", package = "tinkr")
+    #' ex <- tinkr::yarn$new(path, sourcepos = TRUE)
+    #' # protect curly braces
+    #' ex$protect_curly()
+    #' # add math and protect it
+    #' ex$add_md(c("## math\n", 
+    #'   "$c^2 = a^2 + b^2$\n", 
+    #'   "$$",
+    #'   "\\sum_{i}^k = x_i + 1",
+    #'   "$$\n")
+    #' )
+    #' ex$protect_math()
+    #' # get protected now shows all the protected nodes
+    #' ex$get_protected()
+    #' ex$get_protected(c("math", "curly")) # only show the math and curly
+    get_protected = function(type = NULL) {
+      get_protected(self$body, type = type, self$ns)
     }
   ),
   private = list(

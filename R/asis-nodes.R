@@ -178,8 +178,8 @@ fix_partial_inline <- function(tag, body, ns) {
   # paste the lines together and create new nodes
   n <- length(math_lines)
   char <- as.character(math_lines)
-  char[[1]] <- sub("[$]", "$</text><text asis='true'>", char[[1]])
-  char[[n]] <- sub("[<]text ", "<text asis='true' ", char[[n]])
+  char[[1]] <- sub("[$]", "$</text><text asis='true' math='true'>", char[[1]])
+  char[[n]] <- sub("[<]text ", "<text asis='true' math='true' ", char[[n]])
   nodes <- paste(char, collapse = "")
   nodes <- make_text_nodes(nodes)
   # add the new nodes to the bottom of the existing math lines
@@ -198,7 +198,7 @@ fix_fully_inline <- function(math) {
   # <text>this is </text><text asis='true'>$\LaTeX$</text><text> text</text>
   char <- gsub(
     pattern = inline_dollars_regex("full"),
-    replacement = "</text><text asis='true'>\\1</text><text>",
+    replacement = "</text><text asis='true' math='true'>\\1</text><text>",
     x = char,
     perl = TRUE
   )
@@ -259,6 +259,7 @@ protect_block_math <- function(body, ns) {
   # get all of the internal nodes
   bm <- xml2::xml_find_all(bm, ".//descendant-or-self::md:*", ns = ns)
   set_asis(bm)
+  xml2::xml_set_attr(bm, "math", "true")
 }
 
 # TICK BOXES -------------------------------------------------------------------

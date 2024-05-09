@@ -113,6 +113,26 @@ path <- system.file("extdata", "basic-curly.md", package = "tinkr")
 ex <- tinkr::yarn$new(path, sourcepos = TRUE, unescaped = FALSE)
 ex$tail()
 ex$protect_unescaped()$tail()
+
+## ------------------------------------------------
+## Method `yarn$get_protected`
+## ------------------------------------------------
+
+path <- system.file("extdata", "basic-curly.md", package = "tinkr")
+ex <- tinkr::yarn$new(path, sourcepos = TRUE)
+# protect curly braces
+ex$protect_curly()
+# add math and protect it
+ex$add_md(c("## math\n", 
+  "$c^2 = a^2 + b^2$\n", 
+  "$$",
+  "\\\\sum_{i}^k = x_i + 1",
+  "$$\n")
+)
+ex$protect_math()
+# get protected now shows all the protected nodes
+ex$get_protected()
+ex$get_protected(c("math", "curly")) # only show the math and curly
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -141,6 +161,7 @@ commonmark.}
 \item \href{#method-yarn-protect_math}{\code{yarn$protect_math()}}
 \item \href{#method-yarn-protect_curly}{\code{yarn$protect_curly()}}
 \item \href{#method-yarn-protect_unescaped}{\code{yarn$protect_unescaped()}}
+\item \href{#method-yarn-get_protected}{\code{yarn$get_protected()}}
 \item \href{#method-yarn-clone}{\code{yarn$clone()}}
 }
 }
@@ -427,6 +448,51 @@ This is applied by default when you use \code{yarn$new(sourcepos = TRUE)}.
 ex <- tinkr::yarn$new(path, sourcepos = TRUE, unescaped = FALSE)
 ex$tail()
 ex$protect_unescaped()$tail()
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-yarn-get_protected"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-get_protected}{}}}
+\subsection{Method \code{get_protected()}}{
+Return nodes whose contents are protected from being escaped
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$get_protected(type = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{type}}{a character vector listing the protections to be included.
+Defaults to \code{NULL}, which includes all protected nodes:
+\itemize{
+\item math: via the \code{protect_math()} function
+\item curly: via the \code{protect_curly()} function
+\item unescaped: via the \code{protect_unescaped()} function
+}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "basic-curly.md", package = "tinkr")
+ex <- tinkr::yarn$new(path, sourcepos = TRUE)
+# protect curly braces
+ex$protect_curly()
+# add math and protect it
+ex$add_md(c("## math\n", 
+  "$c^2 = a^2 + b^2$\n", 
+  "$$",
+  "\\\\sum_{i}^k = x_i + 1",
+  "$$\n")
+)
+ex$protect_math()
+# get protected now shows all the protected nodes
+ex$get_protected()
+ex$get_protected(c("math", "curly")) # only show the math and curly
 }
 \if{html}{\out{</div>}}
 

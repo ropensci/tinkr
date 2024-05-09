@@ -1,5 +1,12 @@
 # tinkr 0.2.0.9000
 
+## NEW FEATURES
+
+* `get_protected()` function (and yarn method) will return nodes which have
+  been protected in some way by {tinkr} via one of the `protect_` family of
+  functions. Adopting this pattern is preferred over using
+  `md:text[@asis='true']` as the attribute names may change in the future.
+
 ## BUG FIX
 
 * Inline math with single characters will no longer cause an error (issue: #101,
