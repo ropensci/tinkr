@@ -42,7 +42,7 @@ test_that("show_censor() will censor elements", {
 
 
 
-test_that("show context will provide context for the elements", {
+test_that("show_block() will provide context for the elements", {
   path <- system.file("extdata", "example1.md", package = "tinkr")
   y <- tinkr::yarn$new(path, sourcepos = TRUE)
   items <- xml2::xml_find_all(y$body, ".//md:item", tinkr::md_ns())
@@ -51,11 +51,11 @@ test_that("show context will provide context for the elements", {
   blocks <- xml2::xml_find_all(y$body, ".//md:code_block", tinkr::md_ns())
 
   # show the items in the structure of the document
-  expect_snapshot(show_user(show_bare(items), force = TRUE))
-  expect_snapshot(show_user(show_bare(links), force = TRUE))
+  expect_snapshot(show_user(show_block(items), force = TRUE))
+  expect_snapshot(show_user(show_block(links), force = TRUE))
   # show the items with context markers ([...]) in the structure of the document
-  expect_snapshot(show_user(show_context(links[20:31]), force = TRUE))
-  expect_snapshot(show_user(show_context(code[1:10]), force = TRUE))
+  expect_snapshot(show_user(show_block(links[20:31], mark = TRUE), force = TRUE))
+  expect_snapshot(show_user(show_block(code[1:10], mark = TRUE), force = TRUE))
 
 })
 

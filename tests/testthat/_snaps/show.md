@@ -234,10 +234,10 @@
       ... .... ......
       
 
-# show context will provide context for the elements
+# show_block() will provide context for the elements
 
     Code
-      show_user(show_bare(items), force = TRUE)
+      show_user(show_block(items), force = TRUE)
     Output
       
       
@@ -277,7 +277,7 @@
 ---
 
     Code
-      show_user(show_bare(links), force = TRUE)
+      show_user(show_block(links), force = TRUE)
     Output
       
       
@@ -340,7 +340,7 @@
 ---
 
     Code
-      show_user(show_context(links[20:31]), force = TRUE)
+      show_user(show_block(links[20:31], mark = TRUE), force = TRUE)
     Output
       
       
@@ -372,7 +372,7 @@
 ---
 
     Code
-      show_user(show_context(code[1:10]), force = TRUE)
+      show_user(show_block(code[1:10], mark = TRUE), force = TRUE)
     Output
       
       

@@ -3,7 +3,8 @@
 #' When inspecting the results of an XPath query, displaying the text often 
 #' @param nodelist an object of class `xml_nodelist` OR `xml_node` OR a list of
 #'   either.
-#' @return a character vector, displayed to the screen.
+#' @return a character vector, invisibly. The result of these functions are
+#'   displayed to the screen
 #' @examples
 #' path <- system.file("extdata", "example1.md", package = "tinkr")
 #' y <- tinkr::yarn$new(path, sourcepos = TRUE)
@@ -18,18 +19,15 @@
 #' show_list(blocks[1:2])
 #' 
 #' # show the items in their local structure
-#' show_bare(items)
-#' show_bare(links)
+#' show_block(items)
+#' show_block(links, mark = TRUE)
 #'
-#' # show the items with context markers ([...]) in the structure of the document
-#' show_context(links[20:31])
-#' show_context(code[1:10])
-#' 
 #' # show the items in the full document censored:
 #' show_censor(links)
 #' # you can set the mark to censor by using the `tinkr.censor option`
 #' options(tinkr.censor = ".")
 #' show_censor(links)
+#' @seealso [to_md_vec()] to get a vector of these elements in isolation. 
 #' @rdname show
 #' @export
 show_list <- function(nodelist) {
@@ -38,17 +36,17 @@ show_list <- function(nodelist) {
 }
 
 #' @rdname show
+#' @param mark \[bool\] When `TRUE` markers (`[...]`) are added to replace
+#'   nodes that come before or after the islated nodes. Defaults to `FALSE`,
+#'   which only shows the isolated nodes in their respective blocks. Note that
+#'   the default state may cause nodes within the same block to appear adjacent
+#'   to each other.
 #' @export
-show_bare <- function(nodelist) {
+show_block <- function(nodelist, mark = FALSE) {
   res <- isolate_nodes(nodelist, type = "context")
-  return(show_user(print_lines(res$doc)))
-}
-
-#' @rdname show
-#' @export
-show_context <- function(nodelist) {
-  res <- isolate_nodes(nodelist, type = "context")
-  res <- add_isolation_context(nodelist, res)
+  if (mark) {
+    res <- add_isolation_context(nodelist, res)
+  }
   return(show_user(print_lines(res$doc)))
 }
 
@@ -58,8 +56,6 @@ show_censor <- function(nodelist) {
   res <- isolate_nodes(nodelist, type = "censor")
   return(show_user(print_lines(res$doc)))
 }
-
-
 
 isolate_nodes <- function(nodelist, type = "context") {
   switch(type,

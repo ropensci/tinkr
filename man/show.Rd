@@ -2,25 +2,29 @@
 % Please edit documentation in R/show.R
 \name{show_list}
 \alias{show_list}
-\alias{show_bare}
-\alias{show_context}
+\alias{show_block}
 \alias{show_censor}
 \title{Display a node or nodelist as markdown}
 \usage{
 show_list(nodelist)
 
-show_bare(nodelist)
-
-show_context(nodelist)
+show_block(nodelist, mark = FALSE)
 
 show_censor(nodelist)
 }
 \arguments{
 \item{nodelist}{an object of class \code{xml_nodelist} OR \code{xml_node} OR a list of
 either.}
+
+\item{mark}{[bool] When \code{TRUE} markers (\verb{[...]}) are added to replace
+nodes that come before or after the islated nodes. Defaults to \code{FALSE},
+which only shows the isolated nodes in their respective blocks. Note that
+the default state may cause nodes within the same block to appear adjacent
+to each other.}
 }
 \value{
-a character vector, displayed to the screen.
+a character vector, invisibly. The result of these functions are
+displayed to the screen
 }
 \description{
 When inspecting the results of an XPath query, displaying the text often
@@ -39,16 +43,15 @@ show_list(code[1:10])
 show_list(blocks[1:2])
 
 # show the items in their local structure
-show_bare(items)
-show_bare(links)
-
-# show the items with context markers ([...]) in the structure of the document
-show_context(links[20:31])
-show_context(code[1:10])
+show_block(items)
+show_block(links, mark = TRUE)
 
 # show the items in the full document censored:
 show_censor(links)
 # you can set the mark to censor by using the `tinkr.censor option`
 options(tinkr.censor = ".")
 show_censor(links)
+}
+\seealso{
+\code{\link[=to_md_vec]{to_md_vec()}} to get a vector of these elements in isolation.
 }
