@@ -51,11 +51,15 @@ test_that("show_block() will provide context for the elements", {
   blocks <- xml2::xml_find_all(y$body, ".//md:code_block", tinkr::md_ns())
 
   # show the items in the structure of the document
-  expect_snapshot(show_user(show_block(items), force = TRUE))
-  expect_snapshot(show_user(show_block(links), force = TRUE))
+  b_items <- show_block(items)
+  b_links <- show_block(links)
+  expect_snapshot(show_user(b_items, force = TRUE))
+  expect_snapshot(show_user(b_links, force = TRUE))
   # show the items with context markers ([...]) in the structure of the document
-  expect_snapshot(show_user(show_block(links[20:31], mark = TRUE), force = TRUE))
-  expect_snapshot(show_user(show_block(code[1:10], mark = TRUE), force = TRUE))
+  b_links <- show_block(links[20:31], mark = TRUE)
+  b_code <- show_block(code[1:10], mark = TRUE)
+  expect_snapshot(show_user(b_links, force = TRUE))
+  expect_snapshot(show_user(b_code, force = TRUE))
 
 })
 
