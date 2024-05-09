@@ -4,7 +4,7 @@
 
 * `to_md_vec()` takes an xml node or nodelist and returns a character vector of
   the markdown produced.
-* `show_list()`, `show_block()`, and `show_context()` will show the markdown
+* `show_list()`, `show_block()`, and `show_censor()` will show the markdown
   content of a node, nodelist, or list of nodes without needing to print the
   entire document.
 * `yarn$show()` method now gains the `lines` parameter, which allows you to
