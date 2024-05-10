@@ -24,6 +24,11 @@ test_that("to_xml works for Rmd", {
 
 
 test_that("to_xml can parse markdown with special control characters", {
+  # skip if we are on windows with R version lower than 4.2.0
+  os <- tolower(Sys.info())[["sysname"]]
+  no_utf8_support <- os == "windows" && getRversion() < numeric_version('4.2.0')
+  skip_if(no_utf8_support, message = "this system cannot test UTF-8 output")
+
   tmp <- withr::local_tempfile()
   writeLines("\u2018test single\u2019 \u001C\u201Ctest double\u201D", tmp)
   expect_no_error(xml <- tinkr::to_xml(tmp))
