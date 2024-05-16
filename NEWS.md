@@ -4,6 +4,8 @@
 
 * Inline math with single characters will no longer cause an error (issue: #101,
   fix: #103, @maelle)
+* Special control characters are now filtered out before processing XML (issue:
+  #96, fix: #111, @zkamvar)
 
 ## MISC
 
