@@ -198,21 +198,3 @@ al_title <- function(link) {
   escape_ampersand(titles)
 }
 
-#nocov start
-# Get the position of an element
-get_pos <- function(x, e = 1) {
-  as.integer(
-    gsub(
-      "^(\\d+?):(\\d+?)[-](\\d+?):(\\d+?)$",
-      glue::glue("\\{e}"),
-      xml2::xml_attr(x, "sourcepos")
-    )
-  )
-}
-
-# helpers for get_pos
-get_linestart <- function(x) get_pos(x, e = 1)
-get_colstart  <- function(x) get_pos(x, e = 2)
-get_lineend   <- function(x) get_pos(x, e = 3)
-get_colend    <- function(x) get_pos(x, e = 4)
-#nocov end

@@ -3,6 +3,22 @@ show_user <- function(out, force = FALSE) {
   invisible(out)
 }
 
+# taken from pegboard
+find_between_nodes <- function(a, b, include = TRUE) {
+  the_parent <- xml2::xml_parent(a)
+  if (!identical(the_parent, xml2::xml_parent(b))) {
+    # we cannot return a space between nodes on different levels
+    return(xml2::xml_missing())
+  }
+  the_children <- xml2::xml_children(the_parent)
+  # find the node in question by testing for identity since they represent the
+  # same object, they will be identical. 
+  offset <- if (include) 0 else 1
+  ida <- which(purrr::map_lgl(the_children, identical, a)) + offset
+  idb <- which(purrr::map_lgl(the_children, identical, b)) - offset
+  the_children[seq(ida, idb)]
+}
+
 unbalanced_math_error <- function(bmath, endless, headless, le, lh) {
   no_end <- xml2::xml_text(bmath[endless])
   no_beginning <- xml2::xml_text(bmath[headless])

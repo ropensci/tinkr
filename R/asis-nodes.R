@@ -17,7 +17,7 @@
 #' txt <- textConnection(tinkr::to_md(m))
 #' cat(tail(readLines(txt)), sep = "\n") # broken math
 #' close(txt)
-#' m$body <- protect_math(m$body)
+#' protect_math(m$body)
 #' txt <- textConnection(tinkr::to_md(m))
 #' cat(tail(readLines(txt)), sep = "\n") # fixed math
 #' close(txt)
@@ -30,6 +30,10 @@ protect_math <- function(body, ns = md_ns()) {
 
 set_asis <- function(nodes) {
   xml2::xml_set_attr(nodes[xml2::xml_name(nodes) != "softbreak"], "asis", "true")
+}
+
+is_asis <- function(node) {
+  xml2::xml_has_attr(node, "asis")
 }
 
 # INLINE MATH ------------------------------------------------------------------
@@ -104,7 +108,6 @@ find_broken_math <- function(math) {
 #' cat(tinkr::to_md(list(body = protxt, yaml = "")), sep = "\n")
 #' }
 protect_inline_math <- function(body, ns) {
-  body  <- copy_xml(body)
   math  <- find_inline_math(body, ns)
   if (length(math) == 0) {
     return(body)
@@ -120,16 +123,12 @@ protect_inline_math <- function(body, ns) {
   bmath   <- math[!bespoke]
 
   # protect math that is strictly inline
-  if (length(imath)) {
-    new_nodes <- purrr::map(imath, fix_fully_inline)
-    # since we split up the nodes, we have to do this node by node
-    for (i in seq(new_nodes)) {
-      add_node_siblings(imath[[i]], new_nodes[[i]], remove = TRUE)
-    }
+  if (length(imath) > 0L) {
+    purrr::walk(imath, label_fully_inline)
   }
 
   # protect math that is broken across lines or markdown elements
-  if (length(bmath)) {
+  if (length(bmath) > 0L) {
     if (any(broke$ambiguous)) {
       # ambiguous math may be due to inline r code that produces an answer:
       # $R^2 = `r runif(1)`$
@@ -155,7 +154,7 @@ protect_inline_math <- function(body, ns) {
       fix_partial_inline(i, body, ns)
     }
   }
-  copy_xml(body)
+  body
 }
 
 # Partial inline math are math elements that are not entirely embedded in a
@@ -171,77 +170,68 @@ fix_partial_inline <- function(tag, body, ns) {
   # find everything between the tagged pair
   math_lines <- find_between_inlines(body, ns, tag)
   # make sure everything between the tagged pair is labeled as 'asis'
+  # this is explicitly for symbols like `_`, which denote subscripts in LaTeX,
+  # but make _emph_ text in markdown.
   filling <- math_lines[is.na(xml2::xml_attr(math_lines, "latex-pair"))]
   set_asis(filling)
   filling <- xml2::xml_find_all(filling, ".//node()")
   set_asis(filling)
-  # paste the lines together and create new nodes
-  n <- length(math_lines)
-  char <- as.character(math_lines)
-  char[[1]] <- sub("[$]", "$</text><text asis='true'>", char[[1]])
-  char[[n]] <- sub("[<]text ", "<text asis='true' ", char[[n]])
-  nodes <- paste(char, collapse = "")
-  nodes <- make_text_nodes(nodes)
-  # add the new nodes to the bottom of the existing math lines
-  last_line <- math_lines[n]
-  to_remove <- math_lines[-n]
-  add_node_siblings(last_line, nodes, remove = TRUE)
-  # remove the duplicate lines
-  xml2::xml_remove(to_remove)
+  purrr::walk(math_lines, label_partial_inline)
 }
 
-fix_fully_inline <- function(math) {
-  char <- as.character(math)
-  # Find inline math that is complete and wrap it in text with asis
-  # <text>this is $\LaTeX$ text</text>
-  #   becomes
-  # <text>this is </text><text asis='true'>$\LaTeX$</text><text> text</text>
-  char <- gsub(
-    pattern = inline_dollars_regex("full"),
-    replacement = "</text><text asis='true'>\\1</text><text>",
-    x = char,
+label_partial_inline <- function(math) {
+  char <- xml2::xml_text(math)
+  # find lines that begin with `$` but do not have an end.
+  start <- gregexpr(inline_dollars_regex("start"),
+    char,
     perl = TRUE
   )
-  make_text_nodes(char)
+  # find lines that end with `$` but do not have a beginning.
+  stop <- gregexpr(inline_dollars_regex("stop"),
+    char,
+    perl = TRUE
+  )
+  has_start <- start[[1]][1] > 0
+  has_end <- stop[[1]][1] > 0
+  if (has_start) {
+    # if the line contains the beginning of an inline math fragment,
+    # we start at the match and end at the end of the string
+    begin <- start[[1]]
+    end <- nchar(char)
+  } else if (has_end) {
+    # if the line contains the end of an inline math fragment,
+    # we start at the beginning of the string and end at the end of the match
+    begin <- 1
+    end <- stop[[1]] + attr(stop[[1]], "match.len") - 1L
+  } else {
+    # otherwise, the entire range should be protected.
+    begin <- 1
+    end <- nchar(char)
+  }
+  # if any of the nodes have been set as curly, unset
+  xml2::xml_set_attr(math, "curly", NULL)
+  xml2::xml_set_attr(math, "curly-id", NULL)
+  add_protected_ranges(math, begin, end)
 }
 
-#' Transform a character vector of XML into text nodes
-#'
-#' This is useful in the case where we want to modify some text content to
-#' split it and label a portion of it 'asis' to protect it from commonmark's
-#' escape processing.
-#'
-#' `fix_fully_inline()` uses `make_text_nodes()` to modify a single text node
-#' into several text nodes. It first takes a string of a single text node like
-#' below...
-#'
-#' ```html
-#' <text>this is $\LaTeX$ text</text>
-#' ```
-#'
-#' ...and splits it into three text nodes, surrounding the LaTeX math with text
-#' tags that have the 'asis' attribute.
-#'
-#' ```html
-#' <text>this is </text><text asis='true'>$\LaTeX$</text><text> text</text>
-#' ```
-#'
-#' The `make_text_nodes()` function takes the above text string and converts it
-#' into nodes so that the original text node can be replaced.
-#'
-#' @param a character vector of modified text nodes
-#' @return a nodeset with no associated namespace
-#' @noRd
-make_text_nodes <- function(txt) {
-  # We are hijacking commonmark here to produce an XML markdown document with
-  # a single element: {paste(txt, collapse = ''). This gets passed to glue where
-  # it is expanded into nodes that we can read in via {xml2}, strip the
-  # namespace, and extract all nodes below
-  doc <- glue::glue(commonmark::markdown_xml("{paste(txt, collapse = '')}"))
-  nodes <- xml2::xml_ns_strip(xml2::read_xml(doc))
-  xml2::xml_find_all(nodes, ".//paragraph/text/*")
+label_fully_inline <- function(math) {
+  char <- xml2::xml_text(math)
+  # Find the locations of inline math that is complete
+  locations <- gregexpr(pattern = inline_dollars_regex("full"),
+    char,
+    perl = TRUE
+  )
+  # add the ranges to the attributes
+  # <text>this is $\LaTeX$ text</text>
+  #   becomes
+  # <text protect.start='9' protect.end='16'>this is $\LaTeX$ text</text>
+  start <- locations[[1]]
+  end <- start + attr(locations[[1]], "match.len") - 1L
+  # if any of the nodes have been set as curly, unset
+  xml2::xml_set_attr(math, "curly", NULL)
+  xml2::xml_set_attr(math, "curly-id", NULL)
+  add_protected_ranges(math, start, end)
 }
-
 
 # BLOCK MATH ------------------------------------------------------------------
 
@@ -258,6 +248,9 @@ protect_block_math <- function(body, ns) {
   bm <- find_block_math(body, ns)
   # get all of the internal nodes
   bm <- xml2::xml_find_all(bm, ".//descendant-or-self::md:*", ns = ns)
+  # if any of the nodes have been set as curly, unset
+  xml2::xml_set_attr(bm, "curly", NULL)
+  xml2::xml_set_attr(bm, "curly-id", NULL)
   set_asis(bm)
 }
 
@@ -373,11 +366,10 @@ protect_unescaped <- function(body, txt, ns = md_ns()) {
     warning(msg, call. = FALSE)
     return(body)
   }
-  body <- copy_xml(body)
-  XPATH <- ".//md:text[not(@asis)][contains(text(), '[') or contains(text(), ']')]"
+  XPATH <- ".//md:text[contains(text(), '[') or contains(text(), ']')]"
   snodes <- xml2::xml_find_all(body, XPATH, ns = ns)
   fix_unescaped_squares(snodes, txt)
-  copy_xml(body)
+  return(body)
 }
 
 #' Find the escaped square braces in text vector
@@ -386,7 +378,7 @@ protect_unescaped <- function(body, txt, ns = md_ns()) {
 #' @return the same output as [base::gregexpr()]: a list the same length as
 #' `txt` with integer vectors indicating the character positions of the matches
 #' with attributes:
-#'   1. match.length the length of the match (will be '2')
+#'   1. match.len the length of the match (will be '2')
 #' @noRd
 find_escaped_squares <- function(txt) {
   gregexpr("(\\\\\\])|(\\\\\\[)", txt, useBytes = FALSE)
@@ -407,9 +399,8 @@ find_escaped_squares <- function(txt) {
 #' not represented as markup, we use their `sourcepos` attributes to determine
 #' the lines and columns of the `txt` where _escaped_ square braces are.
 #'
-#' Knowing this, we can process each node by its line number and wrap all
-#' unescpaed square braces in text nodes with the `@asis` attribute, which is
-#' performed with the [fix_unescaped()] function.
+#' Knowing this, we can add protection attributes to the positions that should
+#' not be escaped.
 #'
 #' @return nothing, invisibly. This function is called for its side-effect.
 #' @noRd
@@ -438,7 +429,7 @@ fix_unescaped_squares <- function(nodes, txt) {
       }
     }
   }
-  invisible()
+  return(invisible())
 }
 
 
@@ -456,17 +447,17 @@ fix_unescaped_squares <- function(nodes, txt) {
 #' will produce a text node like this:
 #'
 #' ```html
-#' <text sourcepos='1:1-1:43'>this is [unescaped] and this is [escaped]</text>
+#' <text sourcepos='1:1-1:43'>
+#' this is [unescaped] and this is [escaped]
+#' </text>
 #' ```
 #'
 #' This function will replace the text node with this:
 #'
 #' ```html
-#' <text sourcepos='1:1-1:43'>this is </text>
-#' <text asis='true'>[</text>
-#' <text>unescaped</text>
-#' <text asis='true'>]</text>
-#' <text> and this is [escaped]</text>
+#' <text sourcepos='1:1-1:43' protect.start='9 19' protect.end='9 19'>
+#' this is [unescaped] and this is [escaped]
+#' </text>
 #' ```
 #'
 #' This will ensure that the unescaped markdown remains unescaped.
@@ -479,35 +470,37 @@ fix_unescaped_squares <- function(nodes, txt) {
 #'   list items will have an offset of 4L because they are preceeded by ` - `.
 #'   Defaults to `1L`, indicating that this text node starts as a paragraph
 #'   whose parent is the root of the document.
-#' @return new XML nodes, invisibly
+#' @return modified XML nodes, invisibly
 #' @noRd
 fix_unescaped <- function(node, escaped = integer(0), offset = 1L) {
 
   txt <- as.character(node)
-  if (length(escaped) == 0) {
-    # If we have no escaped characters, then we can do a broad substitution
-    unescaped <- TRUE
-  } else {
-    # Converted to text, the node becomes <text ...>Actual text</text> Because
-    # the position is based on the actual text, we need to find the start of
-    # the actual text in the node text
-    text_start <- gregexpr("[>]", txt)[[1]][[1]] + 1L
+  if (length(escaped) > 0) {
     # Because the escaped characters were stripped off, we have to account for
     # a rolling count of the number of escapes
     missing_chars <- seq_along(escaped) - 1L
-    # If the source starts with markup, we have to take into account the offset
-    # position. This will set the escaped to start at the end of the XML markup
-    unescaped <- -(escaped + text_start - offset - missing_chars)
+    # If the source starts with markup (e.g. a list item), we have to take into
+    # account the offset position. This will set the escaped to start at the
+    # end of the XML markup
+    escaped <- escaped - missing_chars - offset + 1L
   }
-  # Here we split the character and exclude the escaped braces, protecting
-  # the unescaped braces.
-  chars <- strsplit(txt, "")[[1]]
-  chars[unescaped] <- sub(
-    pattern = "(\\[|\\])",
-    replacement = "</text><text asis='true'>\\1</text><text>",
-    x = chars[unescaped]
-  )
-  new_nodes <- make_text_nodes(paste(chars, collapse = ""))
-  add_node_siblings(node, new_nodes, remove = TRUE)
+  return(label_unescaped(node, except = escaped))
 }
 
+
+label_unescaped <- function(node, except = integer(0)) {
+  char <- xml2::xml_text(node)
+  # Find the locations of inline chars that is complete
+  locations <- gregexpr(
+    pattern = "(\\[|\\])",
+    char,
+    perl = TRUE
+  )
+  # add the ranges to the attributes
+  # <text>this is $\LaTeX$ text</text>
+  #   becomes
+  # <text protect.start='9' protect.end='16'>this is $\LaTeX$ text</text>
+  pos <- locations[[1]]
+  pos <- pos[!pos %in% except]
+  return(add_protected_ranges(node, pos, pos))
+}

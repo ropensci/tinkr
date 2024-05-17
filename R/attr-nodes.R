@@ -6,44 +6,86 @@ find_curly <- function(body, ns) {
   attr_texts <- xml2::xml_text(curlies)
   no_closing <- !grepl("[}]", attr_texts)
   if (any(no_closing)) {
+    curlies <- lapply(curlies, function(i) i)
     close_xpath <- "self::*/following-sibling::md:text[contains(text(), '}')]"
-    for (not_closed in curlies[no_closing]) {
-      closing <- xml2::xml_find_all(
+    for (i in which(no_closing)) {
+      not_closed <- curlies[[i]]
+      closing <- xml2::xml_find_first(
         not_closed,
         glue::glue("./{close_xpath}"),
         ns
       )
-      xml2::xml_text(not_closed) <- paste(
-        xml2::xml_text(not_closed),
-        xml2::xml_text(closing),
-        sep = "\n"
-      )
-      xml2::xml_remove(closing)
+      all_nodes <- find_between_nodes(not_closed, closing, include = TRUE)
+      curlies[[i]] <- all_nodes
+      # xml2::xml_text(not_closed) <- paste(
+      #   xml2::xml_text(all_nodes),
+      #   collapse = "\n"
+      # )
+      # xml2::xml_remove(all_nodes[-1])
     }
   }
   curlies
 }
 
-digest_curly <- function(curly, ns) {
-  char <- as.character(curly)
-  curlies <- regmatches(char, gregexpr("\\{.*?\\}", char))[[1]]
-  for (curl in curlies) {
-    attributes <- "curly='true'"
-
-    alt_fragment <- regmatches(curl, gregexpr("alt=['\"].*?['\"]", curl))[[1]]
-    if (length(alt_fragment) > 0) {
-      alt_text <- sub("^alt=", "", alt_fragment)
-      attributes <- sprintf("%s alt=%s", attributes, alt_text)
+digest_curly <- function(curly, id, ns) {
+  xml2::xml_set_attr(curly, "curly-id", id)
+  if (inherits(curly, "xml_node")) {
+    label_curly_node(curly)
+  } else {
+    n <- length(curly)
+    label_curly_node(curly[[1]], type = "start")
+    label_curly_node(curly[[n]], type = "stop")
+    if (n > 2) {
+      set_asis(curly[-c(1, n)])
     }
+  }
+  label_alt(curly)
+  return(curly)
+}
 
-    char <- sub(
-      curl,
-      sprintf("</text><text %s>%s</text><text>", attributes, curl),
-      char,
-      fixed = TRUE
+label_alt <- function(curly) {
+  char <- trimws(xml2::xml_text(curly))
+  char <- paste(char[char != ""], collapse = " ")
+  res <- if (inherits(curly, "xml_node")) curly else curly[[1]]
+  alt_fragment <- regmatches(char, gregexpr("alt=['\"].*?['\"]", char))[[1]]
+  if (length(alt_fragment) > 0) {
+    alt_text <- sub("^alt=", "", alt_fragment)
+    xml2::xml_set_attr(res, "alt", alt_text)
+  }
+}
+
+label_curly_node <- function(node, type = c("full", "start", "stop")) {
+  char <- xml2::xml_text(node)
+  # Find the locations of inline chars that is complete
+  pattern <- switch(match.arg(type),
+    full = "\\{.*?\\}",
+    start = "\\{[^}]*?",
+    stop = "[^{]*?\\}",
+  )
+  locations <- gregexpr(
+    pattern = pattern,
+    char,
+    perl = TRUE
+  )
+  start <- locations[[1]]
+  end   <- if (match.arg(type) == "start") {
+    nchar(char)
+  } else {
+    start + attr(locations[[1]], "match.len") - 1L
+  }
+  add_protected_ranges(node, start, end)
+  if (is_asis(node)) {
+    xml2::xml_set_attr(node, "curly", "true")
+  } else {
+    xml2::xml_set_attr(node, "curly",
+      paste(
+        paste(start, collapse = " "),
+        paste(end, collapse = " "),
+        sep = ":"
+      )
     )
   }
-  make_text_nodes(char)
+  return(node)
 }
 
 #' Protect curly elements for further processing
@@ -71,12 +113,7 @@ digest_curly <- function(curly, ns) {
 #' m$body <- protect_curly(m$body)
 #' xml2::xml_child(m$body)
 protect_curly <- function(body, ns = md_ns()) {
-  body  <- copy_xml(body)
-  curly  <- find_curly(body, ns)
-  new_nodes <- purrr::map(curly, digest_curly, ns = ns)
-  # since we split up the nodes, we have to do this node by node
-  for (i in seq(new_nodes)) {
-    add_node_siblings(curly[[i]], new_nodes[[i]], remove = TRUE)
-  }
-  copy_xml(body)
+  curly <- find_curly(body, ns)
+  purrr::iwalk(curly, digest_curly, ns = ns)
+  return(body)
 }

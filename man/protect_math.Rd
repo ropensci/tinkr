@@ -32,7 +32,7 @@ m <- tinkr::to_xml(system.file("extdata", "math-example.md", package = "tinkr"))
 txt <- textConnection(tinkr::to_md(m))
 cat(tail(readLines(txt)), sep = "\n") # broken math
 close(txt)
-m$body <- protect_math(m$body)
+protect_math(m$body)
 txt <- textConnection(tinkr::to_md(m))
 cat(tail(readLines(txt)), sep = "\n") # fixed math
 close(txt)

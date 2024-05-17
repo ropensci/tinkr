@@ -5,14 +5,36 @@ test_that("mal-formed inline math throws an informative error", {
 })
 
 test_that("multi-line inline math can have punctutation after", {
-  template <- "C) $E(\\text{Weight}) = 81.37 + 1.26 \\times x_1 +\n2.65 \\times x_2$punk\n"
-  for (punk in c('--', '---', ',', ';', '.', '?', ')', ']', '}', '>')) {
-    expected <- sub("punk", punk, template)
+  template <- c(
+    "C) $E(\\text{Weight}) = 81.37 + 1.26 \\times x_1 +",
+    "2.65 \\times x_2$punk\n"
+  )
+  for (punk in c('--', '---', ',', ';', '.', '?', ')', '\\\\]', '}', '>')) {
+    expected <- paste(sub("punk", punk, template), collapse = "\n")
     math <- commonmark::markdown_xml(expected)
     txt <- xml2::read_xml(math)
+    nodes <- xml2::xml_find_all(txt, ".//md:text", ns = md_ns())
+    # no protection initially
+    expect_equal(
+      xml2::xml_attr(nodes, "protect.start"),
+      c(NA_character_, NA_character_)
+    )
     protxt <- protect_inline_math(txt, md_ns())
+    # the transformed content is identical.
+    expect_identical(txt, protxt)
+    # protection exists
+    expect_equal(
+      xml2::xml_attr(nodes, "protect.start"),
+      c('4', '1')
+    )
+    expect_equal(
+      xml2::xml_attr(nodes, "protect.end"),
+      c('48', '16')
+    )
     actual <- to_md(list(yaml = NULL, body = protxt))
-    expect_equal(actual, expected)
+    act <- substring(actual, nchar(actual) - 2, nchar(actual) - 1)
+
+    expect_equal(actual, expected, label = act, expected.label = punk)
   }
 })
 
@@ -98,5 +120,34 @@ test_that("protect_unescaped() will throw a warning if no sourcpos is available"
   expect_warning({
     protect_unescaped(x$body, txt = readLines(m$path)[-seq_along(m$yaml)], "sourcepos")
   })
+})
+
+
+test_that("(105) protection of one element does not impede protection of another", {
+  
+  expected <- "example inline $b_{ij}$\n\n$a_{ij}$ \n"
+
+  temp_file <- withr::local_tempfile()
+  brio::write_lines(expected, temp_file)
+  wool <- tinkr::yarn$new(temp_file)
+  # no protection initially 
+  n <- xml2::xml_find_all(wool$body, ".//md:text[@protect.start]", ns = md_ns())
+  expect_length(n, 0)
+
+  wool$protect_curly()
+
+  # protection exists
+  the_nodes <- xml2::xml_find_all(wool$body, ".//node()[@protect.start]")
+  expect_length(the_nodes, 2)
+  # the ranges are initially betwen the curly braces
+  expect_equal(get_protected_ranges(the_nodes[[1]]), list(start = 19L, end = 22L))
+  expect_equal(get_protected_ranges(the_nodes[[2]]), list(start = 4L, end = 7L))
+
+  # protecting for math does not throw an error
+  expect_no_error(wool$protect_math())
+  # the protected range now extends to the whole line without the trailing space
+  expect_equal(get_protected_ranges(the_nodes[[1]]), list(start = 16L, end = 23L))
+  expect_equal(get_protected_ranges(the_nodes[[2]]), NULL)
+  expect_snapshot(show_user(wool$show(), force = TRUE))
 })
 
