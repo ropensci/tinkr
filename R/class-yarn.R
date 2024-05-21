@@ -203,7 +203,7 @@ yarn <- R6::R6Class("yarn",
     #' @description Return nodes whose contents are protected from being escaped
     #' @param type a character vector listing the protections to be included.
     #'   Defaults to `NULL`, which includes all protected nodes:
-    #'   - math: via the `protect_math()` function
+    #'   - math: via the [protect_math()] function
     #'   - curly: via the `protect_curly()` function
     #'   - unescaped: via the `protect_unescaped()` function
     #'
