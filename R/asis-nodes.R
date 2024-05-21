@@ -246,7 +246,12 @@ make_text_nodes <- function(txt) {
 # BLOCK MATH ------------------------------------------------------------------
 
 find_block_math <- function(body, ns) {
-  find_between(body, ns, pattern = "md:text[contains(text(), '$$')]", include = FALSE)
+  # https://github.com/ropensci/tinkr/issues/113#issue-2302065427
+  find_between(body, 
+    ns, 
+    pattern = "md:text[contains(text(), '$$')]", 
+    include = TRUE
+  )
 }
 
 find_between_inlines <- function(body, ns, tag) {
