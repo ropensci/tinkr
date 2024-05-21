@@ -469,7 +469,7 @@ Return nodes whose contents are protected from being escaped
 \item{\code{type}}{a character vector listing the protections to be included.
 Defaults to \code{NULL}, which includes all protected nodes:
 \itemize{
-\item math: via the \code{protect_math()} function
+\item math: via the \code{\link[=protect_math]{protect_math()}} function
 \item curly: via the \code{protect_curly()} function
 \item unescaped: via the \code{protect_unescaped()} function
 }}
