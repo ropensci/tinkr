@@ -32,13 +32,7 @@ get_protected <- function(body, type = NULL, ns = md_ns()) {
     unescaped = "(@asis and text()='[' or text()=']')"
   )
   if (!is.null(type)) {
-    keep <- match.arg(type, names(protections), several.ok = TRUE)
-    missing <- setdiff(type, keep)
-    if (length(missing) > 0) {
-      be <- if (length(missing) > 1) "are" else "is"
-      missing <- glue::glue_collapse(missing, sep = ", ", last = ", and ")
-      message(glue::glue("the type options {missing} {be} not one of math, curly, or unescaped"))
-    }
+    keep <- rlang::arg_match(type, names(protections), multiple = TRUE)
   } else {
     keep <- TRUE
   }

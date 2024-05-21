@@ -38,8 +38,8 @@ test_that("protected nodes can be accessed", {
   expect_length(ex$get_protected("math"), 6)
   expect_length(ex$get_protected("unescaped"), 2)
 
-  expect_message(ex$get_protected(c("curly", "shemp", "moe")), 
-    "shemp, and moe are not"
+  expect_error(ex$get_protected(c("curly", "shemp")), 
+    "not \"shemp\""
   )
 })
 
