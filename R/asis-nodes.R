@@ -29,7 +29,7 @@ protect_math <- function(body, ns = md_ns()) {
 }
 
 set_asis <- function(nodes) {
-  xml2::xml_set_attr(nodes[xml2::xml_name(nodes) != "softbreak"], "asis", "true")
+  xml2::xml_set_attr(nodes, "asis", "true")
 }
 
 # INLINE MATH ------------------------------------------------------------------
