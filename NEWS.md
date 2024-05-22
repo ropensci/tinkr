@@ -2,6 +2,9 @@
 
 ## BUG FIX
 
+* Bare links in Markdown (e.g. `<https://example.com/one>`) are no longer
+  transformed to markdown-style links (e.g. 
+  `[https://example.com/one](https://example.com/one)`). (issue: #59; fix: #115)
 * Inline math with single characters will no longer cause an error (issue: #101,
   fix: #103, @maelle)
 * Special control characters are now filtered out before processing XML (issue:
