@@ -70,6 +70,23 @@ test_that("block math can be protected", {
   expect_equal(md_ns()[[1]], xml2::xml_ns(m$body)[[1]])
 })
 
+
+test_that("tick boxes can be protected without needing intervention", {
+  src <- commonmark::markdown_xml("- a\n- b\n- c")
+  xml <- xml2::read_xml(src)
+
+  # no tickboxes returns the original body
+  expect_identical(protect_tickbox(xml, md_ns()), xml)
+
+  item <- xml2::xml_find_all(xml, ".//md:text[not(text()='b')]", ns = md_ns())
+  xml2::xml_set_text(item, c("[ ] a", "[x] c"))
+
+  new <- protect_tickbox(xml, md_ns())
+  expect_failure(expect_identical(protect_tickbox(xml, md_ns()), xml))
+  expect_identical(to_md(list(body = new, yaml = NULL)),
+    "- [ ] a\n- b\n- [x] c\n")
+})
+
 test_that("tick boxes are protected by default", {
   pathmath <- system.file("extdata", "math-example.md", package = "tinkr")
   m <- yarn$new(pathmath, sourcepos = TRUE)
