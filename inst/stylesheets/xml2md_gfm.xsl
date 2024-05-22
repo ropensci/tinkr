@@ -33,6 +33,16 @@
       <xsl:value-of select='string(.)'/>
     </xsl:template>
 
+    <!-- #59: preserve bare links -->
+    <xsl:template match="md:link[string(self::md:*)=@destination and @title='']">
+      <xsl:text>&#x3C;</xsl:text>
+      <xsl:call-template name="escape-text">
+          <xsl:with-param name="text" select="string(@destination)"/>
+          <xsl:with-param name="escape" select="'()'"/>
+      </xsl:call-template>
+      <xsl:text>&#x3E;</xsl:text>
+    </xsl:template>
+
     <xsl:template match="md:link[@rel] | md:image[@rel]">
       <xsl:if test="self::md:image">!</xsl:if>
       <xsl:text>[</xsl:text>

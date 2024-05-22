@@ -38,7 +38,7 @@
 #' post_list2 <- to_xml(path2)
 #' post_list2
 to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = TRUE, unescaped = TRUE){
-  content <- readLines(path, encoding = encoding)
+  content <- readLines(path, encoding = encoding, warn = FALSE)
 
   splitted_content <- split_yaml_body(content)
 
