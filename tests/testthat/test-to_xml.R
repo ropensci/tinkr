@@ -6,6 +6,16 @@ test_that("to_xml works", {
   expect_s3_class(post_list[[2]], "xml_document")
 })
 
+
+test_that("#65 to_xml does not throw a warning for no newline", {
+  path <- withr::local_tempfile()
+  # cat writes without a newline
+  cat("tada!", file = path)
+  expect_no_warning(res <- to_xml(path))
+  expect_equal(xml2::xml_text(res$body), "tada!")
+})
+
+
 test_that("to_xml works for Rmd", {
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
   post_list <- to_xml(path)
