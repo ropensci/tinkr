@@ -6,6 +6,8 @@
   fix: #103, @maelle)
 * Special control characters are now filtered out before processing XML (issue:
   #96, fix: #111, @zkamvar)
+* Documents with no trailing newline will no longer throw a warning (issue: #65;
+  fix: #114, @zkamvar)
 
 ## MISC
 
