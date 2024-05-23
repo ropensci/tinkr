@@ -69,12 +69,12 @@ to_md <- function(yaml_xml_list, path = NULL, stylesheet_path = stylesheet()){
 #' @rdname to_md
 #' @export
 #' @param nodelist an object of `xml_nodelist` or `xml_node`
-to_md_vec <- function(nodelist) {
+to_md_vec <- function(nodelist, stylesheet_path = stylesheet()) {
   if (inherits(nodelist, "xml_node")) {
     nodelist <- list(nodelist)
   }
   nodes <- lapply(nodelist, function(i) {
-    print_lines(isolate_nodes(i, "list")$doc)
+    print_lines(isolate_nodes(i, "list")$doc, stylesheet = stylesheet_path)
   })
   trimws(vapply(nodes, paste, character(1), collapse = "\n"))
 }
