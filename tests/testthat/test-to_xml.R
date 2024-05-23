@@ -6,6 +6,16 @@ test_that("to_xml works", {
   expect_s3_class(post_list[[2]], "xml_document")
 })
 
+
+test_that("#65 to_xml does not throw a warning for no newline", {
+  path <- withr::local_tempfile()
+  # cat writes without a newline
+  cat("tada!", file = path)
+  expect_no_warning(res <- to_xml(path))
+  expect_equal(xml2::xml_text(res$body), "tada!")
+})
+
+
 test_that("to_xml works for Rmd", {
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
   post_list <- to_xml(path)
@@ -21,6 +31,20 @@ test_that("to_xml works for Rmd", {
   expect_equal(length(blocks), 4)
 
 })
+
+
+test_that("to_xml can parse markdown with special control characters", {
+  # skip if we are on windows with R version lower than 4.2.0
+  os <- tolower(Sys.info())[["sysname"]]
+  no_utf8_support <- os == "windows" && getRversion() < numeric_version('4.2.0')
+  skip_if(no_utf8_support, message = "this system cannot test UTF-8 output")
+
+  tmp <- withr::local_tempfile()
+  writeLines("\u2018test single\u2019 \u001C\u201Ctest double\u201D", tmp)
+  expect_no_error(xml <- tinkr::to_xml(tmp))
+  expect_equal(xml2::xml_text(xml$body), "'test single' \"test double\"")
+})
+
 
 
 test_that("to_xml will not convert numeric options to character", {

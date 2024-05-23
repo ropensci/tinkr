@@ -177,7 +177,6 @@ test_that("links that start lines are not escaped", {
 
 })
 
-
 test_that("to_md_vec() returns a vector of the same length as the nodelist", {
 
   path <- system.file("extdata", "example1.md", package = "tinkr")
@@ -207,7 +206,22 @@ test_that("to_md_vec() returns a vector of the same length as the nodelist", {
 
   # the output is as expected
   expect_snapshot(show_user(to_md_vec(blocks[5:6]), force = TRUE))
+})
 
-
+test_that("(#59) Bare links are not transformed to markdown links", {
+  input <- c(
+    "<https://example.com/one> and",
+    "[https://example.com/two](https://example.com/two \"with a title\") and",
+    "https://example.com/three",
+    ""
+  )
+  tmp <- withr::local_tempfile()
+  writeLines(input, tmp)
+  expected <- input
+  expected[3] <- paste0("<", input[3], ">")
+  expected <- paste(expected, collapse = "\n")
+  xml <- to_xml(tmp)
+  md <- to_md(xml)
+  expect_identical(expected, md)
 })
 

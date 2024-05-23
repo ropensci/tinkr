@@ -38,7 +38,7 @@
 #' post_list2 <- to_xml(path2)
 #' post_list2
 to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = TRUE, unescaped = TRUE){
-  content <- readLines(path, encoding = encoding)
+  content <- readLines(path, encoding = encoding, warn = FALSE)
 
   splitted_content <- split_yaml_body(content)
 
@@ -66,10 +66,13 @@ to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = T
 
 
 clean_content <- function(content){
+  illegal_control_chars <- "[^\u0009\u000a\u000d\u0020-\uD7FF\uE000-\uFFFD]"
+  smart_double_quotes <- "[\u201C\u201D]"
+  smart_single_quotes <- "[\u2018\u2019]"
   content %>%
-    str_replace_all("\u201C", '"') %>%
-    str_replace_all("\u201D", '"') %>%
-    str_replace_all("\u2019", "'")
+    str_replace_all(smart_double_quotes, '"') %>%
+    str_replace_all(smart_single_quotes, "'") %>%
+    str_replace_all(illegal_control_chars, "")
 }
 
 
