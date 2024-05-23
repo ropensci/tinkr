@@ -30,27 +30,41 @@ displayed to the screen
 When inspecting the results of an XPath query, displaying the text often
 }
 \examples{
-path <- system.file("extdata", "example1.md", package = "tinkr")
+path <- system.file("extdata", "show-example.md", package = "tinkr")
 y <- tinkr::yarn$new(path, sourcepos = TRUE)
+y$protect_math()$protect_curly()
 items <- xml2::xml_find_all(y$body, ".//md:item", tinkr::md_ns())
+imgs <- xml2::xml_find_all(y$body, ".//md:image | .//node()[@curly]", 
+  tinkr::md_ns())
 links <- xml2::xml_find_all(y$body, ".//md:link", tinkr::md_ns())
 code <- xml2::xml_find_all(y$body, ".//md:code", tinkr::md_ns())
 blocks <- xml2::xml_find_all(y$body, ".//md:code_block", tinkr::md_ns())
 
 # show a list of items 
-show_list(links[1:10])
-show_list(code[1:10])
-show_list(blocks[1:2])
+show_list(links)
+show_list(code)
+show_list(blocks)
 
 # show the items in their local structure
 show_block(items)
 show_block(links, mark = TRUE)
 
-# show the items in the full document censored:
+# show the items in the full document censored (everything but whitespace):
+show_censor(imgs)
+
+# You can also adjust the censorship parameters. There are two paramters
+# available: the mark, which chooses what character you want to use to
+# replace characters (default: `\u2587`); and the regex which specifies 
+# characters to replace (default: `[^[:space:]]`, which replaces all
+# non-whitespace characters.
+# 
+# The following will replace everything that is not a whitespace
+# or punctuation character with "o" for a very ghostly document
+op <- options()
+options(tinkr.censor.regex = "[^[:space:][:punct:]]")
+options(tinkr.censor.mark = "o")
 show_censor(links)
-# you can set the mark to censor by using the `tinkr.censor option`
-options(tinkr.censor = ".")
-show_censor(links)
+options(op)
 }
 \seealso{
 \code{\link[=to_md_vec]{to_md_vec()}} to get a vector of these elements in isolation.
