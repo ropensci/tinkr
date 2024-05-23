@@ -96,6 +96,7 @@ isolate_nodes_censor <- function(nodelist) {
   res <- provision_isolation(nodelist)
   censor_attr(res$parents, "destination")
   censor_attr(res$parents, "title")
+  censor_attr(res$parents, "rel")
   txt <- xml2::xml_find_all(res$parents, ".//text()")
   xml2::xml_set_text(txt, censor(xml2::xml_text(txt)))
   return(list(doc = res$doc, key = res$key))
