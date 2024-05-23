@@ -8,7 +8,11 @@
   content of a node, nodelist, or list of nodes without needing to print the
   entire document.
 * `yarn$show()` method now gains the `lines` parameter, which allows you to
-  subset the output by the lines of text.
+  subset the output by the lines of text. A warning is produced if a stylesheet
+  is supplied in place of `lines`.
+* `yarn$md_vec()` is a new method that will generate a character vector of
+  markdown elements from a query. This is a convenience method that uses
+  `xml2::xml_find_all()` and `to_md_vec()` in the background.
 
 ## BUG FIX
 

@@ -7,7 +7,7 @@
 \usage{
 to_md(yaml_xml_list, path = NULL, stylesheet_path = stylesheet())
 
-to_md_vec(nodelist)
+to_md_vec(nodelist, stylesheet_path = stylesheet())
 }
 \arguments{
 \item{yaml_xml_list}{result from a call to \code{\link[=to_xml]{to_xml()}} and editing.}

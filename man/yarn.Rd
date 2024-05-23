@@ -66,6 +66,23 @@ ex2$tail(5)
 ex2$show()
 
 ## ------------------------------------------------
+## Method `yarn$md_vec`
+## ------------------------------------------------
+
+path <- system.file("extdata", "example1.md", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+# all headings
+ex$md_vec(".//md:heading")
+# all headings greater than level 3
+ex$md_vec(".//md:heading[@level>3]")
+# all links
+ex$md_vec(".//md:link")
+# all links that are part of lists
+ex$md_vec(".//md:list//md:link")
+# all code
+ex$md_vec(".//md:code | .//md:code_block")
+
+## ------------------------------------------------
 ## Method `yarn$add_md`
 ## ------------------------------------------------
 
@@ -114,6 +131,10 @@ ex <- tinkr::yarn$new(path, sourcepos = TRUE, unescaped = FALSE)
 ex$tail()
 ex$protect_unescaped()$tail()
 }
+\seealso{
+\code{\link[=to_md_vec]{to_md_vec()}} for a way to generate the same vector from a
+nodelist without a yarn object
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -137,6 +158,7 @@ commonmark.}
 \item \href{#method-yarn-show}{\code{yarn$show()}}
 \item \href{#method-yarn-head}{\code{yarn$head()}}
 \item \href{#method-yarn-tail}{\code{yarn$tail()}}
+\item \href{#method-yarn-md_vec}{\code{yarn$md_vec()}}
 \item \href{#method-yarn-add_md}{\code{yarn$add_md()}}
 \item \href{#method-yarn-protect_math}{\code{yarn$protect_math()}}
 \item \href{#method-yarn-protect_curly}{\code{yarn$protect_curly()}}
@@ -294,8 +316,7 @@ show the head of the markdown contents on the screen
 \describe{
 \item{\code{n}}{the number of elements to show from the top. Negative numbers}
 
-\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.
-exclude lines from the bottom}
+\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.}
 }
 \if{html}{\out{</div>}}
 }
@@ -317,14 +338,54 @@ show the tail of the markdown contents on the screen
 \describe{
 \item{\code{n}}{the number of elements to show from the bottom. Negative numbers}
 
-\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.
-exclude lines from the top}
+\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
 a character vector with \code{n} elements
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-yarn-md_vec"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-md_vec}{}}}
+\subsection{Method \code{md_vec()}}{
+query and extract markdown elements
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$md_vec(xpath = NULL, stylesheet_path = stylesheet())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{xpath}}{a valid XPath expression}
+
+\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+a vector of markdown elements generated from the query
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "example1.md", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+# all headings
+ex$md_vec(".//md:heading")
+# all headings greater than level 3
+ex$md_vec(".//md:heading[@level>3]")
+# all links
+ex$md_vec(".//md:link")
+# all links that are part of lists
+ex$md_vec(".//md:list//md:link")
+# all code
+ex$md_vec(".//md:code | .//md:code_block")
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-yarn-add_md"></a>}}
