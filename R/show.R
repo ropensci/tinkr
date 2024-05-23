@@ -156,8 +156,9 @@ censor_attr <- function(nodes, attr) {
 }
 
 censor <- function(x) {
-  item <- getOption("tinkr.censor", default = "\u2587")
-  gsub("[^[:space:]]", item, x, perl = TRUE)
+  regex <- getOption("tinkr.censor.regex", default = "[^[:space:]]")
+  mark <- getOption("tinkr.censor.mark", default = "\u2587")
+  gsub(regex, mark, x, perl = TRUE)
 }
 
 print_lines <- function(xml, path = NULL, stylesheet = NULL) {

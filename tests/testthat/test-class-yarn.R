@@ -47,6 +47,25 @@ test_that("yarn show, head, and tail methods work", {
 
 })
 
+
+test_that("yarn show method will warn if using positional stylesheet", {
+
+  path <- system.file("extdata", "table.md", package = "tinkr")
+  y1 <- yarn$new(path)
+  expect_no_warning({
+    md_show <- y1$show(TRUE)
+  })
+  expect_no_warning({
+    md_show1 <- y1$show(stylesheet_path = stylesheet())
+  })
+  suppressWarnings({
+    expect_warning(md_show2 <- y1$show(stylesheet()))
+  })
+  expect_identical(md_show, md_show2)
+
+})
+
+
 test_that("yarn can be created from Rmarkdown", {
   pathrmd <- system.file("extdata", "example2.Rmd", package = "tinkr")
   y1 <- yarn$new(pathrmd)

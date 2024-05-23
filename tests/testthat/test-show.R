@@ -38,7 +38,11 @@ test_that("show_censor() will censor elements", {
   orig <- y$show()
   n <- length(orig) - length(y$yaml) + 1
   # the censor option can be adjusted
-  withr::local_options(list(tinkr.censor = "."))
+  withr::local_options(list(
+      tinkr.censor.mark = ".",
+      tinkr.censor.regex = "[^[:space:]]"
+    )
+  )
   lnks <- show_censor(links)
   cd <- show_censor(code)
   blks <- show_censor(blocks)

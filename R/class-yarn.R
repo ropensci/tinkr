@@ -107,6 +107,19 @@ yarn <- R6::R6Class("yarn",
     #' ex2$tail(5)
     #' ex2$show()
     show = function(lines = TRUE, stylesheet_path = stylesheet()) {
+      if (is.character(lines) && length(lines) == 1 && file.exists(lines)) {
+        # when using {tinkr} < 0.3.0
+        stylesheet_path <- lines
+        lines <- TRUE
+        the_call <- match.call()
+        the_call$stylesheet_path <- the_call$lines
+        the_call$lines <- NULL
+        new_call <- capture.output(print(the_call))
+        warning(
+          "In {tinkr} 0.3.0, the $show() method gained the `lines` argument as the first argument.\n", 
+          sprintf("To remove this warning, use: `%s`", new_call), 
+          call. = FALSE)
+      }
       show_user(private$md_lines(stylesheet = stylesheet_path)[lines])
     },
 
