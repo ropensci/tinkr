@@ -127,7 +127,6 @@ yarn <- R6::R6Class("yarn",
     #'
     #' @param n the number of elements to show from the top. Negative numbers
     #' @param stylesheet_path path to the xsl stylesheet to convert XML to markdown.
-    #' exclude lines from the bottom
     #' @return a character vector with `n` elements
     head = function(n = 6L, stylesheet_path = stylesheet()) {
       show_user(head(private$md_lines(stylesheet = stylesheet_path), n))
@@ -137,11 +136,39 @@ yarn <- R6::R6Class("yarn",
     #'
     #' @param n the number of elements to show from the bottom. Negative numbers
     #' @param stylesheet_path path to the xsl stylesheet to convert XML to markdown.
-    #' exclude lines from the top
     #'
     #' @return a character vector with `n` elements
     tail = function(n = 6L, stylesheet_path = stylesheet()) {
       show_user(tail(private$md_lines(stylesheet = stylesheet_path), n))
+    },
+
+    #' @description query and extract markdown elements
+    #'
+    #' @param xpath a valid XPath expression
+    #' @param stylesheet_path path to the xsl stylesheet to convert XML to markdown.
+    #'
+    #' @return a vector of markdown elements generated from the query
+    #' @seealso [to_md_vec()] for a way to generate the same vector from a
+    #'   nodelist without a yarn object
+    #' @examples
+    #' path <- system.file("extdata", "example1.md", package = "tinkr")
+    #' ex <- tinkr::yarn$new(path)
+    #' # all headings
+    #' ex$md_vec(".//md:heading")
+    #' # all headings greater than level 3
+    #' ex$md_vec(".//md:heading[@level>3]")
+    #' # all links
+    #' ex$md_vec(".//md:link")
+    #' # all links that are part of lists
+    #' ex$md_vec(".//md:list//md:link")
+    #' # all code
+    #' ex$md_vec(".//md:code | .//md:code_block")
+    md_vec = function(xpath = NULL, stylesheet_path = stylesheet()) {
+      if (is.null(xpath)) {
+        return(NULL)
+      }
+      nodes <- xml2::xml_find_all(self$body, xpath, ns = self$ns)
+      return(to_md_vec(nodes, stylesheet_path))
     },
 
     #' @description add an arbitrary Markdown element to the document
