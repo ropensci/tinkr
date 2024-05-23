@@ -5,153 +5,39 @@
     Output
       
       
-      [second post of the series where we obtained data from
-      eBird](https://ropensci.org/blog/2018/08/21/birds-radolfzell/)
+      [relative links](#links)
       
-      [the fourth post of the
-      series](https://ropensci.org/blog/2018/09/04/birds-taxo-traits/)
+      [anchor links]
       
-      [previous post
-      of the series](https://ropensci.org/blog/2018/08/21/birds-radolfzell/)
+      [anchor links]: https://example.com/anchor
       
-      [(`glue::glue_collapse(species, sep = ", ", last = " and ")`)](https://twitter.com/LucyStats/status/1031938964796657665?s=19)
-      
-      [`taxize`](https://github.com/ropensci/taxize)
-      
-      [`spocc`](https://github.com/ropensci/spocc)
-      
-      [`fulltext`](https://github.com/ropensci/fulltext)
-      
-      ["Investigating the impact of media on demand for wildlife: A case
-      study of Harry Potter and the UK trade in
-      owls"](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0182368)
-      
-      [`cites`](https://github.com/ecohealthalliance/cites/)
-      
-      [`rcites`](https://ibartomeus.github.io/rcites/)
-      
-      [`wordcloud`
-      package](https://cran.r-project.org/web/packages/wordcloud/index.html)
-      
-      [`wordcloud2`
-      package](https://github.com/Lchiffon/wordcloud2)
-      
-      [from
-      Phylopic](http://phylopic.org/image/6209c9be-060e-4d7f-bc74-a75f3ccf4629/)
-      
-      [DataONE](https://www.dataone.org/)
-      
-      [searching
-      DataONE
-      vignette](https://github.com/DataONEorg/rdataone/blob/master/vignettes/searching-dataone.Rmd)
-      
-      [download data
-      vignette](https://github.com/DataONEorg/rdataone/blob/master/vignettes/download-data.Rmd)
-      
-      [`europepmc`](https://github.com/ropensci/europepmc)
-      
-      [`jstor`](https://github.com/ropensci/jstor)
-      
-      [`suppdata`](https://github.com/ropensci/suppdata)
-      
-      [much
-      more](https://ropensci.org/packages/)
-      
-      [`dataone`
-      package](https://github.com/DataONEorg/rdataone)
-      
-      [`rfigshare`](https://github.com/ropensci/rfigshare)
-      
-      [Figshare](https://figshare.com/)
-      
-      [`EML` package](https://github.com/ropensci/EML)
-      
-      [unconf
-      `dataspice` project](https://github.com/ropenscilabs/dataspice)
-      
-      [here](https://ropensci.org/packages/)
-      
-      [How to identify spots for birding using open geographical
-      data](https://ropensci.org/blog/2018/08/14/where-to-bird/)
-      
-      [How to obtain bird occurrence data in
-      R](https://ropensci.org/blog/2018/08/21/birds-radolfzell/)
-      
-      [How to extract text from old natural history
-      drawings](https://ropensci.org/blog/2018/08/28/birds-ocr/)
-      
-      [How to complement an occurrence dataset with taxonomy and trait
-      information](https://ropensci.org/blog/2018/09/04/birds-taxo-traits/)
-      
-      [our friendly discussion
-      forum](https://discuss.ropensci.org/c/usecases)
       
 
 ---
 
     Code
-      show_user(show_list(code[1:10]), force = TRUE)
+      show_user(show_list(code), force = TRUE)
     Output
       
       
-      `glue::glue_collapse(species, sep = ", ", last = " and ")`
-      
-      `taxize`
-      
-      `spocc`
-      
-      `fulltext`
-      
-      `fulltext`
-      
-      `tidytext`
-      
-      `dplyr::bind_rows`
-      
-      `fulltext`
-      
-      `cites`
-      
-      `rcites`
+      `utils::strcapture()`
       
 
 ---
 
     Code
-      show_user(show_list(blocks[1:2]), force = TRUE)
+      show_user(show_list(blocks), force = TRUE)
     Output
       
       
       ```r
-      # polygon for filtering
-      landkreis_konstanz <- osmdata::getbb("Landkreis Konstanz",
-                                   format_out = "sf_polygon")
-      crs <- sf::st_crs(landkreis_konstanz)
-      
-      # get and filter data
-      f_out_ebd <- "ebird/ebd_lk_konstanz.txt"
-      
-      library("magrittr")
-      
-      ebd <- auk::read_ebd(f_out_ebd) %>%
-        sf::st_as_sf(coords = c("longitude", "latitude"),
-                      crs = crs)
-      
-      in_indices <- sf::st_within(ebd, landkreis_konstanz)
-      
-      ebd <- dplyr::filter(ebd, lengths(in_indices) > 0)
-      
-      ebd <- as.data.frame(ebd)
-      
-      ebd <- dplyr::filter(ebd, approved, lubridate::year(observation_date) > 2010)
-      ```
-      
-      
-      ```r
-      species <- ebd %>%
-        dplyr::count(common_name, sort = TRUE) %>%
-        head(n = 50) %>%
-        dplyr::pull(common_name)
+      sourcepos <- c("2:1-2:33", "4:1-7:7")
+      pattern <- "([[:digit:]]+):([[:digit:]]+)-([[:digit:]]+):([[:digit:]]+)"
+      proto <- data.frame(
+        linestart = integer(), colstart = integer(),
+        lineend = integer(), colend = integer()
+      )
+      utils::strcapture(pattern, sourcepos, proto)
       ```
       
       
@@ -159,99 +45,258 @@
 # show_list() will isolate groups of elements
 
     Code
-      show_user(show_list(list(links[1:3], links[4:5])), force = TRUE)
+      show_user(show_list(list(links, headings)), force = TRUE)
     Output
       
       
-      [second post of the series where we obtained data from
-      eBird](https://ropensci.org/blog/2018/08/21/birds-radolfzell/)
-      [the fourth post of the
-      series](https://ropensci.org/blog/2018/09/04/birds-taxo-traits/)
-      [previous post
-      of the series](https://ropensci.org/blog/2018/08/21/birds-radolfzell/)
+      [relative links](#links)
+      [anchor links]
+      [anchor links]: https://example.com/anchor
       
       
-      [(`glue::glue_collapse(species, sep = ", ", last = " and ")`)](https://twitter.com/LucyStats/status/1031938964796657665?s=19)
-      [`taxize`](https://github.com/ropensci/taxize)
+      
+      ## Links
+      
+      
+      ### Relative
+      
+      
+      ### Images
+      
+      
+      ## Lists
+      
+      
+      ## Code
+      
+      
+      ## Math
+      
       
       
 
 # show_censor() will censor elements
 
     Code
-      show_user(lnks[1:10], force = TRUE)
+      show_user(lnks, force = TRUE)
     Output
       
       
-      .. ... [second post of the series where we obtained data from
-      eBird](https://ropensci.org/blog/2018/08/21/birds-radolfzell/) ..
-      .......... .... ..... .... ........ .. ... ...... .. .......... ... ..
-      ............ .... ......... .... .... ......... ... ..... ........... ..
-      [the fourth post of the
-      series](https://ropensci.org/blog/2018/09/04/birds-taxo-traits/). ....
-      .. ..... .. ....... ..... ... .......... .. ..... ..... .. *..........
-      ....*. .. .... ..... .. .... ..... ... .......... .......... ... .. ....
-
----
-
-    Code
-      show_user(tail(cd, 20), force = TRUE)
-    Output
+      ## .....
       
-      - [... .. ....... .... .... ... ....... .......
-        ........](...............................................).
-        ......... `magick` ... ..... ............. `tesseract` ... .......
-        ......... ............ `cld2` ... `cld3` ... ........ .......... ...
-        `taxize::gnr_resolve` ... ......... .... ...........
+      ### ........
       
-      - [... .. .......... .. .......... ....... .... ........ ... .....
-        ...........](.......................................................).
-        ......... `taxize`. ......... ........ ... .. ... `traits`.
-        ......... ...... .. ....... ...... .....
+      .... ... .... [relative links](#links) ... [anchor links].
       
-      - ... .. ..... ... .......... .......... ... .......... .... ....
-        ............. .... .. ... .... ...... .... .....
+      ### ......
       
-      ...... . ..... ... .... ..... *...* ........ .. ....... ... ........
-      ..... ... .... ... ...... ... .. ..... ..... .... ... ..... .. ........
-      ........ .. . ...... .. ... ... [... ........ ..........
-      .....](.......................................). ..... ........
+      ![....... ... ....](...............................)....... ...... ....... .. . ........
       
-
----
-
-    Code
-      show_user(blks[19:48], force = TRUE)
-    Output
-      ... ...... .......... .. ... ...... . .... .. .... .... .... ... ...
-      .... ...... ......
+      ## .....
+      
+      - .......
+        - ...
+          - .....
+          - ....
+        - ....
+          - ....
+          - ...... .......
+      - ......
+        - ...
+          - .......
+      
+      ## ....
+      
+      .... .. .. ....... .. ... `...................` ........
       
       ```r
-      # polygon for filtering
-      landkreis_konstanz <- osmdata::getbb("Landkreis Konstanz",
-                                   format_out = "sf_polygon")
-      crs <- sf::st_crs(landkreis_konstanz)
-      
-      # get and filter data
-      f_out_ebd <- "ebird/ebd_lk_konstanz.txt"
-      
-      library("magrittr")
-      
-      ebd <- auk::read_ebd(f_out_ebd) %>%
-        sf::st_as_sf(coords = c("longitude", "latitude"),
-                      crs = crs)
-      
-      in_indices <- sf::st_within(ebd, landkreis_konstanz)
-      
-      ebd <- dplyr::filter(ebd, lengths(in_indices) > 0)
-      
-      ebd <- as.data.frame(ebd)
-      
-      ebd <- dplyr::filter(ebd, approved, lubridate::year(observation_date) > 2010)
+      ......... .. ............. ..........
+      ....... .. .............................................................
+      ..... .. ...........
+        ......... . .......... ........ . ..........
+        ....... . .......... ...... . .........
+      .
+      .......................... .......... ......
       ```
       
-      ... ... .... .. ........... .. ..... .... ... ... .. ....... ........
-      ... .... ......
+      ## ....
+      
+      ...... .... ... .. ....... .. .. . .. . .. ..... ..... .... ...... ...
+      
+      ..
+      . . .. . .
+      ..
+      
+      [anchor links]: https://example.com/anchor
+      
+      
+
+---
+
+    Code
+      show_user(cd, force = TRUE)
+    Output
+      
+      
+      ## .....
+      
+      ### ........
+      
+      .... ... .... [........ .....](......) ... [...... .....].
+      
+      ### ......
+      
+      ![....... ... ....](...............................)....... ...... ....... .. . ........
+      
+      ## .....
+      
+      - .......
+        - ...
+          - .....
+          - ....
+        - ....
+          - ....
+          - ...... .......
+      - ......
+        - ...
+          - .......
+      
+      ## ....
+      
+      .... .. .. ....... .. ... `utils::strcapture()` ........
+      
+      ```r
+      ......... .. ............. ..........
+      ....... .. .............................................................
+      ..... .. ...........
+        ......... . .......... ........ . ..........
+        ....... . .......... ...... . .........
+      .
+      .......................... .......... ......
+      ```
+      
+      ## ....
+      
+      ...... .... ... .. ....... .. .. . .. . .. ..... ..... .... ...... ...
+      
+      ..
+      . . .. . .
+      ..
+      
+      [...... .....]: ..........................
+      
+      
+
+---
+
+    Code
+      show_user(blks, force = TRUE)
+    Output
+      
+      
+      ## .....
+      
+      ### ........
+      
+      .... ... .... [........ .....](......) ... [...... .....].
+      
+      ### ......
+      
+      ![....... ... ....](...............................)....... ...... ....... .. . ........
+      
+      ## .....
+      
+      - .......
+        - ...
+          - .....
+          - ....
+        - ....
+          - ....
+          - ...... .......
+      - ......
+        - ...
+          - .......
+      
+      ## ....
+      
+      .... .. .. ....... .. ... `...................` ........
+      
+      ```r
+      sourcepos <- c("2:1-2:33", "4:1-7:7")
+      pattern <- "([[:digit:]]+):([[:digit:]]+)-([[:digit:]]+):([[:digit:]]+)"
+      proto <- data.frame(
+        linestart = integer(), colstart = integer(),
+        lineend = integer(), colend = integer()
+      )
+      utils::strcapture(pattern, sourcepos, proto)
+      ```
+      
+      ## ....
+      
+      ...... .... ... .. ....... .. .. . .. . .. ..... ..... .... ...... ...
+      
+      ..
+      . . .. . .
+      ..
+      
+      [...... .....]: ..........................
+      
+      
+
+# tinkr.censor.regex can adjust for symbols
+
+    Code
+      show_user(itms, force = TRUE)
+    Output
+      
+      
+      ## Links
+      
+      ### Relative
+      
+      Here are some [relative links](#links) and [anchor links].
+      
+      ### Images
+      
+      ![kittens are cute](https://loremflickr.com/320/240){alt='a random picture of a kitten'}
+      
+      ## Lists
+      
+      - kittens
+        - are
+          - super
+          - cute
+        - have
+          - teef
+          - murder mittens
+      - brains
+        - are
+          - wrinkly
+      
+      ## Code
+      
+      Here is an example of the `utils::strcapture()` function
+      
+      ```r
+      AAAAAAAAA <- A("A:A-A:AA", "A:A-A:A")
+      AAAAAAA <- "([[:AAAAA:]]+):([[:AAAAA:]]+)-([[:AAAAA:]]+):([[:AAAAA:]]+)"
+      AAAAA <- AAAA.AAAAA(
+        AAAAAAAAA = AAAAAAA(), AAAAAAAA = AAAAAAA(),
+        AAAAAAA = AAAAAAA(), AAAAAA = AAAAAAA()
+      )
+      AAAAA::AAAAAAAAAA(AAAAAAA, AAAAAAAAA, AAAAA)
+      ```
+      
+      ## Math
+      
+      Inline math can be written as $y = mx + b$ while block math should be:
+      
+      $$
+      y = mx + b
+      $$
+      
+      [anchor links]: https://example.com/anchor
+      
       
 
 # show_block() will provide context for the elements
@@ -261,37 +306,16 @@
     Output
       
       
-      - study the results of such queries (e.g. meta studies of number of,
-        say, versions by datasets)
-      
-      - or find data to integrate to a new study. If you want to *download*
-        data from DataONE, refer to the [download data
-        vignette](https://github.com/DataONEorg/rdataone/blob/master/vignettes/download-data.Rmd).
-      
-      - [How to identify spots for birding using open geographical
-        data](https://ropensci.org/blog/2018/08/14/where-to-bird/).
-        Featuring `opencage` for geocoding, `bbox` for bounding box
-        creation, `osmdata` for OpenStreetMap's Overpass API querying,
-        `osmplotr` for map drawing using OpenStreetMap's data.
-      
-      - [How to obtain bird occurrence data in
-        R](https://ropensci.org/blog/2018/08/21/birds-radolfzell/).
-        Featuring `rebird` for interaction with the eBird's API, and `auk`
-        for munging of the whole eBird dataset.
-      
-      - [How to extract text from old natural history
-        drawings](https://ropensci.org/blog/2018/08/28/birds-ocr/).
-        Featuring `magick` for image manipulation, `tesseract` for Optical
-        Character Recognition, `cld2` and `cld3` for language detection, and
-        `taxize::gnr_resolve` for taxonomic name resolution.
-      
-      - [How to complement an occurrence dataset with taxonomy and trait
-        information](https://ropensci.org/blog/2018/09/04/birds-taxo-traits/).
-        Featuring `taxize`, taxonomic toolbelt for R, and `traits`,
-        providing access to species traits data.
-      
-      - How to query the scientific literature and scientific open data
-        repositories. This is the post you've just read!
+      - kittens
+        - are
+          - super
+          - cute
+        - have
+          - teef
+          - murder mittens
+      - brains
+        - are
+          - wrinkly
       
 
 ---
@@ -301,109 +325,32 @@
     Output
       
       
-      [second post of the series where we obtained data from
-      eBird](https://ropensci.org/blog/2018/08/21/birds-radolfzell/)[the fourth post of the
-      series](https://ropensci.org/blog/2018/09/04/birds-taxo-traits/)
+      [relative links](#links)[anchor links]
       
-      [previous post
-      of the series](https://ropensci.org/blog/2018/08/21/birds-radolfzell/)
+      [anchor links]: https://example.com/anchor
       
-      [(`glue::glue_collapse(species, sep = ", ", last = " and ")`)](https://twitter.com/LucyStats/status/1031938964796657665?s=19)
-      
-      [`taxize`](https://github.com/ropensci/taxize)[`spocc`](https://github.com/ropensci/spocc)[`fulltext`](https://github.com/ropensci/fulltext)
-      
-      ["Investigating the impact of media on demand for wildlife: A case
-      study of Harry Potter and the UK trade in
-      owls"](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0182368)[`cites`](https://github.com/ecohealthalliance/cites/)[`rcites`](https://ibartomeus.github.io/rcites/)
-      
-      [`wordcloud`
-      package](https://cran.r-project.org/web/packages/wordcloud/index.html)
-      
-      [`wordcloud2`
-      package](https://github.com/Lchiffon/wordcloud2)[from
-      Phylopic](http://phylopic.org/image/6209c9be-060e-4d7f-bc74-a75f3ccf4629/)
-      
-      [DataONE](https://www.dataone.org/)
-      
-      [searching
-      DataONE
-      vignette](https://github.com/DataONEorg/rdataone/blob/master/vignettes/searching-dataone.Rmd)
-      
-      - [download data
-        vignette](https://github.com/DataONEorg/rdataone/blob/master/vignettes/download-data.Rmd)
-      
-      [`europepmc`](https://github.com/ropensci/europepmc)[`jstor`](https://github.com/ropensci/jstor)[`suppdata`](https://github.com/ropensci/suppdata)[much
-      more](https://ropensci.org/packages/)
-      
-      [`dataone`
-      package](https://github.com/DataONEorg/rdataone)[`rfigshare`](https://github.com/ropensci/rfigshare)[Figshare](https://figshare.com/)[`EML` package](https://github.com/ropensci/EML)[unconf
-      `dataspice` project](https://github.com/ropenscilabs/dataspice)
-      
-      [here](https://ropensci.org/packages/)
-      
-      - [How to identify spots for birding using open geographical
-        data](https://ropensci.org/blog/2018/08/14/where-to-bird/)
-      
-      - [How to obtain bird occurrence data in
-        R](https://ropensci.org/blog/2018/08/21/birds-radolfzell/)
-      
-      - [How to extract text from old natural history
-        drawings](https://ropensci.org/blog/2018/08/28/birds-ocr/)
-      
-      - [How to complement an occurrence dataset with taxonomy and trait
-        information](https://ropensci.org/blog/2018/09/04/birds-taxo-traits/)
-      
-      [our friendly discussion
-      forum](https://discuss.ropensci.org/c/usecases)
       
 
 ---
 
     Code
-      show_user(b_links, force = TRUE)
+      show_user(bmark_links, force = TRUE)
     Output
       
       
-      [...] [much
-      more](https://ropensci.org/packages/) [...]
+      [...] [relative links](#links) [...][...] [anchor links] [...]
       
-      [...] [`dataone`
-      package](https://github.com/DataONEorg/rdataone) [...][...] [`rfigshare`](https://github.com/ropensci/rfigshare) [...][...] [Figshare](https://figshare.com/) [...][...] [`EML` package](https://github.com/ropensci/EML) [...][...] [unconf
-      `dataspice` project](https://github.com/ropenscilabs/dataspice) [...]
+      [anchor links]: https://example.com/anchor
       
-      [...] [here](https://ropensci.org/packages/) [...]
-      
-      - [How to identify spots for birding using open geographical
-        data](https://ropensci.org/blog/2018/08/14/where-to-bird/) [...]
-      
-      - [How to obtain bird occurrence data in
-        R](https://ropensci.org/blog/2018/08/21/birds-radolfzell/) [...]
-      
-      - [How to extract text from old natural history
-        drawings](https://ropensci.org/blog/2018/08/28/birds-ocr/) [...]
-      
-      - [How to complement an occurrence dataset with taxonomy and trait
-        information](https://ropensci.org/blog/2018/09/04/birds-taxo-traits/) [...]
-      
-      [...] [our friendly discussion
-      forum](https://discuss.ropensci.org/c/usecases) [...]
       
 
 ---
 
     Code
-      show_user(b_code, force = TRUE)
+      show_user(bmark_code, force = TRUE)
     Output
       
       
-      [[...] `glue::glue_collapse(species, sep = ", ", last = " and ")` [...]](https://twitter.com/LucyStats/status/1031938964796657665?s=19)
-      
-      [`taxize`](https://github.com/ropensci/taxize)[`spocc`](https://github.com/ropensci/spocc)[`fulltext`](https://github.com/ropensci/fulltext)
-      
-      [...] `fulltext` [...][...] `tidytext` [...]
-      
-      [...] `dplyr::bind_rows` [...][...] `fulltext` [...]
-      
-      [`cites`](https://github.com/ecohealthalliance/cites/)[`rcites`](https://ibartomeus.github.io/rcites/)
+      [...] `utils::strcapture()` [...]
       
 
