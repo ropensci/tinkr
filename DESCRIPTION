@@ -42,6 +42,7 @@ Imports:
     magrittr,
     purrr,
     R6,
+    rlang (>= 0.4.5),
     xml2,
     xslt,
     yaml
