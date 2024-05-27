@@ -79,7 +79,7 @@ md <- yarn$new(f, sourcepos = TRUE, unescaped = FALSE)
 md$show()
 if (requireNamespace("withr")) {
 lines <- readLines(f)[-length(md$yaml)]
-lnks <- withr::with_namespace("tinkr", 
+lnks <- withr::with_namespace("tinkr",
   protect_unescaped(body = md$body, txt = lines))
 md$body <- lnks
 md$show()

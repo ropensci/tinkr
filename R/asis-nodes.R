@@ -29,7 +29,7 @@ protect_math <- function(body, ns = md_ns()) {
 }
 
 set_asis <- function(nodes) {
-  xml2::xml_set_attr(nodes[xml2::xml_name(nodes) != "softbreak"], "asis", "true")
+  xml2::xml_set_attr(nodes, "asis", "true")
 }
 
 # INLINE MATH ------------------------------------------------------------------
@@ -178,8 +178,8 @@ fix_partial_inline <- function(tag, body, ns) {
   # paste the lines together and create new nodes
   n <- length(math_lines)
   char <- as.character(math_lines)
-  char[[1]] <- sub("[$]", "$</text><text asis='true'>", char[[1]])
-  char[[n]] <- sub("[<]text ", "<text asis='true' ", char[[n]])
+  char[[1]] <- sub("[$]", "$</text><text asis='true' math='true'>", char[[1]])
+  char[[n]] <- sub("[<]text ", "<text asis='true' math='true' ", char[[n]])
   nodes <- paste(char, collapse = "")
   nodes <- make_text_nodes(nodes)
   # add the new nodes to the bottom of the existing math lines
@@ -198,7 +198,7 @@ fix_fully_inline <- function(math) {
   # <text>this is </text><text asis='true'>$\LaTeX$</text><text> text</text>
   char <- gsub(
     pattern = inline_dollars_regex("full"),
-    replacement = "</text><text asis='true'>\\1</text><text>",
+    replacement = "</text><text asis='true' math='true'>\\1</text><text>",
     x = char,
     perl = TRUE
   )
@@ -246,7 +246,12 @@ make_text_nodes <- function(txt) {
 # BLOCK MATH ------------------------------------------------------------------
 
 find_block_math <- function(body, ns) {
-  find_between(body, ns, pattern = "md:text[contains(text(), '$$')]", include = FALSE)
+  # https://github.com/ropensci/tinkr/issues/113#issue-2302065427
+  find_between(body, 
+    ns, 
+    pattern = "md:text[contains(text(), '$$')]", 
+    include = TRUE
+  )
 }
 
 find_between_inlines <- function(body, ns, tag) {
@@ -259,6 +264,7 @@ protect_block_math <- function(body, ns) {
   # get all of the internal nodes
   bm <- xml2::xml_find_all(bm, ".//descendant-or-self::md:*", ns = ns)
   set_asis(bm)
+  xml2::xml_set_attr(bm, "math", "true")
 }
 
 # TICK BOXES -------------------------------------------------------------------

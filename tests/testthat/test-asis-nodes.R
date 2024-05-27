@@ -68,6 +68,12 @@ test_that("block math can be protected", {
   expect_snapshot(show_user(m$protect_math()$tail(48), force = TRUE))
   expect_length(xml2::xml_ns(m$body), 1L)
   expect_equal(md_ns()[[1]], xml2::xml_ns(m$body)[[1]])
+  # 3 math blocks with code examples
+  expect_length(grep("$$", m$show(), fixed = TRUE), 12)
+  # 3 math delimiters included in the get_protected
+  expect_equal(sum(xml2::xml_text(m$get_protected("math")) == "$$"), 6)
+
+
 })
 
 

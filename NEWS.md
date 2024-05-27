@@ -1,5 +1,21 @@
 # tinkr 0.2.0.9000
 
+## NEW FEATURES
+
+* `get_protected()` function (and yarn method) will return nodes which have
+  been protected in some way by {tinkr} via one of the `protect_` family of
+  functions. Adopting this pattern is preferred over using
+  `md:text[@asis='true']` as the attribute names may change in the future
+  (@zkamvar, #111; reviewed: @maelle)
+* Block math will now include the delimiters and the softbreaks for protection
+  (issue/review: #113, @maelle; implemented: #111, @zkamvar)
+
+## NEW IMPORTS
+
+* We now import {rlang} for error handling. Because we already import {purrr},
+  this does not impact the dependency footprint (suggested: @maelle, #111;
+  implemented: @zkamvar, #111).
+
 ## BUG FIX
 
 * Bare links in Markdown (e.g. `<https://example.com/one>`) are no longer
