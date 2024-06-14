@@ -1,7 +1,7 @@
 #' Display a node or nodelist as markdown
 #'
 #' When inspecting the results of an XPath query, displaying the text often 
-#' @param nodelist an object of class `xml_nodelist` OR `xml_node` OR a list of
+#' @param nodelist an object of class `xml_nodeset` OR `xml_node` OR a list of
 #'   either.
 #' @inheritParams to_md 
 #' @return a character vector, invisibly. The result of these functions are
@@ -85,25 +85,18 @@ show_censor <- function(nodelist, stylesheet_path = stylesheet()) {
 #'         attribute
 #'
 #' @details 
-#' `isolate_nodes()` and `provision_isolation()` are the workhorses for the
-#' `show` family of functions. These functions will create a copy of the
-#' document with the nodes present in `nodelist` isolated.
-#'
-#' - `isolate_nodes()` provides a switch between specific modes:
-#'   - "context" include the nodes within the block context of the document.
-#'     For example, if the nodelist contains links in headings, paragraphs, and
-#'     lists, those links will appear within these blocks. When `mark = TRUE`,
-#'     ellipses `[...]` will be added to indicate hidden content.
-#'   - "censor" by default will replace all non-whitespace characters with a
-#'     censor character. This is controlled by `tinkr.censor.regex` and
-#'     `tinkr.censor.mark`
-#'   - "list" creates a new document and copies over the nodes so they appear
-#'     as a list of paragraphs.
-#' - `provision_isolation()` uses [xml2::xml_root()] and [xml2::xml_path()] to
-#'   make a copy of the root document and then tag the corresponding nodes in
-#'   the nodelist so that we can filter on nodes that are not connected to 
-#'   those present in the nodelist.
-#'
+#' `isolate_nodes()`is the workhorse for the `show` family of functions. These
+#' functions will create a copy of the document with the nodes present in
+#' `nodelist` isolated. It has the following switches for "type":
+#' - "context" include the nodes within the block context of the document.
+#'   For example, if the nodelist contains links in headings, paragraphs, and
+#'   lists, those links will appear within these blocks. When `mark = TRUE`,
+#'   ellipses `[...]` will be added to indicate hidden content.
+#' - "censor" by default will replace all non-whitespace characters with a
+#'   censor character. This is controlled by `tinkr.censor.regex` and
+#'   `tinkr.censor.mark`
+#' - "list" creates a new document and copies over the nodes so they appear
+#'   as a list of paragraphs.
 #' @keywords internal
 isolate_nodes <- function(nodelist, type = "context") {
   switch(type,
@@ -113,7 +106,13 @@ isolate_nodes <- function(nodelist, type = "context") {
   )
 }
 
-#' @rdname isolate_nodes
+#' Create a document and list of nodes to isolate
+#'
+#' This uses [xml2::xml_root()] and [xml2::xml_path()] to make a copy of the
+#' root document and then tag the corresponding nodes in the nodelist so that
+#' we can filter on nodes that are not connected to those present in the
+#' nodelist.
+#'
 provision_isolation <- function(nodelist) {
   # create a copy of our document
   doc <- if (inherits(nodelist, "xml_node")) nodelist else nodelist[[1]]
@@ -121,7 +120,7 @@ provision_isolation <- function(nodelist) {
   # get the path to the currently labelled nodes so we can
   # isolate them in the copy.
   # This will return one path statement per node
-  if (inherits(nodelist, c("xml_nodelist", "xml_node"))) {
+  if (inherits(nodelist, c("xml_nodeset", "xml_node"))) {
     path <- xml2::xml_path(nodelist)
   } else {
     path <- purrr::flatten_chr(purrr::map(nodelist, xml2::xml_path))
