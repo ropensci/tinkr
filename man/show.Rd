@@ -6,15 +6,17 @@
 \alias{show_censor}
 \title{Display a node or nodelist as markdown}
 \usage{
-show_list(nodelist)
+show_list(nodelist, stylesheet_path = stylesheet())
 
-show_block(nodelist, mark = FALSE)
+show_block(nodelist, mark = FALSE, stylesheet_path = stylesheet())
 
-show_censor(nodelist)
+show_censor(nodelist, stylesheet_path = stylesheet())
 }
 \arguments{
 \item{nodelist}{an object of class \code{xml_nodelist} OR \code{xml_node} OR a list of
 either.}
+
+\item{stylesheet_path}{path to the XSL stylesheet}
 
 \item{mark}{[bool] When \code{TRUE} markers (\verb{[...]}) are added to replace
 nodes that come before or after the islated nodes. Defaults to \code{FALSE},
@@ -64,7 +66,8 @@ op <- options()
 options(tinkr.censor.regex = "[^[:space:][:punct:]]")
 options(tinkr.censor.mark = "o")
 show_censor(links)
-options(op)
+options(tinkr.censor.regex = NULL)
+options(tinkr.censor.mark = NULL)
 }
 \seealso{
 \code{\link[=to_md_vec]{to_md_vec()}} to get a vector of these elements in isolation.

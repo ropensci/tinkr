@@ -3,6 +3,7 @@
 #' When inspecting the results of an XPath query, displaying the text often 
 #' @param nodelist an object of class `xml_nodelist` OR `xml_node` OR a list of
 #'   either.
+#' @inheritParams to_md 
 #' @return a character vector, invisibly. The result of these functions are
 #'   displayed to the screen
 #' @examples
@@ -40,11 +41,12 @@
 #' options(tinkr.censor.regex = "[^[:space:][:punct:]]")
 #' options(tinkr.censor.mark = "o")
 #' show_censor(links)
-#' options(op)
+#' options(tinkr.censor.regex = NULL)
+#' options(tinkr.censor.mark = NULL)
 #' @seealso [to_md_vec()] to get a vector of these elements in isolation. 
 #' @rdname show
 #' @export
-show_list <- function(nodelist) {
+show_list <- function(nodelist, stylesheet_path = stylesheet()) {
   res <- isolate_nodes(nodelist, type = "list")
   return(show_user(print_lines(res$doc)))
 }
@@ -56,7 +58,7 @@ show_list <- function(nodelist) {
 #'   the default state may cause nodes within the same block to appear adjacent
 #'   to each other.
 #' @export
-show_block <- function(nodelist, mark = FALSE) {
+show_block <- function(nodelist, mark = FALSE, stylesheet_path = stylesheet()) {
   res <- isolate_nodes(nodelist, type = "context")
   if (mark) {
     res <- add_isolation_context(nodelist, res)
@@ -66,20 +68,84 @@ show_block <- function(nodelist, mark = FALSE) {
 
 #' @rdname show
 #' @export
-show_censor <- function(nodelist) {
+show_censor <- function(nodelist, stylesheet_path = stylesheet()) {
   res <- isolate_nodes(nodelist, type = "censor")
   return(show_user(print_lines(res$doc)))
 }
 
+#' Isolate nodes in a document
+#'
+#' @inheritParams show_list
+#' @param type a string of either "context" (default), "censor", or "list"
+#'
+#' @return a list of two elements:
+#'  - doc: a copy of the document with the nodes isolated depending on the
+#'         context
+#'  - key: a string used to tag nodes that are isolated via the `tnk-key`
+#'         attribute
+#'
+#' @details 
+#' `isolate_nodes()` and `provision_isolation()` are the workhorses for the
+#' `show` family of functions. These functions will create a copy of the
+#' document with the nodes present in `nodelist` isolated.
+#'
+#' - `isolate_nodes()` provides a switch between specific modes:
+#'   - "context" include the nodes within the block context of the document.
+#'     For example, if the nodelist contains links in headings, paragraphs, and
+#'     lists, those links will appear within these blocks. When `mark = TRUE`,
+#'     ellipses `[...]` will be added to indicate hidden content.
+#'   - "censor" by default will replace all non-whitespace characters with a
+#'     censor character. This is controlled by `tinkr.censor.regex` and
+#'     `tinkr.censor.mark`
+#'   - "list" creates a new document and copies over the nodes so they appear
+#'     as a list of paragraphs.
+#' - `provision_isolation()` uses [xml2::xml_root()] and [xml2::xml_path()] to
+#'   make a copy of the root document and then tag the corresponding nodes in
+#'   the nodelist so that we can filter on nodes that are not connected to 
+#'   those present in the nodelist.
+#'
+#' @keywords internal
 isolate_nodes <- function(nodelist, type = "context") {
   switch(type,
+    "context" = isolate_nodes_block(nodelist),
     "censor" = isolate_nodes_censor(nodelist),
-    "context" = isolate_nodes_in_context(nodelist),
-    "list" = isolate_nodes_a_la_carte(nodelist),
+    "list" = isolate_nodes_list(nodelist),
   )
 }
 
-isolate_nodes_a_la_carte <- function(nodelist) {
+#' @rdname isolate_nodes
+provision_isolation <- function(nodelist) {
+  # create a copy of our document
+  doc <- if (inherits(nodelist, "xml_node")) nodelist else nodelist[[1]]
+  doc <- copy_xml(xml2::xml_root(doc))
+  # get the path to the currently labelled nodes so we can
+  # isolate them in the copy.
+  # This will return one path statement per node
+  if (inherits(nodelist, c("xml_nodelist", "xml_node"))) {
+    path <- xml2::xml_path(nodelist)
+  } else {
+    path <- purrr::flatten_chr(purrr::map(nodelist, xml2::xml_path))
+  }
+  # label new nodes with unique timestamp
+  key <- as.character(as.integer(Sys.time()))
+  purrr::walk(path, label_nodes, doc = doc, label = key)
+
+  # find the unrelated nodes for deletion/censoring
+  #  - not labelled
+  #  - not a descendant of a labelled node
+  #  - not an _ancestor_ of a labelled node
+  predicate <- sprintf("@tnk-key=%s", key)
+  ancestor <- sprintf("ancestor::*[%s]", predicate)
+  descendant <- sprintf("descendant::*[%s]", predicate)
+  xpth <- sprintf("not(%s) and not(%s) and not(%s)",
+    ancestor, descendant, predicate
+  )
+  unrelated <- xml2::xml_find_all(doc, sprintf("//node()[%s]", xpth))
+  return(list(doc = doc, key = key, unrelated = unrelated))
+}
+
+
+isolate_nodes_list <- function(nodelist) {
   doc <- xml2::read_xml(commonmark::markdown_xml(""))
   # if we get a single node, make sure it's in a list
   if (inherits(nodelist, "xml_node")) {
@@ -100,52 +166,31 @@ isolate_nodes_a_la_carte <- function(nodelist) {
 }
 
 
-isolate_nodes_in_context <- function(nodelist) {
+isolate_nodes_block <- function(nodelist) {
   res <- provision_isolation(nodelist)
-  xml2::xml_remove(res$parents)
+  xml2::xml_remove(res$unrelated)
   return(list(doc = res$doc, key = res$key))
 }
 
 isolate_nodes_censor <- function(nodelist) {
   res <- provision_isolation(nodelist)
-  censor_attr(res$parents, "destination")
-  censor_attr(res$parents, "title")
-  censor_attr(res$parents, "rel")
-  txt <- xml2::xml_find_all(res$parents, ".//text()")
+  censor_attr(res$unrelated, "destination")
+  censor_attr(res$unrelated, "title")
+  censor_attr(res$unrelated, "rel")
+  txt <- xml2::xml_find_all(res$unrelated, ".//text()")
   xml2::xml_set_text(txt, censor(xml2::xml_text(txt)))
   return(list(doc = res$doc, key = res$key))
 }
 
-provision_isolation <- function(nodelist) {
-  # create a copy of our document
-  doc <- copy_xml(xml2::xml_root(nodelist))
-  # get the path to the currently labelled nodes so we can isolate them
-  # in the copy
-  # This will return one path statement per node
-  path <- xml2::xml_path(nodelist)
-  # label new nodes with unique timestamp
-  tim <- as.character(as.integer(Sys.time()))
-  purrr::walk(path, label_nodes, doc = doc, label = tim)
-
-  # find the unlabelled nodes
-  predicate <- sprintf("@label=%s", tim)
-  xpth <- sprintf("not(descendant::*[%s]) and not(ancestor::*[%s]) and not(%s)",
-    predicate, predicate, predicate
-  )
-  rents <- xml2::xml_find_all(doc, sprintf("//node()[%s]", xpth))
-  return(list(doc = doc, key = tim, parents = rents))
-
-}
-
 add_isolation_context <- function(nodelist, isolated) {
-  sib <- sprintf("sibling::*[1][not(@label=%s)]", isolated$key)
+  sib <- sprintf("sibling::*[1][not(@tnk-key=%s)]", isolated$key)
   pretext <- xml2::xml_find_lgl(nodelist, 
     sprintf("boolean(count(preceding-%s)!=0)", sib)
   )
   postext <- xml2::xml_find_lgl(nodelist, 
     sprintf("boolean(count(following-%s)!=0)", sib)
   )
-  xpath <- sprintf(".//node()[@label=%s]", isolated$key)
+  xpath <- sprintf(".//node()[@tnk-key=%s]", isolated$key)
   labelled <- xml2::xml_find_all(isolated$doc, xpath)
   purrr::walk(labelled[pretext], function(node) {
     xml2::xml_add_sibling(node, .where = "before",
@@ -199,6 +244,6 @@ print_lines <- function(xml, path = NULL, stylesheet = NULL) {
 label_nodes <- function(xpath, doc, label = "save") {
   xml2::xml_set_attr(
     xml2::xml_find_all(doc, xpath, ns = md_ns()), 
-    "label", label)
+    "tnk-key", label)
 }
 

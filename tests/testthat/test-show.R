@@ -25,6 +25,25 @@ test_that("show_list() will isolate groups of elements", {
 })
 
 
+test_that("show_censor() will show a censored list of disparate elements", {
+  path <- system.file("extdata", "show-example.md", package = "tinkr")
+  y <- tinkr::yarn$new(path, sourcepos = TRUE)
+  pth <- c("*[6]", "*[9]/*[2]", "*[9]/*[3]")
+  nodes <- purrr::map(pth, function(p) {
+    xml2::xml_find_all(y$body, p)
+  })
+  expect_length(nodes, 3)
+  # the censor option can be adjusted
+  withr::local_options(list(
+      tinkr.censor.mark = ".",
+      tinkr.censor.regex = "[^[:space:]]"
+    )
+  )
+  disp <- show_censor(nodes)[1:29]
+  expect_snapshot(show_user(disp, force = TRUE))
+})
+
+
 test_that("show_censor() will censor elements", {
   path <- system.file("extdata", "show-example.md", package = "tinkr")
   y <- tinkr::yarn$new(path, sourcepos = TRUE)
