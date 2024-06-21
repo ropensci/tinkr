@@ -38,11 +38,15 @@ shove_nodes_in <- function(body, new, nodes, where = "after") {
     nodes <- xml2::xml_find_all(body, nodes, ns = md_ns())
   }
   if (!inherits(nodes, c("xml_node", "xml_nodeset"))) {
-    rlang::abort("an object of class `xml_node` or `xml_nodeset` was expected")
+    rlang::abort("an object of class `xml_node` or `xml_nodeset` was expected",
+      class = "insert-md-node"
+    )
   }
   root <- xml2::xml_root(nodes)
   if (!identical(root, body)) {
-    rlang::abort("nodes must come from the same body as the yarn document")
+    rlang::abort("nodes must come from the same body as the yarn document",
+      class = "insert-md-body"
+    )
   }
   return(add_nodes_to_nodes(new, old = nodes, where = where))
 }
@@ -61,11 +65,14 @@ add_nodes_to_nodes <- function(nodes, old, where = "after") {
   single_node <- inherits(old, "xml_node")
   if (n > 0) {
     if (!single_node && n < length(old)) {
-      rlang::abort("Nodes must be either block type or inline, but not both", call. = FALSE)
+      rlang::abort("Nodes must be either block type or inline, but not both", 
+        class = "insert-md-dual-type",
+        call. = FALSE
+      )
     }
     nodes <- xml2::xml_children(nodes)
   }
-  if (!single_node) {
+  if (single_node) {
     old <- list(old)
   }
   purrr::walk(old, add_node_siblings, nodes, where = where, remove = FALSE)

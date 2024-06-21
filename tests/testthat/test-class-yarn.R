@@ -133,7 +133,7 @@ test_that("a yarn object can be reset", {
 
 })
 
-test_that("random markdown can be added", {
+test_that("random markdown can be added to the body", {
 
   tmpdir <- withr::local_tempdir()
   scarf3 <- withr::local_file(file.path(tmpdir, "yarn-kilroy.md"))
@@ -146,13 +146,83 @@ test_that("random markdown can be added", {
     "[KILROY](https://en.wikipedia.org/wiki/Kilroy_was_here) WAS **HERE**\n\n",
     "stop copying me!" # THIS WILL BE COPIED TWICE
   )
-  t1$add_md(paste(newmd, collapse = ""))$add_md(toupper(newmd[[3]]), where = 3)
+  t1$add_md(paste(newmd, collapse = ""))
+  t1$add_md(toupper(newmd[[3]]), where = 3)
   expect_length(xml2::xml_find_all(t1$body, "md:link", t1$ns), 0L)
 
   t1$write(scarf3)
   expect_snapshot_file(scarf3)
 
 })
+
+
+test_that("markdown can be appended to elements", {
+  path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+  ex <- tinkr::yarn$new(path)
+  # append a note after the first heading
+  txt <- c("> Hello from *tinkr*!", ">", ">  :heart: R")
+  # Via XPath ------------------------------------------------------------------
+  ex$append_md(txt, ".//md:heading[1]")
+  # the block quote has been added to the first heading 
+  expect_length(xml2::xml_find_all(ex$body, ".//md:block_quote", ns = ex$ns), 1)
+  # Via node -------------------------------------------------------------------
+  heading2 <- xml2::xml_find_first(ex$body, ".//md:heading[2]", ns = ex$ns)
+  ex$append_md(txt, heading2)
+  expect_length(xml2::xml_find_all(ex$body, ".//md:block_quote", ns = ex$ns), 2)
+  # Because the body is a copy, the original nodeset will throw an error
+  expect_error(ex$append_md(txt, heading2), class = "insert-md-body")
+
+  # Via nodeset ----------------------------------------------------------------
+  ex$append_md(txt, ".//md:heading")
+  expect_length(xml2::xml_find_all(ex$body, ".//md:block_quote", ns = ex$ns), 4)
+})
+
+
+test_that("Inline markdown can be appended (to a degree)", {
+  path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+  ex <- tinkr::yarn$new(path)
+  nodes <- xml2::xml_find_all(ex$body, 
+    ".//md:code[contains(text(), 'READ THIS')]", ex$ns)
+  expect_length(nodes, 0)
+  ex <- tinkr::yarn$new(path)
+  ex$append_md("`<-- READ THIS`", ".//md:link")
+  nodes <- xml2::xml_find_all(ex$body, 
+    ".//md:code[contains(text(), 'READ THIS')]", ex$ns)
+  expect_length(nodes, 1)
+})
+
+
+test_that("markdown can be prepended", {
+  path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+  ex <- tinkr::yarn$new(path)
+  nodes <- xml2::xml_find_all(ex$body, 
+    ".//node()[contains(text(), 'NERDS')]", ex$ns)
+  expect_length(nodes, 0)
+  ex$prepend_md("Table: BIRDS, NERDS", ".//md:table")
+  nodes <- xml2::xml_find_all(ex$body, 
+    ".//node()[contains(text(), 'NERDS')]", ex$ns)
+  expect_length(nodes, 1)
+})
+
+
+test_that("an error happens when you try to append with a number", {
+  path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+  ex <- tinkr::yarn$new(path)
+  expect_error(ex$append_md("WRONG", 42), class = "insert-md-node")
+})
+
+
+
+test_that("an error happens when you try to append markdown to disparate elements", {
+
+  path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+  ex <- tinkr::yarn$new(path)
+  xpath <- ".//md:text[contains(text(), 'bird')] | .//md:paragraph[md:text[contains(text(), 'Non')]]"
+
+  expect_error(ex$append_md("WRONG", xpath), class = "insert-md-dual-type")
+})
+
+
 
 
 test_that("md_vec() will convert a query to a markdown vector", {
