@@ -2,15 +2,12 @@
 % Please edit documentation in R/show.R
 \name{isolate_nodes}
 \alias{isolate_nodes}
-\alias{provision_isolation}
 \title{Isolate nodes in a document}
 \usage{
 isolate_nodes(nodelist, type = "context")
-
-provision_isolation(nodelist)
 }
 \arguments{
-\item{nodelist}{an object of class \code{xml_nodelist} OR \code{xml_node} OR a list of
+\item{nodelist}{an object of class \code{xml_nodeset} OR \code{xml_node} OR a list of
 either.}
 
 \item{type}{a string of either "context" (default), "censor", or "list"}
@@ -28,11 +25,9 @@ attribute
 Isolate nodes in a document
 }
 \details{
-\code{isolate_nodes()} and \code{provision_isolation()} are the workhorses for the
-\code{show} family of functions. These functions will create a copy of the
-document with the nodes present in \code{nodelist} isolated.
-\itemize{
-\item \code{isolate_nodes()} provides a switch between specific modes:
+\code{isolate_nodes()}is the workhorse for the \code{show} family of functions. These
+functions will create a copy of the document with the nodes present in
+\code{nodelist} isolated. It has the following switches for "type":
 \itemize{
 \item "context" include the nodes within the block context of the document.
 For example, if the nodelist contains links in headings, paragraphs, and
@@ -44,10 +39,22 @@ censor character. This is controlled by \code{tinkr.censor.regex} and
 \item "list" creates a new document and copies over the nodes so they appear
 as a list of paragraphs.
 }
-\item \code{provision_isolation()} uses \code{\link[xml2:xml_children]{xml2::xml_root()}} and \code{\link[xml2:xml_path]{xml2::xml_path()}} to
-make a copy of the root document and then tag the corresponding nodes in
-the nodelist so that we can filter on nodes that are not connected to
-those present in the nodelist.
 }
+\examples{
+\dontshow{if (isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+path <- system.file("extdata", "show-example.md", package = "tinkr")
+y <- tinkr::yarn$new(path, sourcepos = TRUE)
+y$protect_math()$protect_curly()
+items <- xml2::xml_find_all(y$body, ".//md:item", tinkr::md_ns())
+tnk <- asNamespace("tinkr")
+tnk$isolate_nodes(items, type = "context")
+tnk$isolate_nodes(items, type = "censor")
+tnk$isolate_nodes(items, type = "list")
+\dontshow{\}) # examplesIf}
 }
+\seealso{
+Other nodeset isolation functions: 
+\code{\link{provision_isolation}()}
+}
+\concept{nodeset isolation functions}
 \keyword{internal}

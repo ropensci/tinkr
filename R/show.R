@@ -98,6 +98,16 @@ show_censor <- function(nodelist, stylesheet_path = stylesheet()) {
 #' - "list" creates a new document and copies over the nodes so they appear
 #'   as a list of paragraphs.
 #' @keywords internal
+#' @family nodeset isolation functions
+#' @examplesIf isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))
+#' path <- system.file("extdata", "show-example.md", package = "tinkr")
+#' y <- tinkr::yarn$new(path, sourcepos = TRUE)
+#' y$protect_math()$protect_curly()
+#' items <- xml2::xml_find_all(y$body, ".//md:item", tinkr::md_ns())
+#' tnk <- asNamespace("tinkr")
+#' tnk$isolate_nodes(items, type = "context")
+#' tnk$isolate_nodes(items, type = "censor")
+#' tnk$isolate_nodes(items, type = "list")
 isolate_nodes <- function(nodelist, type = "context") {
   switch(type,
     "context" = isolate_nodes_block(nodelist),
@@ -111,8 +121,27 @@ isolate_nodes <- function(nodelist, type = "context") {
 #' This uses [xml2::xml_root()] and [xml2::xml_path()] to make a copy of the
 #' root document and then tag the corresponding nodes in the nodelist so that
 #' we can filter on nodes that are not connected to those present in the
-#' nodelist.
+#' nodelist. This function is required for [isolate_nodes()] to work. 
 #'
+#'
+#' @inheritParams isolate_nodes
+#'
+#' @return a list of three elements:
+#'  - doc: a copy of the document with the nodes isolated depending on the
+#'         context
+#'  - key: a string used to tag nodes that are isolated via the `tnk-key`
+#'         attribute.
+#'  - unrelated: an `xml_nodeset` containing nodes that have no ancestor,
+#'         descendant, or self relationship to the nodes in `nodelist`.
+#' @keywords internal
+#' @family nodeset isolation functions
+#' @examplesIf isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))
+#' path <- system.file("extdata", "show-example.md", package = "tinkr")
+#' y <- tinkr::yarn$new(path, sourcepos = TRUE)
+#' y$protect_math()$protect_curly()
+#' items <- xml2::xml_find_all(y$body, ".//md:item", tinkr::md_ns())
+#' tnk <- asNamespace("tinkr")
+#' tnk$provision_isolation(items)
 provision_isolation <- function(nodelist) {
   # create a copy of our document
   doc <- if (inherits(nodelist, "xml_node")) nodelist else nodelist[[1]]

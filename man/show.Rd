@@ -13,7 +13,7 @@ show_block(nodelist, mark = FALSE, stylesheet_path = stylesheet())
 show_censor(nodelist, stylesheet_path = stylesheet())
 }
 \arguments{
-\item{nodelist}{an object of class \code{xml_nodelist} OR \code{xml_node} OR a list of
+\item{nodelist}{an object of class \code{xml_nodeset} OR \code{xml_node} OR a list of
 either.}
 
 \item{stylesheet_path}{path to the XSL stylesheet}
