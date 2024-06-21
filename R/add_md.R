@@ -21,6 +21,56 @@ add_nodes_to_body <- function(body, nodes, where = 0L) {
   }
 }
 
+append_md <- function(body, md, after = NULL) {
+  new <- md_to_xml(md)
+  shove_nodes_in(body, new, nodes = after, where = "after")
+  copy_xml(body)
+}
+
+prepend_md <- function(body, md, before = NULL) {
+  new <- md_to_xml(md)
+  shove_nodes_in(body, new, nodes = before, where = "before")
+  copy_xml(body)
+}
+
+shove_nodes_in <- function(body, new, nodes, where = "after") {
+  if (inherits(nodes, "character")) {
+    nodes <- xml2::xml_find_all(body, nodes, ns = md_ns())
+  }
+  if (!inherits(nodes, c("xml_node", "xml_nodeset"))) {
+    rlang::abort("an object of class `xml_node` or `xml_nodeset` was expected")
+  }
+  root <- xml2::xml_root(nodes)
+  if (!identical(root, body)) {
+    rlang::abort("nodes must come from the same body as the yarn document")
+  }
+  return(add_nodes_to_nodes(new, old = nodes, where = where))
+}
+
+
+node_is_inline <- function(node) {
+  blocks <- c("document", "paragraph", "heading", "block_quote", "list",
+  "item", "code_block", "html_block", "custom_block", "thematic_break",
+  "table")
+  !xml2::xml_name(node) %in% blocks
+}
+
+add_nodes_to_nodes <- function(nodes, old, where = "after") {
+  inlines <- node_is_inline(old)
+  n <- sum(inlines)
+  single_node <- inherits(old, "xml_node")
+  if (n > 0) {
+    if (!single_node && n < length(old)) {
+      rlang::abort("Nodes must be either block type or inline, but not both", call. = FALSE)
+    }
+    nodes <- xml2::xml_children(nodes)
+  }
+  if (!single_node) {
+    old <- list(old)
+  }
+  purrr::walk(old, add_node_siblings, nodes, where = where, remove = FALSE)
+}
+
 # Add siblings to a node
 add_node_siblings <- function(node, nodes, where = "after", remove = TRUE) {
   # if there is a single node, then we need only add it

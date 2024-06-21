@@ -203,6 +203,39 @@ yarn <- R6::R6Class("yarn",
       self$body <- add_md(self$body, md, where)
       invisible(self)
     },
+    #' @description append abritrary markdown to a node or set of nodes
+    #'
+    #' @param md a string of markdown formatted text.
+    #' @param nodes an XPath expression that evaulates to object of class
+    #'   `xml_node` or `xml_nodeset` that are all either inline or block nodes
+    #'   (never both)
+    #' @examples
+    #' path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+    #' ex <- tinkr::yarn$new(path)
+    #' # append a note after the first heading
+    #'
+    #' txt <- c("> Hello from *tinkr*!", ">", ">  :heart: R")
+    #' ex$append_md(txt, ".//md:heading[1]")$head(20)
+    append_md = function(md, nodes = NULL) {
+      self$body <- append_md(self$body, md, nodes)
+      invisible(self)
+    },
+    #' @description prepend abritrary markdown to a node or set of nodes
+    #'
+    #' @param md a string of markdown formatted text.
+    #' @param nodes an XPath expression that evaulates to object of class
+    #'   `xml_node` or `xml_nodeset` that are all either inline or block nodes
+    #'   (never both)
+    #' @examples
+    #' path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+    #' ex <- tinkr::yarn$new(path)
+    #'
+    #' # prepend a table description to the birds table
+    #' ex$prepend_md("Table: BIRDS, NERDS", ".//md:table[1]")$tail(20)
+    prepend_md = function(md, nodes = NULL) {
+      self$body <- prepend_md(self$body, md, nodes)
+      invisible(self)
+    },
     #' @description Protect math blocks from being escaped
     #'
     #' @examples
