@@ -2,6 +2,17 @@
 
 ## NEW FEATURES
 
+* `to_md_vec()` takes an xml node or nodelist and returns a character vector of
+  the markdown produced.
+* `show_list()`, `show_block()`, and `show_censor()` will show the markdown
+  content of a node, nodelist, or list of nodes without needing to print the
+  entire document.
+* `yarn$show()` method now gains the `lines` parameter, which allows you to
+  subset the output by the lines of text. A warning is produced if a stylesheet
+  is supplied in place of `lines`.
+* `yarn$md_vec()` is a new method that will generate a character vector of
+  markdown elements from a query. This is a convenience method that uses
+  `xml2::xml_find_all()` and `to_md_vec()` in the background.
 * `get_protected()` function (and yarn method) will return nodes which have
   been protected in some way by {tinkr} via one of the `protect_` family of
   functions. Adopting this pattern is preferred over using

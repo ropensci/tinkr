@@ -24,8 +24,21 @@ test_that("yarn show, head, and tail methods work", {
   expect_snapshot(show_user(res <- y1$show(), TRUE))
   expect_type(res, "character")
 
+  # the head method is identical to subsetting 10 lines
+  expect_snapshot(show_user(res_11 <- y1$show(11:20), TRUE))
+  expect_length(res_11, 10) %>%
+    expect_identical(res[11:20]) %>%
+    expect_type("character")
+
+  # a subset from the top has 10 lines
+  expect_snapshot(show_user(res_1 <- y1$show(1:10), TRUE))
+  expect_length(res_1, 10) %>%
+    expect_type("character")
+
+  # the head method is identical to subsetting 10 lines
   expect_snapshot(show_user(res <- y1$head(10), TRUE))
   expect_length(res, 10) %>%
+    expect_identical(res_1) %>%
     expect_type("character")
 
   expect_snapshot(show_user(res <- y1$tail(11), TRUE))
@@ -33,6 +46,25 @@ test_that("yarn show, head, and tail methods work", {
     expect_type("character")
 
 })
+
+
+test_that("yarn show method will warn if using positional stylesheet", {
+
+  path <- system.file("extdata", "table.md", package = "tinkr")
+  y1 <- yarn$new(path)
+  expect_no_warning({
+    md_show <- y1$show(TRUE)
+  })
+  expect_no_warning({
+    md_show1 <- y1$show(stylesheet_path = stylesheet())
+  })
+  suppressWarnings({
+    expect_warning(md_show2 <- y1$show(stylesheet()))
+  })
+  expect_identical(md_show, md_show2)
+
+})
+
 
 test_that("yarn can be created from Rmarkdown", {
   pathrmd <- system.file("extdata", "example2.Rmd", package = "tinkr")
@@ -121,3 +153,26 @@ test_that("random markdown can be added", {
   expect_snapshot_file(scarf3)
 
 })
+
+
+test_that("md_vec() will convert a query to a markdown vector", {
+
+  pathmd  <- system.file("extdata", "example1.md", package = "tinkr")
+  y1 <- yarn$new(pathmd, sourcepos = TRUE, encoding = "utf-8")
+
+  expect_null(y1$md_vec(NULL))
+
+  headings <- xml2::xml_find_all(y1$body, ".//md:heading", y1$ns)
+
+  expected <- paste(strrep("#", xml2::xml_attr(headings, "level")),
+    xml2::xml_text(headings)
+  )
+  expect_equal(y1$md_vec(".//md:heading[@level=3]"), expected[1:4])
+  expect_length(y1$md_vec(".//md:list//md:link"), 5)
+  
+  skip_on_os("windows")
+  expect_equal(y1$md_vec(".//md:heading[@level=4]"), expected[5:7])
+  expect_equal(y1$md_vec(".//md:heading"), expected)
+
+})
+

@@ -96,6 +96,8 @@ yarn <- R6::R6Class("yarn",
 
     #' @description show the markdown contents on the screen
     #'
+    #' @param lines a subset of elements to show. Defaults to `TRUE`, which
+    #'    shows all lines of the output. This can be either logical or numeric.
     #' @param stylesheet_path path to the xsl stylesheet to convert XML to markdown.
     #' @return a character vector with one line for each line in the output
     #' @examples
@@ -104,15 +106,30 @@ yarn <- R6::R6Class("yarn",
     #' ex2$head(5)
     #' ex2$tail(5)
     #' ex2$show()
-    show = function(stylesheet_path = stylesheet() ) {
-      show_user(private$md_lines(stylesheet = stylesheet_path))
+    show = function(lines = TRUE, stylesheet_path = stylesheet()) {
+      if (is.character(lines) && length(lines) == 1 && file.exists(lines)) {
+        # when using {tinkr} < 0.3.0
+        stylesheet_path <- lines
+        lines <- TRUE
+        the_call <- match.call()
+        the_call$stylesheet_path <- the_call$lines
+        the_call$lines <- NULL
+        new_call <- capture.output(print(the_call))
+        rlang::warn(
+          c(
+            "!" = "In {tinkr} 0.3.0, the $show() method gains the `lines` argument as the first argument.", 
+            "i" = "To remove this warning, use the following code:", 
+            " " = new_call
+          ), 
+          call. = FALSE)
+      }
+      show_user(private$md_lines(stylesheet = stylesheet_path)[lines])
     },
 
     #' @description show the head of the markdown contents on the screen
     #'
     #' @param n the number of elements to show from the top. Negative numbers
     #' @param stylesheet_path path to the xsl stylesheet to convert XML to markdown.
-    #' exclude lines from the bottom
     #' @return a character vector with `n` elements
     head = function(n = 6L, stylesheet_path = stylesheet()) {
       show_user(head(private$md_lines(stylesheet = stylesheet_path), n))
@@ -122,11 +139,39 @@ yarn <- R6::R6Class("yarn",
     #'
     #' @param n the number of elements to show from the bottom. Negative numbers
     #' @param stylesheet_path path to the xsl stylesheet to convert XML to markdown.
-    #' exclude lines from the top
     #'
     #' @return a character vector with `n` elements
     tail = function(n = 6L, stylesheet_path = stylesheet()) {
       show_user(tail(private$md_lines(stylesheet = stylesheet_path), n))
+    },
+
+    #' @description query and extract markdown elements
+    #'
+    #' @param xpath a valid XPath expression
+    #' @param stylesheet_path path to the xsl stylesheet to convert XML to markdown.
+    #'
+    #' @return a vector of markdown elements generated from the query
+    #' @seealso [to_md_vec()] for a way to generate the same vector from a
+    #'   nodelist without a yarn object
+    #' @examples
+    #' path <- system.file("extdata", "example1.md", package = "tinkr")
+    #' ex <- tinkr::yarn$new(path)
+    #' # all headings
+    #' ex$md_vec(".//md:heading")
+    #' # all headings greater than level 3
+    #' ex$md_vec(".//md:heading[@level>3]")
+    #' # all links
+    #' ex$md_vec(".//md:link")
+    #' # all links that are part of lists
+    #' ex$md_vec(".//md:list//md:link")
+    #' # all code
+    #' ex$md_vec(".//md:code | .//md:code_block")
+    md_vec = function(xpath = NULL, stylesheet_path = stylesheet()) {
+      if (is.null(xpath)) {
+        return(NULL)
+      }
+      nodes <- xml2::xml_find_all(self$body, xpath, ns = self$ns)
+      return(to_md_vec(nodes, stylesheet_path))
     },
 
     #' @description add an arbitrary Markdown element to the document
@@ -232,21 +277,7 @@ yarn <- R6::R6Class("yarn",
     encoding  = "UTF-8",
     # converts the document to markdown and separates the output into lines
     md_lines = function(path = NULL, stylesheet = NULL) {
-      if (is.null(stylesheet)) {
-        md <- to_md(self, path)
-      } else {
-        md <- to_md(self, path, stylesheet)
-      }
-      if (!is.null(path) && !is.null(stylesheet)) {
-        return(md)
-      }
-      # Make sure that the yaml is not sitting on top of the first markdown line
-      if (length(md) == 2) {
-        md[1] <- paste0(md[1], "\n")
-      }
-      f  <- textConnection(md)
-      on.exit(close(f))
-      readLines(f)
+      print_lines(self, path = path, stylesheet = stylesheet)
     }
   )
 )

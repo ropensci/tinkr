@@ -13,7 +13,9 @@
 #' the path to your XSL stylesheet as argument.
 #'
 #'
-#' @return the converted document, invisibly. 
+#' @return 
+#'  - `to_md()`: `\[character\]` the converted document, invisibly as a character vector containing two elements: the yaml list and the markdown body.
+#'  - `to_md_vec()`: `\[character\]` the markdown representation of each node.
 #'
 #' @export
 #'
@@ -21,21 +23,28 @@
 #' path <- system.file("extdata", "example1.md", package = "tinkr")
 #' yaml_xml_list <- to_xml(path)
 #' names(yaml_xml_list)
-#' library("magrittr")
+#' # extract the level 3 headers from the body
+#' headers3 <- xml2::xml_find_all(
+#'   yaml_xml_list$body,
+#'   xpath = './/md:heading[@level="3"]', 
+#'   ns = md_ns()
+#' )
+#' # show the headers
+#' print(h3 <- to_md_vec(headers3))
 #' # transform level 3 headers into level 1 headers
-#' body <- yaml_xml_list$body
-#' body %>%
-#'   xml2::xml_find_all(xpath = './/d1:heading',
-#'                      xml2::xml_ns(.)) %>%
-#'   .[xml2::xml_attr(., "level") == "3"] -> headers3
+#' # NOTE: these nodes are still associated with the document and this is done
+#' # in place.
 #' xml2::xml_set_attr(headers3, "level", 1)
-#' yaml_xml_list$body <- body
+#' # preview the new headers
+#' print(h1 <- to_md_vec(headers3))
 #' # save back and have a look
 #' newmd <- tempfile("newmd", fileext = ".md")
-#' to_md(yaml_xml_list, newmd)
+#' res <- to_md(yaml_xml_list, newmd)
+#' # show that it works
+#' regmatches(res[[2]], gregexpr(h1[1], res[[2]], fixed = TRUE))
 #' # file.edit("newmd.md")
 #' file.remove(newmd)
-#'
+#' 
 to_md <- function(yaml_xml_list, path = NULL, stylesheet_path = stylesheet()){
 
   # duplicate document to avoid overwriting
@@ -56,6 +65,20 @@ to_md <- function(yaml_xml_list, path = NULL, stylesheet_path = stylesheet()){
 
   invisible(md_out)
 }
+
+#' @rdname to_md
+#' @export
+#' @param nodelist an object of `xml_nodelist` or `xml_node`
+to_md_vec <- function(nodelist, stylesheet_path = stylesheet()) {
+  if (inherits(nodelist, "xml_node")) {
+    nodelist <- list(nodelist)
+  }
+  nodes <- lapply(nodelist, function(i) {
+    print_lines(isolate_nodes(i, "list")$doc, stylesheet = stylesheet_path)
+  })
+  trimws(vapply(nodes, paste, character(1), collapse = "\n"))
+}
+
 
 # convert body and yaml to markdown text given a stylesheet
 transform_to_md <- function(body, yaml, stylesheet) {
@@ -127,3 +150,4 @@ to_info <- function(code_block){
 
  xml2::xml_set_attr(code_block, "info", info)
 }
+
