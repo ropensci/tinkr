@@ -21,19 +21,19 @@ add_nodes_to_body <- function(body, nodes, where = 0L) {
   }
 }
 
-append_md <- function(body, md, after = NULL) {
+append_md <- function(body, md, after = NULL, space = TRUE) {
   new <- md_to_xml(md)
-  shove_nodes_in(body, new, nodes = after, where = "after")
+  shove_nodes_in(body, new, nodes = after, where = "after", space = space)
   copy_xml(body)
 }
 
-prepend_md <- function(body, md, before = NULL) {
+prepend_md <- function(body, md, before = NULL, space = TRUE) {
   new <- md_to_xml(md)
-  shove_nodes_in(body, new, nodes = before, where = "before")
+  shove_nodes_in(body, new, nodes = before, where = "before", space = space)
   copy_xml(body)
 }
 
-shove_nodes_in <- function(body, new, nodes, where = "after") {
+shove_nodes_in <- function(body, new, nodes, where = "after", space = TRUE) {
   if (inherits(nodes, "character")) {
     nodes <- xml2::xml_find_all(body, nodes, ns = md_ns())
   }
@@ -48,7 +48,7 @@ shove_nodes_in <- function(body, new, nodes, where = "after") {
       class = "insert-md-body"
     )
   }
-  return(add_nodes_to_nodes(new, old = nodes, where = where))
+  return(add_nodes_to_nodes(new, old = nodes, where = where, space = space))
 }
 
 
@@ -59,7 +59,7 @@ node_is_inline <- function(node) {
   !xml2::xml_name(node) %in% blocks
 }
 
-add_nodes_to_nodes <- function(nodes, old, where = "after") {
+add_nodes_to_nodes <- function(nodes, old, where = "after", space = TRUE) {
   inlines <- node_is_inline(old)
   n <- sum(inlines)
   single_node <- inherits(old, "xml_node")
@@ -71,6 +71,11 @@ add_nodes_to_nodes <- function(nodes, old, where = "after") {
       )
     }
     nodes <- xml2::xml_children(nodes)
+    if (space) {
+      lead <- if (inherits(nodes, "xml_node")) nodes else nodes[[1]]
+      txt <- if (where == "after") " %s" else "%s " 
+      xml2::xml_set_text(lead, sprintf(txt, xml2::xml_text(lead)))
+    }
   }
   if (single_node) {
     old <- list(old)

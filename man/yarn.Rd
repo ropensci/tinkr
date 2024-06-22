@@ -483,7 +483,7 @@ readLines(tmp, n = 20)
 \subsection{Method \code{append_md()}}{
 append abritrary markdown to a node or set of nodes
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{yarn$append_md(md, nodes = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{yarn$append_md(md, nodes = NULL, space = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -494,6 +494,9 @@ append abritrary markdown to a node or set of nodes
 \item{\code{nodes}}{an XPath expression that evaulates to object of class
 \code{xml_node} or \code{xml_nodeset} that are all either inline or block nodes
 (never both)}
+
+\item{\code{space}}{if \code{TRUE}, inline nodes will have a space inserted before
+they are appended.}
 }
 \if{html}{\out{</div>}}
 }
@@ -517,7 +520,7 @@ ex$append_md(txt, ".//md:heading[1]")$head(20)
 \subsection{Method \code{prepend_md()}}{
 prepend abritrary markdown to a node or set of nodes
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{yarn$prepend_md(md, nodes = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{yarn$prepend_md(md, nodes = NULL, space = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -528,6 +531,9 @@ prepend abritrary markdown to a node or set of nodes
 \item{\code{nodes}}{an XPath expression that evaulates to object of class
 \code{xml_node} or \code{xml_nodeset} that are all either inline or block nodes
 (never both)}
+
+\item{\code{space}}{if \code{TRUE}, inline nodes will have a space inserted before
+they are prepended.}
 }
 \if{html}{\out{</div>}}
 }

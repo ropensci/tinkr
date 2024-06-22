@@ -209,6 +209,8 @@ yarn <- R6::R6Class("yarn",
     #' @param nodes an XPath expression that evaulates to object of class
     #'   `xml_node` or `xml_nodeset` that are all either inline or block nodes
     #'   (never both)
+    #' @param space if `TRUE`, inline nodes will have a space inserted before
+    #'   they are appended.
     #' @examples
     #' path <- system.file("extdata", "example2.Rmd", package = "tinkr")
     #' ex <- tinkr::yarn$new(path)
@@ -216,8 +218,8 @@ yarn <- R6::R6Class("yarn",
     #'
     #' txt <- c("> Hello from *tinkr*!", ">", ">  :heart: R")
     #' ex$append_md(txt, ".//md:heading[1]")$head(20)
-    append_md = function(md, nodes = NULL) {
-      self$body <- append_md(self$body, md, nodes)
+    append_md = function(md, nodes = NULL, space = TRUE) {
+      self$body <- append_md(self$body, md, nodes, space = space)
       invisible(self)
     },
     #' @description prepend abritrary markdown to a node or set of nodes
@@ -226,14 +228,16 @@ yarn <- R6::R6Class("yarn",
     #' @param nodes an XPath expression that evaulates to object of class
     #'   `xml_node` or `xml_nodeset` that are all either inline or block nodes
     #'   (never both)
+    #' @param space if `TRUE`, inline nodes will have a space inserted before
+    #'   they are prepended.
     #' @examples
     #' path <- system.file("extdata", "example2.Rmd", package = "tinkr")
     #' ex <- tinkr::yarn$new(path)
     #'
     #' # prepend a table description to the birds table
     #' ex$prepend_md("Table: BIRDS, NERDS", ".//md:table[1]")$tail(20)
-    prepend_md = function(md, nodes = NULL) {
-      self$body <- prepend_md(self$body, md, nodes)
+    prepend_md = function(md, nodes = NULL, space = TRUE) {
+      self$body <- prepend_md(self$body, md, nodes, space = space)
       invisible(self)
     },
     #' @description Protect math blocks from being escaped

@@ -185,11 +185,35 @@ test_that("Inline markdown can be appended (to a degree)", {
     ".//md:code[contains(text(), 'READ THIS')]", ex$ns)
   expect_length(nodes, 0)
   ex <- tinkr::yarn$new(path)
+  nodes <- xml2::xml_find_all(ex$body, 
+    ".//md:code[contains(text(), ' <-- READ THIS')]", ex$ns)
+  expect_length(nodes, 0)
   ex$append_md("`<-- READ THIS`", ".//md:link")
   nodes <- xml2::xml_find_all(ex$body, 
-    ".//md:code[contains(text(), 'READ THIS')]", ex$ns)
+    ".//md:code[contains(text(), ' <-- READ THIS')]", ex$ns)
   expect_length(nodes, 1)
 })
+
+
+test_that("space parameter can be shut off", {
+  path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+  ex <- tinkr::yarn$new(path)
+  chk <- xml2::xml_find_all(ex$body, 
+    ".//md:heading/*[contains(text(), '!!!')]", ex$ns)
+  space_chk <- xml2::xml_find_all(ex$body, 
+    ".//md:heading/*[contains(text(), ' !!!')]", ex$ns)
+  expect_length(chk, 0)
+  expect_length(space_chk, 0)
+  ex <- tinkr::yarn$new(path)
+  ex$append_md("!!!", ".//md:heading/*", space = FALSE)
+  chk <- xml2::xml_find_all(ex$body, 
+    ".//md:heading/*[contains(text(), '!!!')]", ex$ns)
+  space_chk <- xml2::xml_find_all(ex$body, 
+    ".//md:heading/*[contains(text(), ' !!!')]", ex$ns)
+  expect_length(chk, 2)
+  expect_length(space_chk, 0)
+})
+
 
 
 test_that("markdown can be prepended", {
