@@ -21,15 +21,9 @@ add_nodes_to_body <- function(body, nodes, where = 0L) {
   }
 }
 
-append_md <- function(body, md, after = NULL, space = TRUE) {
+insert_md <- function(body, md, nodes, where = "after", space = TRUE) {
   new <- md_to_xml(md)
-  shove_nodes_in(body, new, nodes = after, where = "after", space = space)
-  copy_xml(body)
-}
-
-prepend_md <- function(body, md, before = NULL, space = TRUE) {
-  new <- md_to_xml(md)
-  shove_nodes_in(body, new, nodes = before, where = "before", space = space)
+  shove_nodes_in(body, new, nodes = nodes, where = where, space = space)
   copy_xml(body)
 }
 
@@ -59,10 +53,15 @@ node_is_inline <- function(node) {
   !xml2::xml_name(node) %in% blocks
 }
 
-add_nodes_to_nodes <- function(nodes, old, where = "after", space = TRUE) {
+# add a new set of nodes before or after an exsiting set of nodes.
+add_nodes_to_nodes <- function(new, old, where = "after", space = TRUE) {
+  single_node <- inherits(old, "xml_node")
+  # count the number of inline elements
   inlines <- node_is_inline(old)
   n <- sum(inlines)
-  single_node <- inherits(old, "xml_node")
+  # when there are any inline nodes, we need to adjust the new node so that
+  # we extract child-level elements. Note that we assume that the user will
+  # be supplying strictly inline markdown, but it may not be so neat. 
   if (n > 0) {
     if (!single_node && n < length(old)) {
       rlang::abort("Nodes must be either block type or inline, but not both", 
@@ -70,17 +69,21 @@ add_nodes_to_nodes <- function(nodes, old, where = "after", space = TRUE) {
         call. = FALSE
       )
     }
-    nodes <- xml2::xml_children(nodes)
+    # make sure the new nodes are inline by extracting the children. 
+    new <- xml2::xml_children(new)
     if (space) {
-      lead <- if (inherits(nodes, "xml_node")) nodes else nodes[[1]]
+      # For inline nodes, we want to make sure they are separated from existing
+      # nodes by a space. 
+      lead <- if (inherits(new, "xml_node")) new else new[[1]]
       txt <- if (where == "after") " %s" else "%s " 
       xml2::xml_set_text(lead, sprintf(txt, xml2::xml_text(lead)))
     }
   }
   if (single_node) {
+    # allow purrr::walk() to work on a single node
     old <- list(old)
   }
-  purrr::walk(old, add_node_siblings, nodes, where = where, remove = FALSE)
+  purrr::walk(old, add_node_siblings, new, where = where, remove = FALSE)
 }
 
 # Add siblings to a node

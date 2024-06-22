@@ -208,9 +208,15 @@ yarn <- R6::R6Class("yarn",
     #' @param md a string of markdown formatted text.
     #' @param nodes an XPath expression that evaulates to object of class
     #'   `xml_node` or `xml_nodeset` that are all either inline or block nodes
-    #'   (never both)
+    #'   (never both). The XPath expression is passed to [xml2::xml_find_all()].
+    #'   If you want to append a specific node, you can pass that node to this
+    #'   parameter.
     #' @param space if `TRUE`, inline nodes will have a space inserted before
     #'   they are appended.
+    #' @details this is similar to the `add_md()` method except that it can do
+    #'   the following:
+    #'   1. append content after a _specific_ node or set of nodes
+    #'   2. append content to multiple places in the document
     #' @examples
     #' path <- system.file("extdata", "example2.Rmd", package = "tinkr")
     #' ex <- tinkr::yarn$new(path)
@@ -219,7 +225,7 @@ yarn <- R6::R6Class("yarn",
     #' txt <- c("> Hello from *tinkr*!", ">", ">  :heart: R")
     #' ex$append_md(txt, ".//md:heading[1]")$head(20)
     append_md = function(md, nodes = NULL, space = TRUE) {
-      self$body <- append_md(self$body, md, nodes, space = space)
+      self$body <- insert_md(self$body, md, nodes, where = "after", space = space)
       invisible(self)
     },
     #' @description prepend abritrary markdown to a node or set of nodes
@@ -227,9 +233,15 @@ yarn <- R6::R6Class("yarn",
     #' @param md a string of markdown formatted text.
     #' @param nodes an XPath expression that evaulates to object of class
     #'   `xml_node` or `xml_nodeset` that are all either inline or block nodes
-    #'   (never both)
+    #'   (never both). The XPath expression is passed to [xml2::xml_find_all()].
+    #'   If you want to append a specific node, you can pass that node to this
+    #'   parameter.
     #' @param space if `TRUE`, inline nodes will have a space inserted before
     #'   they are prepended.
+    #' @details this is similar to the `add_md()` method except that it can do
+    #'   the following:
+    #'   1. prepend content after a _specific_ node or set of nodes
+    #'   2. prepend content to multiple places in the document
     #' @examples
     #' path <- system.file("extdata", "example2.Rmd", package = "tinkr")
     #' ex <- tinkr::yarn$new(path)
@@ -237,7 +249,7 @@ yarn <- R6::R6Class("yarn",
     #' # prepend a table description to the birds table
     #' ex$prepend_md("Table: BIRDS, NERDS", ".//md:table[1]")$tail(20)
     prepend_md = function(md, nodes = NULL, space = TRUE) {
-      self$body <- prepend_md(self$body, md, nodes, space = space)
+      self$body <- insert_md(self$body, md, nodes, where = "before", space = space)
       invisible(self)
     },
     #' @description Protect math blocks from being escaped

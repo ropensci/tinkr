@@ -493,13 +493,24 @@ append abritrary markdown to a node or set of nodes
 
 \item{\code{nodes}}{an XPath expression that evaulates to object of class
 \code{xml_node} or \code{xml_nodeset} that are all either inline or block nodes
-(never both)}
+(never both). The XPath expression is passed to \code{\link[xml2:xml_find_all]{xml2::xml_find_all()}}.
+If you want to append a specific node, you can pass that node to this
+parameter.}
 
 \item{\code{space}}{if \code{TRUE}, inline nodes will have a space inserted before
 they are appended.}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Details}{
+this is similar to the \code{add_md()} method except that it can do
+the following:
+\enumerate{
+\item append content after a \emph{specific} node or set of nodes
+\item append content to multiple places in the document
+}
+}
+
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{path <- system.file("extdata", "example2.Rmd", package = "tinkr")
@@ -530,13 +541,24 @@ prepend abritrary markdown to a node or set of nodes
 
 \item{\code{nodes}}{an XPath expression that evaulates to object of class
 \code{xml_node} or \code{xml_nodeset} that are all either inline or block nodes
-(never both)}
+(never both). The XPath expression is passed to \code{\link[xml2:xml_find_all]{xml2::xml_find_all()}}.
+If you want to append a specific node, you can pass that node to this
+parameter.}
 
 \item{\code{space}}{if \code{TRUE}, inline nodes will have a space inserted before
 they are prepended.}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Details}{
+this is similar to the \code{add_md()} method except that it can do
+the following:
+\enumerate{
+\item prepend content after a \emph{specific} node or set of nodes
+\item prepend content to multiple places in the document
+}
+}
+
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{path <- system.file("extdata", "example2.Rmd", package = "tinkr")
