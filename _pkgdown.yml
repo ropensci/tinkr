@@ -19,6 +19,7 @@ reference:
   - '`protect_math`'
   - '`protect_curly`'
   - '`get_protected`'
+  - '`show_list`'
   - '`find_between`'
   - '`md_ns`'
   - '`stylesheet`'
