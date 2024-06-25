@@ -38,7 +38,10 @@ add_node_siblings <- function(node, nodes, where = "after", remove = TRUE) {
 #' @return an XML nodeset of the markdown text
 #' @keywords internal
 #' @examples
-#' tinkr:::md_to_xml(c(
+#' if (requireNamespace("withr")) {
+#'
+#' withr::with_namespace("tinkr", {
+#' md_to_xml(c(
 #'   "## This is a new section of markdown",
 #'   "",
 #'   "Each new element",
@@ -50,6 +53,9 @@ add_node_siblings <- function(node, nodes, where = "after", remove = TRUE) {
 #'   "",
 #'   "Neat, right?"
 #' ))
+#' })
+#'
+#' }
 md_to_xml <- function(md) {
   new <- clean_content(paste(md, collapse = "\n"))
   new <- commonmark::markdown_xml(new, extensions = TRUE)

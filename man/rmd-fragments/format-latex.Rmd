@@ -4,7 +4,7 @@ and that means LaTeX equations will end up with extra markup due to commonmark's
 
 However, if you have LaTeX equations that use either `$` or `$$` to delimit them, 
 you can protect them from formatting changes with the `$protect_math()` method (for users of the `yarn` object) 
-or the `protect_math()` funciton (for those using the output of `to_xml()`). 
+or the `protect_math()` function (for those using the output of `to_xml()`). 
 Below is a demonstration using the `yarn` object:
 
 ```{r protect-math}
@@ -21,7 +21,7 @@ Note, however, that there are a few caveats for this:
 2. We do not currently have support for bracket notation
 3. If you use a postfix dollar sign in your prose (e.g. BASIC commands or a Burroughs-Wheeler Transformation demonstration),
 you must be sure to either use punctuation after the trailing dollar sign OR format the text as code.
-(i.e. `` `INKEY$` `` is good, but `INKEY$` by itself is not good and will be interepreted as LaTeX code, throwing an error:
+(i.e. `` `INKEY$` `` is good, but `INKEY$` by itself is not good and will be interpreted as LaTeX code, throwing an error:
     ```{r, basic, error = TRUE}
     path <- system.file("extdata", "basic-math.md", package = "tinkr")
     math <- tinkr::yarn$new(path)

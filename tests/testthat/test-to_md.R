@@ -1,11 +1,7 @@
-tmpdir <- withr::local_file("newdir")
-dir.create(tmpdir)
-`%<%` <- magrittr::`%>%`
-
 test_that("to_md works without a file", {
 
   path <- system.file("extdata", "table.md", package = "tinkr")
-  stys <- system.file("extdata", "xml2md_gfm.xsl", package = "tinkr")
+  stys <- system.file("stylesheets", "xml2md_gfm.xsl", package = "tinkr")
   stys <- xml2::read_xml(stys)
 
   yaml_xml_list <- to_xml(path)
@@ -23,37 +19,38 @@ test_that("to_md works without a file", {
 })
 
 test_that("to_md fails if the stylesheet is not correct", {
-  
-  tmp  <- withr::local_file("dummy.xml")
+
+  tmp  <- withr::local_tempfile(fileext = ".xml")
   path <- system.file("extdata", "table.md", package = "tinkr")
   yaml_xml_list <- to_xml(path)
   xml2::write_xml(yaml_xml_list$body, tmp)
   # NULL for stylesheet
-  expect_error(to_md(yaml_xml_list, stylesheet_path = NULL), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = NULL),
     "'stylesheet_path' must be a path to an XSL stylesheet")
   # NA for stylesheet
-  expect_error(to_md(yaml_xml_list, stylesheet_path = NA), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = NA),
     "'stylesheet_path' must be a path to an XSL stylesheet")
   # multi-element vector
-  expect_error(to_md(yaml_xml_list, stylesheet_path = letters), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = letters),
     "'stylesheet_path' must be a path to an XSL stylesheet")
   # zero-element vector
-  expect_error(to_md(yaml_xml_list, stylesheet_path = character(0)), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = character(0)),
     "'stylesheet_path' must be a path to an XSL stylesheet")
   # xml document that is not a stylesheet
-  expect_error(to_md(yaml_xml_list, stylesheet_path = tmp), 
-    "'dummy.xml' is not a valid stylesheet")
+  expect_error(to_md(yaml_xml_list, stylesheet_path = tmp),
+    "'*.xml' is not a valid stylesheet")
   # file that doesn't exist
-  expect_error(to_md(yaml_xml_list, stylesheet_path = "path/to/stylesheet.xsl"), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = "path/to/stylesheet.xsl"),
     "The file 'path/to/stylesheet.xsl' does not exist.")
   # xml object
-  expect_error(to_md(yaml_xml_list, stylesheet_path = yaml_xml_list$body), 
+  expect_error(to_md(yaml_xml_list, stylesheet_path = yaml_xml_list$body),
     "'stylesheet_path' must be a path to an XSL stylesheet")
 
 })
 
 test_that("to_md works", {
-  newmd  <- withr::local_file("to_md-newmd.md")
+  tmpdir <- withr::local_tempdir("newdir")
+  newmd  <- withr::local_file(file.path(tmpdir, "to_md-works.md"))
   path <- system.file("extdata", "example1.md", package = "tinkr")
 
   yaml_xml_list <- to_xml(path)
@@ -83,7 +80,8 @@ test_that("to_md works", {
 
 
 test_that("to_md works for Rmd", {
-  newmd <- withr::local_file("to_md-newmd.Rmd")
+  tmpdir <- withr::local_tempdir("newdir")
+  newmd <- withr::local_file(file.path(tmpdir, "to_md-works-for-Rmd.Rmd"))
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
 
   yaml_xml_list <- to_xml(path, sourcepos = TRUE)
@@ -126,18 +124,21 @@ test_that("to_md works for Rmd", {
 
 test_that("to_md does not break tables", {
   path <- system.file("extdata", "table.md", package = "tinkr")
-  newtable <- file.path(tmpdir, "table.md")
+  tmpdir <- withr::local_tempdir("newdir")
+  newtable <- withr::local_file(file.path(tmpdir, "table.md"))
 
   yaml_xml_list <- to_xml(path)
   to_md(yaml_xml_list, newtable)
   expect_snapshot_file(newtable)
 })
 
-test_that("code chunks can be inserted on round trip", {
 
+
+test_that("code chunks can be inserted on round trip", {
+  tmpdir <- withr::local_tempdir("newdir")
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
   newmd <- file.path(tmpdir, "new-code-chunk.Rmd")
-  
+
   # read in document
   yaml_xml_list <- to_xml(path)
 
@@ -164,3 +165,63 @@ test_that("code chunks can be inserted on round trip", {
   to_md(yaml_xml_list, newmd)
   expect_snapshot_file(newmd)
 })
+
+test_that("links that start lines are not escaped", {
+
+  expected <- "## Dataset\n\nThe data used:\n[data](https://example.com)\n"
+  math <- commonmark::markdown_xml(expected)
+  txt <- xml2::read_xml(math)
+  protxt <- protect_inline_math(txt, md_ns())
+  actual <- to_md(list(yaml = NULL, body = protxt))
+  expect_equal(actual, expected)
+
+})
+
+test_that("to_md_vec() returns a vector of the same length as the nodelist", {
+
+  path <- system.file("extdata", "example1.md", package = "tinkr")
+  y <- tinkr::yarn$new(path, sourcepos = TRUE)
+  items <- xml2::xml_find_all(y$body, ".//md:item", tinkr::md_ns())
+  links <- xml2::xml_find_all(y$body, ".//md:link", tinkr::md_ns())
+  code <- xml2::xml_find_all(y$body, ".//md:code", tinkr::md_ns())
+  blocks <- xml2::xml_find_all(y$body, ".//md:code_block", tinkr::md_ns())
+  # no tables
+  tables <- xml2::xml_find_all(y$body, ".//md:table", tinkr::md_ns())
+
+  # each item is a character vector of equal length to the nodelist
+  expect_length(to_md_vec(items), length(items)) %>%
+    expect_type("character")
+  expect_length(to_md_vec(links), length(links)) %>%
+    expect_type("character")
+  expect_length(to_md_vec(code), length(code)) %>%
+    expect_type("character")
+  expect_length(to_md_vec(blocks), length(blocks)) %>%
+    expect_type("character")
+  expect_length(to_md_vec(tables), 0) %>%
+    expect_type("character")
+
+  # single elements work as well
+  expect_length(to_md_vec(blocks[[1]]), 1) %>%
+    expect_type("character")
+
+  # the output is as expected
+  expect_snapshot(show_user(to_md_vec(blocks[5:6]), force = TRUE))
+})
+
+test_that("(#59) Bare links are not transformed to markdown links", {
+  input <- c(
+    "<https://example.com/one> and",
+    "[https://example.com/two](https://example.com/two \"with a title\") and",
+    "https://example.com/three",
+    ""
+  )
+  tmp <- withr::local_tempfile()
+  writeLines(input, tmp)
+  expected <- input
+  expected[3] <- paste0("<", input[3], ">")
+  expected <- paste(expected, collapse = "\n")
+  xml <- to_xml(tmp)
+  md <- to_md(xml)
+  expect_identical(expected, md)
+})
+

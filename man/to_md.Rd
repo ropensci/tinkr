@@ -2,9 +2,12 @@
 % Please edit documentation in R/to_md.R
 \name{to_md}
 \alias{to_md}
+\alias{to_md_vec}
 \title{Write YAML and XML back to disk as (R)Markdown}
 \usage{
 to_md(yaml_xml_list, path = NULL, stylesheet_path = stylesheet())
+
+to_md_vec(nodelist, stylesheet_path = stylesheet())
 }
 \arguments{
 \item{yaml_xml_list}{result from a call to \code{\link[=to_xml]{to_xml()}} and editing.}
@@ -14,9 +17,14 @@ any file, but will still produce the conversion and pass the output as
 a character vector.}
 
 \item{stylesheet_path}{path to the XSL stylesheet}
+
+\item{nodelist}{an object of \code{xml_nodelist} or \code{xml_node}}
 }
 \value{
-the converted document, invisibly.
+\itemize{
+\item \code{to_md()}: \verb{\[character\]} the converted document, invisibly as a character vector containing two elements: the yaml list and the markdown body.
+\item \code{to_md_vec()}: \verb{\[character\]} the markdown representation of each node.
+}
 }
 \description{
 Write YAML and XML back to disk as (R)Markdown
@@ -32,18 +40,25 @@ the path to your XSL stylesheet as argument.
 path <- system.file("extdata", "example1.md", package = "tinkr")
 yaml_xml_list <- to_xml(path)
 names(yaml_xml_list)
-library("magrittr")
+# extract the level 3 headers from the body
+headers3 <- xml2::xml_find_all(
+  yaml_xml_list$body,
+  xpath = './/md:heading[@level="3"]', 
+  ns = md_ns()
+)
+# show the headers
+print(h3 <- to_md_vec(headers3))
 # transform level 3 headers into level 1 headers
-body <- yaml_xml_list$body
-body \%>\%
-  xml2::xml_find_all(xpath = './/d1:heading',
-                     xml2::xml_ns(.)) \%>\%
-  .[xml2::xml_attr(., "level") == "3"] -> headers3
+# NOTE: these nodes are still associated with the document and this is done
+# in place.
 xml2::xml_set_attr(headers3, "level", 1)
-yaml_xml_list$body <- body
+# preview the new headers
+print(h1 <- to_md_vec(headers3))
 # save back and have a look
 newmd <- tempfile("newmd", fileext = ".md")
-to_md(yaml_xml_list, newmd)
+res <- to_md(yaml_xml_list, newmd)
+# show that it works
+regmatches(res[[2]], gregexpr(h1[1], res[[2]], fixed = TRUE))
 # file.edit("newmd.md")
 file.remove(newmd)
 

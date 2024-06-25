@@ -33,51 +33,77 @@
       <xsl:value-of select='string(.)'/>
     </xsl:template>
 
+    <!-- #59: preserve bare links -->
+    <xsl:template match="md:link[string(self::md:*)=@destination and @title='']">
+      <xsl:text>&#x3C;</xsl:text>
+      <xsl:call-template name="escape-text">
+          <xsl:with-param name="text" select="string(@destination)"/>
+          <xsl:with-param name="escape" select="'()'"/>
+      </xsl:call-template>
+      <xsl:text>&#x3E;</xsl:text>
+    </xsl:template>
+
     <xsl:template match="md:link[@rel] | md:image[@rel]">
       <xsl:if test="self::md:image">!</xsl:if>
       <xsl:text>[</xsl:text>
-      <xsl:apply-templates select="md:*"/>
-      <xsl:text>][</xsl:text>
+      <!-- use only one set of brackets for links where the key matches the text-->
+      <xsl:if test="not(string(self::md:*)=string(@rel))">
+        <xsl:apply-templates select="md:*"/>
+        <xsl:text>][</xsl:text>
+      </xsl:if>
       <xsl:value-of select='string(@rel)'/>
       <xsl:text>]</xsl:text>
     </xsl:template>
 
     <xsl:template match="md:link[@anchor]">
-    <xsl:if test="self::md:image">!</xsl:if>
-    <xsl:text>[</xsl:text>
-    <xsl:apply-templates select="md:*"/>
-    <xsl:text>]: </xsl:text>
-    <xsl:call-template name="escape-text">
-        <xsl:with-param name="text" select="string(@destination)"/>
-        <xsl:with-param name="escape" select="'()'"/>
-    </xsl:call-template>
-    <xsl:if test="string(@title)">
-        <xsl:text> "</xsl:text>
-        <xsl:call-template name="escape-text">
-            <xsl:with-param name="text" select="string(@title)"/>
-            <xsl:with-param name="escape" select="'&quot;'"/>
-        </xsl:call-template>
-        <xsl:text>"</xsl:text>
-    </xsl:if>
-    <xsl:text>&#10;</xsl:text>
+      <xsl:if test="self::md:image">!</xsl:if>
+      <xsl:text>[</xsl:text>
+      <xsl:value-of select='string(.)'/>
+      <xsl:text>]: </xsl:text>
+      <xsl:call-template name="escape-text">
+          <xsl:with-param name="text" select="string(@destination)"/>
+          <xsl:with-param name="escape" select="'()'"/>
+      </xsl:call-template>
+      <xsl:if test="string(@title)">
+          <xsl:text> "</xsl:text>
+          <xsl:call-template name="escape-text">
+              <xsl:with-param name="text" select="string(@title)"/>
+              <xsl:with-param name="escape" select="'&quot;'"/>
+          </xsl:call-template>
+          <xsl:text>"</xsl:text>
+      </xsl:if>
+      <xsl:text>&#10;</xsl:text>
     </xsl:template>
 
+    <xsl:template match="md:tasklist">
+      <xsl:apply-templates select="." mode="indent-block"/>
+      <xsl:choose>
+        <xsl:when test="@completed = 'true'">- [x]</xsl:when>
+        <xsl:when test="@completed = 'false'">- [ ]</xsl:when>
+      </xsl:choose>
+      <xsl:text> </xsl:text>
+      <xsl:apply-templates select="md:*"/>
+    </xsl:template>
+
+    <xsl:template match="md:item" mode="indent">
+      <xsl:text>  </xsl:text>
+    </xsl:template>
 
 
     <!-- Table -->
 
     <xsl:template match="md:table">
-        <xsl:apply-templates select="." mode="indent-block"/>
-        <xsl:apply-templates select="md:*"/>
+      <xsl:apply-templates select="." mode="indent-block"/>
+      <xsl:apply-templates select="md:*"/>
     </xsl:template>
 
     <xsl:variable name="minLength">3</xsl:variable>
 
     <xsl:variable name="maxLength">
-        <xsl:for-each select="//md:table_header/md:table_cell">
-            <xsl:variable name="pos" select="position()"/>
-            <!-- EXslt or XSLT 1.1 would be needed to lookup node-sets;
-                thus generating a string (something like CELL1:7|CELL2:5|CELL3:9|CELL4:8|) -->
+      <xsl:for-each select="//md:table_header/md:table_cell">
+        <xsl:variable name="pos" select="position()"/>
+          <!-- EXslt or XSLT 1.1 would be needed to lookup node-sets;
+          thus generating a string (something like CELL1:7|CELL2:5|CELL3:9|CELL4:8|) -->
             <xsl:text>CELL</xsl:text>
             <xsl:value-of select="$pos"/>
             <xsl:text>:</xsl:text>

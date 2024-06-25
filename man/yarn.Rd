@@ -12,6 +12,10 @@ This class is a fancy wrapper around the results of \code{\link[=to_xml]{to_xml(
 has methods that make it easier to add, analyze, remove, or write elements
 of your markdown document.
 }
+\note{
+this requires the \code{sourcepos} attribute to be recorded when the
+object is initialised. See \code{\link[=protect_unescaped]{protect_unescaped()}} for details.
+}
 \examples{
 
 ## ------------------------------------------------
@@ -62,6 +66,23 @@ ex2$tail(5)
 ex2$show()
 
 ## ------------------------------------------------
+## Method `yarn$md_vec`
+## ------------------------------------------------
+
+path <- system.file("extdata", "example1.md", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+# all headings
+ex$md_vec(".//md:heading")
+# all headings greater than level 3
+ex$md_vec(".//md:heading[@level>3]")
+# all links
+ex$md_vec(".//md:link")
+# all links that are part of lists
+ex$md_vec(".//md:list//md:link")
+# all code
+ex$md_vec(".//md:code | .//md:code_block")
+
+## ------------------------------------------------
 ## Method `yarn$add_md`
 ## ------------------------------------------------
 
@@ -82,7 +103,7 @@ xml2::xml_find_all(ex$body, "md:heading", ex$ns)
 xml2::xml_find_all(ex$body, "md:list", ex$ns)
 tmp <- tempfile()
 ex$write(tmp)
-readLines(tmp, n = 20) 
+readLines(tmp, n = 20)
 
 ## ------------------------------------------------
 ## Method `yarn$protect_math`
@@ -92,6 +113,47 @@ path <- system.file("extdata", "math-example.md", package = "tinkr")
 ex <- tinkr::yarn$new(path)
 ex$tail() # math blocks are escaped :(
 ex$protect_math()$tail() # math blocks are no longer escaped :)
+
+## ------------------------------------------------
+## Method `yarn$protect_curly`
+## ------------------------------------------------
+
+path <- system.file("extdata", "basic-curly.md", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+ex$protect_curly()$head()
+
+## ------------------------------------------------
+## Method `yarn$protect_unescaped`
+## ------------------------------------------------
+
+path <- system.file("extdata", "basic-curly.md", package = "tinkr")
+ex <- tinkr::yarn$new(path, sourcepos = TRUE, unescaped = FALSE)
+ex$tail()
+ex$protect_unescaped()$tail()
+
+## ------------------------------------------------
+## Method `yarn$get_protected`
+## ------------------------------------------------
+
+path <- system.file("extdata", "basic-curly.md", package = "tinkr")
+ex <- tinkr::yarn$new(path, sourcepos = TRUE)
+# protect curly braces
+ex$protect_curly()
+# add math and protect it
+ex$add_md(c("## math\n", 
+  "$c^2 = a^2 + b^2$\n", 
+  "$$",
+  "\\\\sum_{i}^k = x_i + 1",
+  "$$\n")
+)
+ex$protect_math()
+# get protected now shows all the protected nodes
+ex$get_protected()
+ex$get_protected(c("math", "curly")) # only show the math and curly
+}
+\seealso{
+\code{\link[=to_md_vec]{to_md_vec()}} for a way to generate the same vector from a
+nodelist without a yarn object
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -102,7 +164,7 @@ ex$protect_math()$tail() # math blocks are no longer escaped :)
 
 \item{\code{body}}{[\code{xml_document}] an xml document of the (R)Markdown file.}
 
-\item{\code{ns}}{[\code{xml_document}] an xml namespace object definining "md" to
+\item{\code{ns}}{[\code{xml_document}] an xml namespace object defining "md" to
 commonmark.}
 }
 \if{html}{\out{</div>}}
@@ -110,20 +172,24 @@ commonmark.}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{yarn$new()}}
-\item \href{#method-reset}{\code{yarn$reset()}}
-\item \href{#method-write}{\code{yarn$write()}}
-\item \href{#method-show}{\code{yarn$show()}}
-\item \href{#method-head}{\code{yarn$head()}}
-\item \href{#method-tail}{\code{yarn$tail()}}
-\item \href{#method-add_md}{\code{yarn$add_md()}}
-\item \href{#method-protect_math}{\code{yarn$protect_math()}}
-\item \href{#method-clone}{\code{yarn$clone()}}
+\item \href{#method-yarn-new}{\code{yarn$new()}}
+\item \href{#method-yarn-reset}{\code{yarn$reset()}}
+\item \href{#method-yarn-write}{\code{yarn$write()}}
+\item \href{#method-yarn-show}{\code{yarn$show()}}
+\item \href{#method-yarn-head}{\code{yarn$head()}}
+\item \href{#method-yarn-tail}{\code{yarn$tail()}}
+\item \href{#method-yarn-md_vec}{\code{yarn$md_vec()}}
+\item \href{#method-yarn-add_md}{\code{yarn$add_md()}}
+\item \href{#method-yarn-protect_math}{\code{yarn$protect_math()}}
+\item \href{#method-yarn-protect_curly}{\code{yarn$protect_curly()}}
+\item \href{#method-yarn-protect_unescaped}{\code{yarn$protect_unescaped()}}
+\item \href{#method-yarn-get_protected}{\code{yarn$get_protected()}}
+\item \href{#method-yarn-clone}{\code{yarn$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-yarn-new"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new yarn document
 \subsection{Usage}{
@@ -164,8 +230,8 @@ ex2
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-reset"></a>}}
-\if{latex}{\out{\hypertarget{method-reset}{}}}
+\if{html}{\out{<a id="method-yarn-reset"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-reset}{}}}
 \subsection{Method \code{reset()}}{
 reset a yarn document from the original file
 \subsection{Usage}{
@@ -189,8 +255,8 @@ ex1$body
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-write"></a>}}
-\if{latex}{\out{\hypertarget{method-write}{}}}
+\if{html}{\out{<a id="method-yarn-write"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-write}{}}}
 \subsection{Method \code{write()}}{
 Write a yarn document to Markdown/R Markdown
 \subsection{Usage}{
@@ -223,17 +289,20 @@ unlink(tmp)
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-show"></a>}}
-\if{latex}{\out{\hypertarget{method-show}{}}}
+\if{html}{\out{<a id="method-yarn-show"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-show}{}}}
 \subsection{Method \code{show()}}{
 show the markdown contents on the screen
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{yarn$show(stylesheet_path = stylesheet())}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{yarn$show(lines = TRUE, stylesheet_path = stylesheet())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{lines}}{a subset of elements to show. Defaults to \code{TRUE}, which
+shows all lines of the output. This can be either logical or numeric.}
+
 \item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.}
 }
 \if{html}{\out{</div>}}
@@ -255,8 +324,8 @@ ex2$show()
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-head"></a>}}
-\if{latex}{\out{\hypertarget{method-head}{}}}
+\if{html}{\out{<a id="method-yarn-head"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-head}{}}}
 \subsection{Method \code{head()}}{
 show the head of the markdown contents on the screen
 \subsection{Usage}{
@@ -268,8 +337,7 @@ show the head of the markdown contents on the screen
 \describe{
 \item{\code{n}}{the number of elements to show from the top. Negative numbers}
 
-\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.
-exclude lines from the bottom}
+\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.}
 }
 \if{html}{\out{</div>}}
 }
@@ -278,8 +346,8 @@ a character vector with \code{n} elements
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-tail"></a>}}
-\if{latex}{\out{\hypertarget{method-tail}{}}}
+\if{html}{\out{<a id="method-yarn-tail"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-tail}{}}}
 \subsection{Method \code{tail()}}{
 show the tail of the markdown contents on the screen
 \subsection{Usage}{
@@ -291,8 +359,7 @@ show the tail of the markdown contents on the screen
 \describe{
 \item{\code{n}}{the number of elements to show from the bottom. Negative numbers}
 
-\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.
-exclude lines from the top}
+\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.}
 }
 \if{html}{\out{</div>}}
 }
@@ -301,8 +368,49 @@ a character vector with \code{n} elements
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_md"></a>}}
-\if{latex}{\out{\hypertarget{method-add_md}{}}}
+\if{html}{\out{<a id="method-yarn-md_vec"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-md_vec}{}}}
+\subsection{Method \code{md_vec()}}{
+query and extract markdown elements
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$md_vec(xpath = NULL, stylesheet_path = stylesheet())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{xpath}}{a valid XPath expression}
+
+\item{\code{stylesheet_path}}{path to the xsl stylesheet to convert XML to markdown.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+a vector of markdown elements generated from the query
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "example1.md", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+# all headings
+ex$md_vec(".//md:heading")
+# all headings greater than level 3
+ex$md_vec(".//md:heading[@level>3]")
+# all links
+ex$md_vec(".//md:link")
+# all links that are part of lists
+ex$md_vec(".//md:list//md:link")
+# all code
+ex$md_vec(".//md:code | .//md:code_block")
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-yarn-add_md"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-add_md}{}}}
 \subsection{Method \code{add_md()}}{
 add an arbitrary Markdown element to the document
 \subsection{Usage}{
@@ -339,7 +447,7 @@ xml2::xml_find_all(ex$body, "md:heading", ex$ns)
 xml2::xml_find_all(ex$body, "md:list", ex$ns)
 tmp <- tempfile()
 ex$write(tmp)
-readLines(tmp, n = 20) 
+readLines(tmp, n = 20)
 }
 \if{html}{\out{</div>}}
 
@@ -347,8 +455,8 @@ readLines(tmp, n = 20)
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-protect_math"></a>}}
-\if{latex}{\out{\hypertarget{method-protect_math}{}}}
+\if{html}{\out{<a id="method-yarn-protect_math"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-protect_math}{}}}
 \subsection{Method \code{protect_math()}}{
 Protect math blocks from being escaped
 \subsection{Usage}{
@@ -368,8 +476,96 @@ ex$protect_math()$tail() # math blocks are no longer escaped :)
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-yarn-protect_curly"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-protect_curly}{}}}
+\subsection{Method \code{protect_curly()}}{
+Protect curly phrases \code{{likethat}} from being escaped
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$protect_curly()}\if{html}{\out{</div>}}
+}
+
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "basic-curly.md", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+ex$protect_curly()$head()
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-yarn-protect_unescaped"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-protect_unescaped}{}}}
+\subsection{Method \code{protect_unescaped()}}{
+Protect unescaped square braces from being escaped.
+
+This is applied by default when you use \code{yarn$new(sourcepos = TRUE)}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$protect_unescaped()}\if{html}{\out{</div>}}
+}
+
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "basic-curly.md", package = "tinkr")
+ex <- tinkr::yarn$new(path, sourcepos = TRUE, unescaped = FALSE)
+ex$tail()
+ex$protect_unescaped()$tail()
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-yarn-get_protected"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-get_protected}{}}}
+\subsection{Method \code{get_protected()}}{
+Return nodes whose contents are protected from being escaped
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$get_protected(type = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{type}}{a character vector listing the protections to be included.
+Defaults to \code{NULL}, which includes all protected nodes:
+\itemize{
+\item math: via the \code{\link[=protect_math]{protect_math()}} function
+\item curly: via the \code{protect_curly()} function
+\item unescaped: via the \code{protect_unescaped()} function
+}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "basic-curly.md", package = "tinkr")
+ex <- tinkr::yarn$new(path, sourcepos = TRUE)
+# protect curly braces
+ex$protect_curly()
+# add math and protect it
+ex$add_md(c("## math\n", 
+  "$c^2 = a^2 + b^2$\n", 
+  "$$",
+  "\\\\sum_{i}^k = x_i + 1",
+  "$$\n")
+)
+ex$protect_math()
+# get protected now shows all the protected nodes
+ex$get_protected()
+ex$get_protected(c("math", "curly")) # only show the math and curly
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-yarn-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

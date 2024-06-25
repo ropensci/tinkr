@@ -3,7 +3,7 @@
     Inline math delimiters are not balanced.
     
     HINT: If you are writing BASIC code, make sure you wrap variable
-          names and code in backtics like so: `INKEY$`. 
+          names and code in backtics like so: `INKEY$`.
     
     Below are the pairs that were found:
                start...end
@@ -50,7 +50,7 @@
       x = {-b \pm \sqrt{b^2-4ac} \over 2a}
       $$
       
-      Below is an example from [https://github.com/ropensci/tinkr/issues/38](https://github.com/ropensci/tinkr/issues/38)
+      Below is an example from <https://github.com/ropensci/tinkr/issues/38>
       $\frac{\sum _{i=N-n}^{N}Q_i} {\sum_{j=N-n}^{N}{(\frac{C_j+C_{j-1}}2)}}$
       
       ```latex

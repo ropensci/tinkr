@@ -16,7 +16,10 @@ reference:
   - '`to_md`'
 - title: Helpers
   contents:
+  - '`protect_math`'
+  - '`protect_curly`'
+  - '`get_protected`'
+  - '`show_list`'
   - '`find_between`'
   - '`md_ns`'
-  - '`protect_math`'
   - '`stylesheet`'

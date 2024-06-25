@@ -4,7 +4,13 @@
 \alias{to_xml}
 \title{Transform file to XML}
 \usage{
-to_xml(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = TRUE)
+to_xml(
+  path,
+  encoding = "UTF-8",
+  sourcepos = FALSE,
+  anchor_links = TRUE,
+  unescaped = TRUE
+)
 }
 \arguments{
 \item{path}{Path to the file.}
@@ -17,9 +23,14 @@ Defaults to \code{FALSE}.}
 
 \item{anchor_links}{if \code{TRUE} (default), reference-style links with anchors
 (in the style of \verb{[key]: https://example.com/link "title"}) will be
-preserved as best as possible. If this is \code{FASLE}, the anchors disappear
+preserved as best as possible. If this is \code{FALSE}, the anchors disappear
 and the links will appear as normal links. See \code{\link[=resolve_anchor_links]{resolve_anchor_links()}} for
 details.}
+
+\item{unescaped}{if \code{TRUE} (default) AND \code{sourcepos = TRUE}, square braces
+that were unescaped in the original document will be preserved as best as
+possible. If this is \code{FALSE}, these braces will be escaped in the output
+document. See \code{\link[=protect_unescaped]{protect_unescaped()}} for details.}
 }
 \value{
 A list containing the YAML of the file (yaml)
@@ -34,8 +45,10 @@ from the body, and read in the body through \code{\link[commonmark:commonmark]{c
 Any RMarkdown code fences will be parsed to expose the chunk options in
 XML and tickboxes (aka checkboxes) in GitHub-flavored markdown will be
 preserved (both modifications from the commonmark standard).
-
-Math elements
+}
+\note{
+Math elements are not protected by default. You can use \code{\link[=protect_math]{protect_math()}} to
+address this if needed.
 }
 \examples{
 path <- system.file("extdata", "example1.md", package = "tinkr")

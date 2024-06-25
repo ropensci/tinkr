@@ -15,8 +15,8 @@ by reference][link4] and if links [can be referenced multiple times][this fun li
 
 This should also [include non-reference links](https://example.com/5)
 
-If you write \[some link text\]\[link2\], that will appear as [some link text][link2]
-but you can also [test][racehorse] [sub][sub-link1] [links][sub-link2]
+If you [write]{.confession} \[some link text\]\[link2\], that will appear as [some link text][link2]
+but you can also [test][racehorse] [sub][sub-link1] [links][sub_link2]
 
 [pizza & icecream][pizzaicecream] = fun
 
@@ -34,7 +34,7 @@ you can write links like [a link](https://example.com/racehorse) or using
 [link4]: https://example.com/4
 [racehorse]: https://example.com/racehorse/   
 [sub-link1]: https://example.com/racehorse/1/1 "One One Won One"
-[sub-link2]: https://example.com/racehorse/2/2/ "Two Two Won One Two"
+[sub_link2]: https://example.com/racehorse/2/2/ "Two Two Won One Two"
 [pizzaicecream]: https://example.com/pizza&icecream
 
 ## This is some extended markdown content {#extended .callout}
