@@ -7,6 +7,13 @@ test_that("(#121) single dollar lines dont throw errors", {
   expect_equal(actual, expected)
 })
 
+test_that("(#121) money dollars mixed with broken math don't break", {
+  okay <- test_path("examples", "broken-math.md")
+  dollar_math <- yarn$new(okay, sourcepos = TRUE)
+  expect_no_error(dollar_math$protect_math())
+  expect_snapshot(dollar_math$show())
+})
+
 test_that("mal-formed inline math throws an informative error", {
   patherr  <- system.file("extdata", "basic-math.md", package = "tinkr")
   me <- yarn$new(patherr, sourcepos = TRUE)

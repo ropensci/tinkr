@@ -150,7 +150,14 @@ protect_inline_math <- function(body, ns) {
       return(copy_xml(body))
     }
     if (le != lh) {
-      unbalanced_math_error(bmath, endless, headless, le, lh)
+      trm <- remove_money(bmath, endless, headless) 
+      if (trm$pass) {
+        bmath <- trm$bmath
+        endless <- trm$endless
+        headless <- trm$headless
+      } else {
+        unbalanced_math_error(bmath, endless, headless, le, lh)
+      }
     }
     # assign sequential tags to the pairs of inline math elements
     tags <- seq(length(bmath[endless]))
@@ -161,6 +168,50 @@ protect_inline_math <- function(body, ns) {
     }
   }
   copy_xml(body)
+}
+
+# remove the non-math from the math. 
+remove_money <- function(bmath, endless, headless) {
+  actual_math <- toss_broken_teeth(endless, headless)
+  bmath <- bmath[actual_math]
+  endless <- endless[actual_math]
+  headless <- headless[actual_math]
+  pass = length(bmath[endless]) == length(bmath[headless])
+  return(list(
+    bmath = bmath,
+    endless = endless,
+    headless = headless,
+    pass = pass
+  ))
+}
+
+# Imagine a zipper. Every tooth fits in a groove directly opposite. If there
+# is a mistake and there is an extra tooth on one side, the zipper gets stuck.
+# the solution is to remove that tooth to realign the zipper.
+#
+# This function takes two logical vectors assuming the following:
+#
+# 1. endless starts with TRUE
+# 2. headless ends with TRUE
+# 3. endless and headless are the same length
+#
+toss_broken_teeth <- function(endless, headless) {
+  if (length(endless) == 2) {
+    # the last pair returns either TRUE TRUE or FALSE FALSE
+    return(rep(endless[1] == headless[2], 2))
+  } else if (length(endless) < 2) {
+    # less than 2 either returns FALSE or logical(0)
+    return(logical(length(endless)) == 2)
+  }
+  if (endless[1] == headless[2]) {
+    # When the pairs match, these are likely broken math
+    # and we increment by two to move to the next pair
+    return(c(TRUE, TRUE, toss_broken_teeth(endless[-(1:2)], headless[-(1:2)])))
+  } else {
+    # When the pairs do not match, it's not likely broken math, 
+    # so we toss it and move to the next element. 
+    return(c(FALSE, toss_broken_teeth(endless[-1], headless[-1])))
+  }
 }
 
 # Partial inline math are math elements that are not entirely embedded in a

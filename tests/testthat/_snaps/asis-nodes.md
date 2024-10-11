@@ -1,3 +1,8 @@
+# (#121) money dollars mixed with broken math don't break
+
+    Code
+      dollar_math$show()
+
 # mal-formed inline math throws an informative error
 
     Inline math delimiters are not balanced.
