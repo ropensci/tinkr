@@ -144,7 +144,9 @@ protect_inline_math <- function(body, ns) {
     # an error.
     le <- length(bmath[endless])
     lh <- length(bmath[headless])
-    if (le != lh) {
+    # 2024-10-10: if the number of headless tags is zero, then we are dealing
+    # with currency. See issue #121 
+    if (le != lh && lh > 0) {
       unbalanced_math_error(bmath, endless, headless, le, lh)
     }
     # assign sequential tags to the pairs of inline math elements
