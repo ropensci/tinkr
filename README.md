@@ -12,6 +12,9 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 status](https://github.com/ropensci/tinkr/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/tinkr/actions)
 [![Coverage
 status](https://codecov.io/gh/ropensci/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropensci/tinkr?branch=master)
+[![R-CMD-check](https://github.com/ropensci/tinkr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/tinkr/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/ropensci/tinkr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ropensci/tinkr?branch=main)
 <!-- badges: end -->
 
 The goal of tinkr is to convert (R)Markdown files to XML and back to
@@ -23,16 +26,16 @@ regular expressions. If these words mean nothing to you, see our list of
 
 Possible applications are R scripts using tinkr, and XPath via xml2 to:
 
--   change levels of headers, cf [our `roweb2_headers.R`
-    script](https://github.com/ropensci/tinkr/blob/main/inst/scripts/roweb2_headers.R)
-    and [pull request \#279 to
-    roweb2](https://github.com/ropensci-archive/roweb2/pull/279);
--   change chunk labels and options;
--   extract all runnable code (including inline code);
--   insert arbitrary Markdown elements;
--   modify link URLs;
--   your idea, please [report use
-    cases](https://discuss.ropensci.org/c/usecases/10)!
+- change levels of headers, cf [our `roweb2_headers.R`
+  script](https://github.com/ropensci/tinkr/blob/main/inst/scripts/roweb2_headers.R)
+  and [pull request \#279 to
+  roweb2](https://github.com/ropensci-archive/roweb2/pull/279);
+- change chunk labels and options;
+- extract all runnable code (including inline code);
+- insert arbitrary Markdown elements;
+- modify link URLs;
+- your idea, please [report use
+  cases](https://discuss.ropensci.org/c/usecases/10)!
 
 ## Workflow
 
@@ -175,6 +178,9 @@ rmd <- tinkr::yarn$new(path)
 xml2::xml_find_first(rmd$body, ".//md:code_block", rmd$ns)
 #| {xml_node}
 #| <code_block space="preserve" language="r" name="setup" include="FALSE" eval="TRUE">
+```
+
+``` r
 new_code <- c(
   "```{r xml-block, message = TRUE}",
   "message(\"this is a new chunk from {tinkr}\")",
@@ -217,18 +223,18 @@ rmd$head(21)
 If you are not closely following one of the examples provided, what
 background knowledge do you need before using tinkr?
 
--   That XPath, a language for querying XML & HTML, exists, and [some
-    basics](https://www.w3schools.com/xml/xpath_intro.asp).
--   Basics of how [xml2
-    works](https://blog.r-hub.io/2020/01/22/mutable-api/#exposing-the-c-api-in-xml2):
-    how to find, replace, remove nodes etc.
--   How to use R6 classes… although reading the examples should help you
-    get the gist.
--   If you are not happy with [our default
-    stylesheet](#general-principles-and-solution), then understanding
-    [XSLT](https://ropensci.org/blog/2017/01/10/xslt-release/) will help
-    you create your own. Refer to this good resource on [XSLT for XML
-    transformations](https://www.w3schools.com/xml/xsl_intro.asp).
+- That XPath, a language for querying XML & HTML, exists, and [some
+  basics](https://www.w3schools.com/xml/xpath_intro.asp).
+- Basics of how [xml2
+  works](https://blog.r-hub.io/2020/01/22/mutable-api/#exposing-the-c-api-in-xml2):
+  how to find, replace, remove nodes etc.
+- How to use R6 classes… although reading the examples should help you
+  get the gist.
+- If you are not happy with [our default
+  stylesheet](#general-principles-and-solution), then understanding
+  [XSLT](https://ropensci.org/blog/2017/01/10/xslt-release/) will help
+  you create your own. Refer to this good resource on [XSLT for XML
+  transformations](https://www.w3schools.com/xml/xsl_intro.asp).
 
 ## Loss of Markdown style
 
@@ -238,21 +244,21 @@ The (R)md to XML to (R)md loop on which `tinkr` is based is slightly
 lossy because of Markdown syntax redundancy, so the loop from (R)md to
 R(md) via `to_xml` and `to_md` will be a bit lossy. For instance
 
--   lists can be created with either “+”, “-” or “\*“. When using
-    `tinkr`, the (R)md after editing will only use”-” for lists.
+- lists can be created with either “+”, “-” or “\*“. When using `tinkr`,
+  the (R)md after editing will only use”-” for lists.
 
--   Links built like `[word][smallref]` with a bottom anchor
-    `[smallref]: URL` will have the anchor moved to the bottom of the
-    document.
+- Links built like `[word][smallref]` with a bottom anchor
+  `[smallref]: URL` will have the anchor moved to the bottom of the
+  document.
 
--   Characters are escaped (e.g. “\[” when not for a link).
+- Characters are escaped (e.g. “\[” when not for a link).
 
--   [x] GitHub tickboxes are preserved (only for `yarn` objects)
+- [x] GitHub tickboxes are preserved (only for `yarn` objects)
 
--   Block quotes lines all get “\>” whereas in the input only the first
-    could have a “\>” at the beginning of the first line.
+- Block quotes lines all get “\>” whereas in the input only the first
+  could have a “\>” at the beginning of the first line.
 
--   For tables see the next subsection.
+- For tables see the next subsection.
 
 Such losses make your (R)md different, and the git diff a bit harder to
 parse, but should *not* change the documents your (R)md is rendered to.
@@ -265,9 +271,9 @@ and provide its filepath as `stylesheet_path` argument to `to_md`.
 
 ### The special case of tables
 
--   Tables are supposed to remain/become pretty after a full loop
-    `to_xml` + `to_md`. If you notice something amiss, e.g. too much
-    space compared to what you were expecting, please open an issue.
+- Tables are supposed to remain/become pretty after a full loop
+  `to_xml` + `to_md`. If you notice something amiss, e.g. too much space
+  compared to what you were expecting, please open an issue.
 
 ### LaTeX equations
 
@@ -311,7 +317,7 @@ Note, however, that there are a few caveats for this:
     sure to either use punctuation after the trailing dollar sign OR
     format the text as code. (i.e. `` `INKEY$` `` is good, but `INKEY$`
     by itself is not good and will be interpreted as LaTeX code,
-    throwing an error: ::: {.cell}
+    throwing an error:
 
     ``` r
     path <- system.file("extdata", "basic-math.md", package = "tinkr")
@@ -335,7 +341,7 @@ Note, however, that there are a few caveats for this:
     #| Error: Inline math delimiters are not balanced.
     #| 
     #| HINT: If you are writing BASIC code, make sure you wrap variable
-    #|       names and code in backtics like so: `INKEY$`. 
+    #|       names and code in backtics like so: `INKEY$`.
     #| 
     #| Below are the pairs that were found:
     #|            start...end
@@ -345,7 +351,46 @@ Note, however, that there are a few caveats for this:
     #| We write $2 but ...
     ```
 
-    :::
+4.  **use of `$` as currency will still work**, but there is a caveat
+    that mixing this inline math broken across lines will cause
+    problems:
+
+    ``` r
+    # this will be mal-formed
+    bad <- "It's 5:45 and I've got $5.45 in my pocket.\nThe __area of a circle__ is $A =\n \\pi r^2$, where\n$\\pi$ is irrational when it hasn't had its coffee."
+    fails <- tinkr::yarn$new(textConnection(bad))
+    fails$show()
+    #| It's 5:45 and I've got $5.45 in my pocket.
+    #| The **area of a circle** is $A =
+    #| \\pi r^2$, where
+    #| $\\pi$ is irrational when it hasn't had its coffee.
+    fails$
+      protect_math()$
+      show()
+    #| Error: Inline math delimiters are not balanced.
+    #| 
+    #| HINT: If you are writing BASIC code, make sure you wrap variable
+    #|       names and code in backtics like so: `INKEY$`.
+    #| 
+    #| Below are the pairs that were found:
+    #|                                      start...end
+    #|                                      -----...---
+    #| It's 5:45 and I've got $5.45 in my pocket....\pi r^2$, where
+    #|                                    is $A =...
+    # This works
+    good <- "It's 5:45 and I've got $5.45 in my pocket.\nThe __area of a circle__ is $A = \\pi r^2$, where\n$\\pi$ is irrational when it hasn't had its coffee."
+    works <- tinkr::yarn$new(textConnection(good))
+    works$show()
+    #| It's 5:45 and I've got $5.45 in my pocket.
+    #| The **area of a circle** is $A = \\pi r^2$, where
+    #| $\\pi$ is irrational when it hasn't had its coffee.
+    works$
+      protect_math()$
+      show()
+    #| It's 5:45 and I've got $5.45 in my pocket.
+    #| The **area of a circle** is $A = \pi r^2$, where
+    #| $\pi$ is irrational when it hasn't had its coffee.
+    ```
 
 ## Meta
 

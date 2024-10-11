@@ -28,3 +28,22 @@ you must be sure to either use punctuation after the trailing dollar sign OR for
     math$head(15) # malformed
     math$protect_math() #error
     ```
+4. **use of `$` as currency will still work**, but there is a caveat that mixing
+   this inline math broken across lines will cause problems:
+   ```{r, split, error = TRUE}
+   # this will be mal-formed
+   bad <- "It's 5:45 and I've got $5.45 in my pocket.\nThe __area of a circle__ is $A =\n \\pi r^2$, where\n$\\pi$ is irrational when it hasn't had its coffee."
+   fails <- tinkr::yarn$new(textConnection(bad))
+   fails$show()
+   fails$
+     protect_math()$
+     show()
+   # This works
+   good <- "It's 5:45 and I've got $5.45 in my pocket.\nThe __area of a circle__ is $A = \\pi r^2$, where\n$\\pi$ is irrational when it hasn't had its coffee."
+   works <- tinkr::yarn$new(textConnection(good))
+   works$show()
+   works$
+     protect_math()$
+     show()
+
+   ```
