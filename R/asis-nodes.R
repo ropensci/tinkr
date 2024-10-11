@@ -147,7 +147,7 @@ protect_inline_math <- function(body, ns) {
     # 2024-10-10: if the number of headless tags is zero, then we are dealing
     # with currency. See issue #121 
     if (lh == 0) {
-      return(body)
+      return(copy_xml(body))
     }
     if (le != lh) {
       unbalanced_math_error(bmath, endless, headless, le, lh)
