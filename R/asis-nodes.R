@@ -200,24 +200,30 @@ remove_money <- function(bmath, endless, headless) {
 # 1. endless starts with TRUE
 # 2. headless ends with TRUE
 # 3. endless and headless are the same length
-#
+# @param endless [logical] vector indicating broken math elements that
+#   have no ending pair
+# @param headless [logical] vector of the same length as `endless` indicating
+#   broken math elements that have no opening pair.
 toss_broken_teeth <- function(endless, headless) {
-  if (length(endless) == 2) {
-    # the last pair returns either TRUE TRUE or FALSE FALSE
-    return(rep(endless[1] == headless[2], 2))
-  } else if (length(endless) < 2) {
+  if (length(endless) < 2) {
+    # EXIT CASE -----------------------------------------------
     # less than 2 either returns FALSE or logical(0)
     return(logical(length(endless)) == 2)
-  }
-  if (endless[1] == headless[2]) {
+  } else if (endless[1] == headless[2]) {
+    # CASE 1: MATCHING PAIRS ----------------------------------
     # When the pairs match, these are likely broken math
     # and we increment by two to move to the next pair
-    return(c(TRUE, TRUE, toss_broken_teeth(endless[-(1:2)], headless[-(1:2)])))
+    result <- c(TRUE, TRUE)
+    idx <- -(1:2)
   } else {
+    # CASE 2: MISMATCHED PAIRS --------------------------------
     # When the pairs do not match, it's not likely broken math, 
     # so we toss it and move to the next element. 
-    return(c(FALSE, toss_broken_teeth(endless[-1], headless[-1])))
+    result <- FALSE
+    idx <- -1
   }
+  # return the result and iterate over the rest of the vector
+  return(c(result, toss_broken_teeth(endless[idx], headless[idx])))
 }
 
 # Partial inline math are math elements that are not entirely embedded in a
