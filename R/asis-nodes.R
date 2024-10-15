@@ -176,12 +176,14 @@ remove_money <- function(bmath, endless, headless) {
   bmath <- bmath[actual_math]
   endless <- endless[actual_math]
   headless <- headless[actual_math]
-  pass = length(bmath[endless]) == length(bmath[headless])
+  lh <- length(bmath[headless])
+  le <- length(bmath[endless])
   return(list(
     bmath = bmath,
     endless = endless,
     headless = headless,
-    pass = pass
+    lh = lh,
+    le = le
   ))
 }
 
