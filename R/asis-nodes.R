@@ -129,7 +129,7 @@ protect_inline_math <- function(body, ns) {
   }
 
   # protect math that is broken across lines or markdown elements
-  if (length(bmath)) {
+  if (length(bmath) > 0) {
     if (any(broke$ambiguous)) {
       # ambiguous math may be due to inline r code that produces an answer:
       # $R^2 = `r runif(1)`$
@@ -140,8 +140,6 @@ protect_inline_math <- function(body, ns) {
       )
       headless <- headless | has_inline_code
     }
-    # If the lengths of the beginning and ending tags don't match, we throw
-    # an error.
     le <- length(bmath[endless])
     lh <- length(bmath[headless])
     # 2024-10-10: if the number of headless tags is zero, then we are dealing
@@ -149,15 +147,21 @@ protect_inline_math <- function(body, ns) {
     if (lh == 0) {
       return(copy_xml(body))
     }
-    if (le != lh) {
+    # 2024-10-15: if the number of headless tags is _less_ than the number of
+    # endless tags, then we _might_ be dealing with currency and should try to
+    # trim them out. 
+    if (le > lh) {
       trm <- remove_money(bmath, endless, headless) 
-      if (trm$pass) {
-        bmath <- trm$bmath
-        endless <- trm$endless
-        headless <- trm$headless
-      } else {
-        unbalanced_math_error(bmath, endless, headless, le, lh)
-      }
+      bmath <- trm$bmath
+      endless <- trm$endless
+      headless <- trm$headless
+      lh <- trm$lh
+      le <- trm$le
+    }
+    # If the lengths of the beginning and ending tags don't match, we throw
+    # an error.
+    if (le != lh) {
+      unbalanced_math_error(bmath, endless, headless, le, lh)
     }
     # assign sequential tags to the pairs of inline math elements
     tags <- seq(length(bmath[endless]))
