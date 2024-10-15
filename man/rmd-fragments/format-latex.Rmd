@@ -19,31 +19,17 @@ Note, however, that there are a few caveats for this:
 1. The dollar notation for inline math must be adjacent to the text. E.G. 
    `$\alpha$` is valid, but `$ \alpha$` and `$\alpha $` are not valid.
 2. We do not currently have support for bracket notation
-3. If you use a postfix dollar sign in your prose (e.g. BASIC commands or a Burroughs-Wheeler Transformation demonstration),
-you must be sure to either use punctuation after the trailing dollar sign OR format the text as code.
-(i.e. `` `INKEY$` `` is good, but `INKEY$` by itself is not good and will be interpreted as LaTeX code, throwing an error:
-    ```{r, basic, error = TRUE}
-    path <- system.file("extdata", "basic-math.md", package = "tinkr")
-    math <- tinkr::yarn$new(path)
-    math$head(15) # malformed
-    math$protect_math() #error
-    ```
-4. **use of `$` as currency will still work**, but there is a caveat that mixing
-   this inline math broken across lines will cause problems:
-   ```{r, split, error = TRUE}
-   # this will be mal-formed
-   bad <- "It's 5:45 and I've got $5.45 in my pocket.\nThe __area of a circle__ is $A =\n \\pi r^2$, where\n$\\pi$ is irrational when it hasn't had its coffee."
-   fails <- tinkr::yarn$new(textConnection(bad))
-   fails$show()
-   fails$
-     protect_math()$
-     show()
-   # This works
-   good <- "It's 5:45 and I've got $5.45 in my pocket.\nThe __area of a circle__ is $A = \\pi r^2$, where\n$\\pi$ is irrational when it hasn't had its coffee."
-   works <- tinkr::yarn$new(textConnection(good))
-   works$show()
-   works$
-     protect_math()$
-     show()
+3. Use of `$` as currency will still work. There are a few caveats:
+   1. The search for math is greedy, so currency may be extracted along with
+      the math unless a markdown element separates them:
+      ```{r}
+      # no separator, math is detected at the beginning of the line.
+      ex <- textConnection("$5 for a $\\pi$")
+      tinkr::yarn$new(ex)$protect_math()$get_protected()
+      # With an emph separator
+      ex <- textConnection("$5 for _any_ $\\pi$")
+      tinkr::yarn$new(ex)$protect_math()$get_protected()
+      ```
+   2. Postfix dollar signs (e.g. using BASIC code demostrations) should be
+      protected with backtics, or it will cause an error.
 
-   ```
