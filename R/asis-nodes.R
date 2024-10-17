@@ -144,6 +144,11 @@ protect_inline_math <- function(body, ns) {
     # an error.
     le <- length(bmath[endless])
     lh <- length(bmath[headless])
+    # 2024-10-10: if the number of headless tags is zero, then we are dealing
+    # with currency. See issue #121 
+    if (lh == 0) {
+      return(copy_xml(body))
+    }
     if (le != lh) {
       unbalanced_math_error(bmath, endless, headless, le, lh)
     }
@@ -415,7 +420,7 @@ find_escaped_squares <- function(txt) {
 #'
 #' Knowing this, we can process each node by its line number and wrap all
 #' unescpaed square braces in text nodes with the `@asis` attribute, which is
-#' performed with the [fix_unescaped()] function.
+#' performed with the fix_unescaped() function.
 #'
 #' @return nothing, invisibly. This function is called for its side-effect.
 #' @noRd
