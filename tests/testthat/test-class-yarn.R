@@ -160,7 +160,7 @@ test_that("markdown can be appended to elements", {
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
   ex <- tinkr::yarn$new(path)
   # append a note after the first heading
-  txt <- c("> Hello from *tinkr*!", ">", ">  :heart: R")
+  txt <- c("The following message is sponsored by me:\n", "> Hello from *tinkr*!", ">", ">  :heart: R")
   # Via XPath ------------------------------------------------------------------
   ex$append_md(txt, ".//md:heading[1]")
   # the block quote has been added to the first heading 
@@ -222,10 +222,12 @@ test_that("markdown can be prepended", {
   nodes <- xml2::xml_find_all(ex$body, 
     ".//node()[contains(text(), 'NERDS')]", ex$ns)
   expect_length(nodes, 0)
-  ex$prepend_md("Table: BIRDS, NERDS", ".//md:table")
+  ex$prepend_md("I come before the table.\n\nTable: BIRDS, NERDS", ".//md:table")
   nodes <- xml2::xml_find_all(ex$body, 
     ".//node()[contains(text(), 'NERDS')]", ex$ns)
   expect_length(nodes, 1)
+  pretxt <- xml2::xml_find_first(nodes[[1]], ".//parent::*/preceding-sibling::*[1]")
+  expect_equal(xml2::xml_text(pretxt), "I come before the table.")
 })
 
 
@@ -235,6 +237,13 @@ test_that("an error happens when you try to append with a number", {
   expect_error(ex$append_md("WRONG", 42), class = "insert-md-node")
 })
 
+test_that("an error happens when you try to append to a non-existant node", {
+  path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+  ex <- tinkr::yarn$new(path)
+  expect_error(ex$append_md("WRONG", ".//md:nope"), 
+    "No nodes matched the expression './/md:nope'",
+    class = "insert-md-xpath")
+})
 
 
 test_that("an error happens when you try to append markdown to disparate elements", {

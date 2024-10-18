@@ -29,8 +29,15 @@ insert_md <- function(body, md, nodes, where = "after", space = TRUE) {
 
 shove_nodes_in <- function(body, new, nodes, where = "after", space = TRUE) {
   if (inherits(nodes, "character")) {
+    xpath <- nodes
     nodes <- xml2::xml_find_all(body, nodes, ns = md_ns())
+  } else {
+    xpath <- NULL
   }
+  if (length(nodes) == 0) {
+    msg <- glue::glue("No nodes matched the expression {sQuote(xpath)}")
+    rlang::abort(msg, class = "insert-md-xpath")
+  } 
   if (!inherits(nodes, c("xml_node", "xml_nodeset"))) {
     rlang::abort("an object of class `xml_node` or `xml_nodeset` was expected",
       class = "insert-md-node"
@@ -83,16 +90,24 @@ add_nodes_to_nodes <- function(new, old, where = "after", space = TRUE) {
     # allow purrr::walk() to work on a single node
     old <- list(old)
   }
-  purrr::walk(old, add_node_siblings, new, where = where, remove = FALSE)
+  purrr::walk(.x = old, .f = add_node_siblings,
+    new = new, where = where, remove = FALSE
+  )
 }
 
 # Add siblings to a node
-add_node_siblings <- function(node, nodes, where = "after", remove = TRUE) {
+add_node_siblings <- function(node, new, where = "after", remove = TRUE) {
   # if there is a single node, then we need only add it
-  if (inherits(nodes, "xml_node")) {
-    xml2::xml_add_sibling(node, nodes, .where = where)
+  if (inherits(new, "xml_node")) {
+    xml2::xml_add_sibling(node, new, .where = where)
   } else {
-    purrr::walk(rev(nodes), ~xml2::xml_add_sibling(node, .x, .where = where))
+    if (where == "after") {
+      # Appending new nodes requires us to insert them from the bottom to
+      # the top. The reason for this is because we are always using the existing
+      # node as a reference.
+      new <- rev(new)
+    }
+    purrr::walk(new, ~xml2::xml_add_sibling(node, .x, .where = where))
   }
   if (remove) xml2::xml_remove(node)
 }
