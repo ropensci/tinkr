@@ -481,7 +481,7 @@ readLines(tmp, n = 20)
 \if{html}{\out{<a id="method-yarn-append_md"></a>}}
 \if{latex}{\out{\hypertarget{method-yarn-append_md}{}}}
 \subsection{Method \code{append_md()}}{
-append abritrary markdown to a node or set of nodes
+append abritrarily markdown to a node or set of nodes
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{yarn$append_md(md, nodes = NULL, space = TRUE)}\if{html}{\out{</div>}}
 }
@@ -529,7 +529,7 @@ ex$append_md(txt, ".//md:heading[1]")$head(20)
 \if{html}{\out{<a id="method-yarn-prepend_md"></a>}}
 \if{latex}{\out{\hypertarget{method-yarn-prepend_md}{}}}
 \subsection{Method \code{prepend_md()}}{
-prepend abritrary markdown to a node or set of nodes
+prepend abritrarily markdown to a node or set of nodes
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{yarn$prepend_md(md, nodes = NULL, space = TRUE)}\if{html}{\out{</div>}}
 }

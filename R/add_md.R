@@ -6,13 +6,19 @@
 #' @keywords internal
 #'
 #' @return a copy of the XML object with the markdown inserted.
+#' @dev
 add_md <- function(body, md, where = 0L) {
   new <- md_to_xml(md)
   add_nodes_to_body(body, new, where)
   copy_xml(body)
 }
 
-# Add children to a specific location in the full document.
+#' Add children to a specific location in the full document.
+#'
+#' @inheritParams add_md
+#' @param nodes an object of `xml_node` or list of nodes
+#' @return a copy of the XML object with nodes inserted
+#' @dev
 add_nodes_to_body <- function(body, nodes, where = 0L) {
   if (inherits(nodes, "xml_node")) {
     xml2::xml_add_child(body, nodes, .where = where)
@@ -21,6 +27,20 @@ add_nodes_to_body <- function(body, nodes, where = 0L) {
   }
 }
 
+
+#' Insert markdown before or after a set of nodes
+#'
+#' @inheritParams add_md
+#' @param md markdown text to insert
+#' @param nodes a character vector of an XPath expression OR an `xml_node` or
+#'   `xml_nodeset` object. 
+#' @param space when `TRUE` (default) inline nodes have a single space appended
+#'   or prepended to avoid the added markdown abutting text.
+#' @return a copy of the XML object with the translated markdown inserted
+#'
+#' @note The markdown content must be of the same type as the XML nodes, either
+#'   inline or block content.
+#' @dev
 insert_md <- function(body, md, nodes, where = "after", space = TRUE) {
   new <- md_to_xml(md)
   shove_nodes_in(body, new, nodes = nodes, where = where, space = space)
