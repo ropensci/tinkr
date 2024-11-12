@@ -203,7 +203,7 @@ yarn <- R6::R6Class("yarn",
       self$body <- add_md(self$body, md, where)
       invisible(self)
     },
-    #' @description append abritrarily markdown to a node or set of nodes
+    #' @description append abritrary markdown to a node or set of nodes
     #'
     #' @param md a string of markdown formatted text.
     #' @param nodes an XPath expression that evaulates to object of class
@@ -228,7 +228,7 @@ yarn <- R6::R6Class("yarn",
       self$body <- insert_md(self$body, md, nodes, where = "after", space = space)
       invisible(self)
     },
-    #' @description prepend abritrarily markdown to a node or set of nodes
+    #' @description prepend arbitrary markdown to a node or set of nodes
     #'
     #' @param md a string of markdown formatted text.
     #' @param nodes an XPath expression that evaulates to object of class
