@@ -142,9 +142,9 @@ protect_inline_math <- function(body, ns) {
     }
     le <- length(bmath[endless])
     lh <- length(bmath[headless])
-    # 2024-10-10: if the number of headless tags is zero, then we are dealing
-    # with currency. See issue #121 
-    if (lh == 0) {
+    # 2024-10-10: if the number of headless OR endless tags is zero, then we
+    # are dealing with currency. See issue #121 and #124
+    if (lh == 0 || le == 0) {
       return(copy_xml(body))
     }
     # 2024-10-15: if the number of headless tags is _less_ than the number of
