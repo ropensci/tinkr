@@ -39,7 +39,8 @@
 * Documents with no trailing newline will no longer throw a warning (issue: #65;
   fix: #114, @zkamvar)
 * Documents with dollar signs but no math will no longer fail with the
-  `$protect_math()` method (issue: #121, @maelle; fix: #122, @zkamvar).
+  `$protect_math()` method
+  (issue: #121, #124 @maelle; fix: #122, #125 @zkamvar)
 
 ## MISC
 
