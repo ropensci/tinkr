@@ -2,7 +2,7 @@ test_that("an empty yarn object can be created", {
   y1 <- yarn$new()
   expect_s3_class(y1, "yarn")
   expect_null(y1$body)
-  expect_null(y1$yaml)
+  expect_null(y1$toml)
   expect_null(y1$ns)
   expect_null(y1$path)
 })
@@ -169,7 +169,7 @@ test_that("md_vec() will convert a query to a markdown vector", {
   )
   expect_equal(y1$md_vec(".//md:heading[@level=3]"), expected[1:4])
   expect_length(y1$md_vec(".//md:list//md:link"), 5)
-  
+
   skip_on_os("windows")
   expect_equal(y1$md_vec(".//md:heading[@level=4]"), expected[5:7])
   expect_equal(y1$md_vec(".//md:heading"), expected)

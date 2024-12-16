@@ -33,14 +33,15 @@ possible. If this is \code{FALSE}, these braces will be escaped in the output
 document. See \code{\link[=protect_unescaped]{protect_unescaped()}} for details.}
 }
 \value{
-A list containing the YAML of the file (yaml)
+A list containing the front-matter (YAML, TOML or JSON)
+of the file (frontmatter)
 and its body (body) as XML.
 }
 \description{
 Transform file to XML
 }
 \details{
-This function will take a (R)markdown file, split the yaml header
+This function will take a (R)markdown file, split the frontmatter
 from the body, and read in the body through \code{\link[commonmark:commonmark]{commonmark::markdown_xml()}}.
 Any RMarkdown code fences will be parsed to expose the chunk options in
 XML and tickboxes (aka checkboxes) in GitHub-flavored markdown will be
