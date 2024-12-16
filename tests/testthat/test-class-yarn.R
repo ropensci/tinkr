@@ -176,3 +176,30 @@ test_that("md_vec() will convert a query to a markdown vector", {
 
 })
 
+test_that("TOML is preserved", {
+
+  pathmd  <- system.file("extdata", "example-toml.md", package = "tinkr")
+  y1 <- yarn$new(pathmd)
+
+  expect_gt(length(y1$frontmatter), 0)
+  expect_equal(y1$frontmatter_format, "TOML")
+
+  path <- withr::local_tempfile()
+  y1$write(path)
+  expect_snapshot_file(path, name = "example-toml.md")
+})
+
+
+test_that("TOML is preserved", {
+
+  pathmd  <- system.file("extdata", "example-json.md", package = "tinkr")
+  y1 <- yarn$new(pathmd)
+
+  expect_gt(length(y1$frontmatter), 0)
+  expect_equal(y1$frontmatter_format, "JSON")
+
+  path <- withr::local_tempfile()
+  y1$write(path)
+  expect_snapshot_file(path, name = "example-json.md")
+
+})
