@@ -203,3 +203,17 @@ test_that("TOML is preserved", {
   expect_snapshot_file(path, name = "example-json.md")
 
 })
+
+
+test_that("no metadata, chunk works", {
+
+  pathmd  <- system.file("extdata", "example-chunk-not-json.md", package = "tinkr")
+  y1 <- yarn$new(pathmd)
+
+  expect_equal(length(y1$frontmatter), 0)
+
+  path <- withr::local_tempfile()
+  y1$write(path)
+  expect_snapshot_file(path, name = "example-chunk-not-json.md")
+
+})
