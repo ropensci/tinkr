@@ -50,7 +50,7 @@ split_frontmatter_body <- function(x) {
     return(tomlish)
   }
 
-  jsonish <- split_thing_body(x, '^\\{\\s*$', '\\}$')
+  jsonish <- split_thing_body(x, '^\\{\\s*$', '^[^{]*\\}$')
   if (length(jsonish[["frontmatter"]]) > 0) {
     jsonish$frontmatter_format <- "JSON"
     return(jsonish)
