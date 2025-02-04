@@ -7,7 +7,7 @@
 add_md(body, md, where = 0L)
 }
 \arguments{
-\item{body}{an XML object generated via {tinkr}}
+\item{body}{an XML object generated via tinkr}
 
 \item{md}{a string of new markdown to insert}
 

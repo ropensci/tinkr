@@ -20,7 +20,13 @@
   (@zkamvar, #111; reviewed: @maelle)
 * Block math will now include the delimiters and the softbreaks for protection
   (issue/review: #113, @maelle; implemented: #111, @zkamvar)
-
+* Frontmatter in TOML and JSON is now preserved too. 
+  The `yaml` field is replaced (softly deprecated)
+  with a field called `frontmatter`. 
+  A new field called `frontmatter_format` ("YAML", "TOML", or "JSON")
+  contains the format of the frontmatter.
+  (issue: #126, @maelle)
+  
 ## NEW IMPORTS
 
 * We now import {rlang} for error handling. Because we already import {purrr},

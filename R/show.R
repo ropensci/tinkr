@@ -1,9 +1,9 @@
 #' Display a node or nodelist as markdown
 #'
-#' When inspecting the results of an XPath query, displaying the text often 
+#' When inspecting the results of an XPath query, displaying the text often
 #' @param nodelist an object of class `xml_nodeset` OR `xml_node` OR a list of
 #'   either.
-#' @inheritParams to_md 
+#' @inheritParams to_md
 #' @return a character vector, invisibly. The result of these functions are
 #'   displayed to the screen
 #' @examples
@@ -11,30 +11,30 @@
 #' y <- tinkr::yarn$new(path, sourcepos = TRUE)
 #' y$protect_math()$protect_curly()
 #' items <- xml2::xml_find_all(y$body, ".//md:item", tinkr::md_ns())
-#' imgs <- xml2::xml_find_all(y$body, ".//md:image | .//node()[@curly]", 
+#' imgs <- xml2::xml_find_all(y$body, ".//md:image | .//node()[@curly]",
 #'   tinkr::md_ns())
 #' links <- xml2::xml_find_all(y$body, ".//md:link", tinkr::md_ns())
 #' code <- xml2::xml_find_all(y$body, ".//md:code", tinkr::md_ns())
 #' blocks <- xml2::xml_find_all(y$body, ".//md:code_block", tinkr::md_ns())
 #'
-#' # show a list of items 
+#' # show a list of items
 #' show_list(links)
 #' show_list(code)
 #' show_list(blocks)
-#' 
+#'
 #' # show the items in their local structure
 #' show_block(items)
 #' show_block(links, mark = TRUE)
 #'
 #' # show the items in the full document censored (everything but whitespace):
 #' show_censor(imgs)
-#' 
+#'
 #' # You can also adjust the censorship parameters. There are two paramters
 #' # available: the mark, which chooses what character you want to use to
-#' # replace characters (default: `\u2587`); and the regex which specifies 
+#' # replace characters (default: `\u2587`); and the regex which specifies
 #' # characters to replace (default: `[^[:space:]]`, which replaces all
 #' # non-whitespace characters.
-#' # 
+#' #
 #' # The following will replace everything that is not a whitespace
 #' # or punctuation character with "o" for a very ghostly document
 #' op <- options()
@@ -43,7 +43,7 @@
 #' show_censor(links)
 #' options(tinkr.censor.regex = NULL)
 #' options(tinkr.censor.mark = NULL)
-#' @seealso [to_md_vec()] to get a vector of these elements in isolation. 
+#' @seealso [to_md_vec()] to get a vector of these elements in isolation.
 #' @rdname show
 #' @export
 show_list <- function(nodelist, stylesheet_path = stylesheet()) {
@@ -84,7 +84,7 @@ show_censor <- function(nodelist, stylesheet_path = stylesheet()) {
 #'  - key: a string used to tag nodes that are isolated via the `tnk-key`
 #'         attribute
 #'
-#' @details 
+#' @details
 #' `isolate_nodes()`is the workhorse for the `show` family of functions. These
 #' functions will create a copy of the document with the nodes present in
 #' `nodelist` isolated. It has the following switches for "type":
@@ -121,7 +121,7 @@ isolate_nodes <- function(nodelist, type = "context") {
 #' This uses [xml2::xml_root()] and [xml2::xml_path()] to make a copy of the
 #' root document and then tag the corresponding nodes in the nodelist so that
 #' we can filter on nodes that are not connected to those present in the
-#' nodelist. This function is required for [isolate_nodes()] to work. 
+#' nodelist. This function is required for [isolate_nodes()] to work.
 #'
 #'
 #' @inheritParams isolate_nodes
@@ -212,10 +212,10 @@ isolate_nodes_censor <- function(nodelist) {
 
 add_isolation_context <- function(nodelist, isolated) {
   sib <- sprintf("sibling::*[1][not(@tnk-key=%s)]", isolated$key)
-  pretext <- xml2::xml_find_lgl(nodelist, 
+  pretext <- xml2::xml_find_lgl(nodelist,
     sprintf("boolean(count(preceding-%s)!=0)", sib)
   )
-  postext <- xml2::xml_find_lgl(nodelist, 
+  postext <- xml2::xml_find_lgl(nodelist,
     sprintf("boolean(count(following-%s)!=0)", sib)
   )
   xpath <- sprintf(".//node()[@tnk-key=%s]", isolated$key)
@@ -231,13 +231,13 @@ add_isolation_context <- function(nodelist, isolated) {
     )
   })
   return(isolated)
-} 
+}
 
 
 censor_attr <- function(nodes, attr) {
   attrs <- xml2::xml_attr(nodes, attr)
   nomiss <- !is.na(attrs)
-  xml2::xml_set_attr(nodes[nomiss], attr, 
+  xml2::xml_set_attr(nodes[nomiss], attr,
     censor(attrs[nomiss])
   )
 }
@@ -250,7 +250,7 @@ censor <- function(x) {
 
 print_lines <- function(xml, path = NULL, stylesheet = NULL) {
   if (inherits(xml, "xml_document")) {
-    xml <- list(yaml = "", body = xml)
+    xml <- list(frontmatter = "", body = xml)
   }
   if (is.null(stylesheet)) {
     md <- to_md(xml, path)
@@ -260,7 +260,7 @@ print_lines <- function(xml, path = NULL, stylesheet = NULL) {
   if (!is.null(path) && !is.null(stylesheet)) {
     return(md)
   }
-  # Make sure that the yaml is not sitting on top of the first markdown line
+  # Make sure that the frontmatter is not sitting on top of the first markdown line
   if (length(md) == 2) {
     md[1] <- paste0(md[1], "\n")
   }
@@ -271,7 +271,7 @@ print_lines <- function(xml, path = NULL, stylesheet = NULL) {
 
 label_nodes <- function(xpath, doc, label = "save") {
   xml2::xml_set_attr(
-    xml2::xml_find_all(doc, xpath, ns = md_ns()), 
+    xml2::xml_find_all(doc, xpath, ns = md_ns()),
     "tnk-key", label)
 }
 

@@ -36,13 +36,13 @@ path <- system.file("extdata", "show-example.md", package = "tinkr")
 y <- tinkr::yarn$new(path, sourcepos = TRUE)
 y$protect_math()$protect_curly()
 items <- xml2::xml_find_all(y$body, ".//md:item", tinkr::md_ns())
-imgs <- xml2::xml_find_all(y$body, ".//md:image | .//node()[@curly]", 
+imgs <- xml2::xml_find_all(y$body, ".//md:image | .//node()[@curly]",
   tinkr::md_ns())
 links <- xml2::xml_find_all(y$body, ".//md:link", tinkr::md_ns())
 code <- xml2::xml_find_all(y$body, ".//md:code", tinkr::md_ns())
 blocks <- xml2::xml_find_all(y$body, ".//md:code_block", tinkr::md_ns())
 
-# show a list of items 
+# show a list of items
 show_list(links)
 show_list(code)
 show_list(blocks)
@@ -56,10 +56,10 @@ show_censor(imgs)
 
 # You can also adjust the censorship parameters. There are two paramters
 # available: the mark, which chooses what character you want to use to
-# replace characters (default: `\u2587`); and the regex which specifies 
+# replace characters (default: `\u2587`); and the regex which specifies
 # characters to replace (default: `[^[:space:]]`, which replaces all
 # non-whitespace characters.
-# 
+#
 # The following will replace everything that is not a whitespace
 # or punctuation character with "o" for a very ghostly document
 op <- options()

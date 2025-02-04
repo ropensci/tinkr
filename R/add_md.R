@@ -1,6 +1,6 @@
 #' Add markdown content to an XML object
 #'
-#' @param body an XML object generated via {tinkr}
+#' @param body an XML object generated via tinkr
 #' @param md a string of new markdown to insert
 #' @param where the position in the markdown document to insert the new markdown
 #' @keywords internal

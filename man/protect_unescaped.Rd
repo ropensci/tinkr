@@ -78,7 +78,7 @@ f <- system.file("extdata", "link-test.md", package = "tinkr")
 md <- yarn$new(f, sourcepos = TRUE, unescaped = FALSE)
 md$show()
 if (requireNamespace("withr")) {
-lines <- readLines(f)[-length(md$yaml)]
+lines <- readLines(f)[-length(md$frontmatter)]
 lnks <- withr::with_namespace("tinkr",
   protect_unescaped(body = md$body, txt = lines))
 md$body <- lnks

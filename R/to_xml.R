@@ -15,10 +15,11 @@
 #'   possible. If this is `FALSE`, these braces will be escaped in the output
 #'   document. See [protect_unescaped()] for details.
 #'
-#' @return A list containing the YAML of the file (yaml)
+#' @return A list containing the front-matter (YAML, TOML or JSON)
+#'   of the file (frontmatter)
 #'   and its body (body) as XML.
 #'
-#' @details This function will take a (R)markdown file, split the yaml header
+#' @details This function will take a (R)markdown file, split the frontmatter
 #'   from the body, and read in the body through [commonmark::markdown_xml()].
 #'   Any RMarkdown code fences will be parsed to expose the chunk options in
 #'   XML and tickboxes (aka checkboxes) in GitHub-flavored markdown will be
@@ -40,9 +41,9 @@
 to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = TRUE, unescaped = TRUE){
   content <- readLines(path, encoding = encoding, warn = FALSE)
 
-  splitted_content <- split_yaml_body(content)
+  splitted_content <- split_frontmatter_body(content)
 
-  yaml <- splitted_content$yaml
+  frontmatter <- splitted_content$frontmatter
 
   splitted_content$body %>%
     clean_content() %>%
@@ -60,8 +61,11 @@ to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = T
     body <- resolve_anchor_links(body, splitted_content$body)
   }
 
-  list(yaml = yaml,
-       body = body)
+  list(
+    frontmatter = frontmatter,
+    body = body,
+    frontmatter_format = splitted_content$frontmatter_format
+  )
 }
 
 

@@ -1,6 +1,7 @@
-#' Write YAML and XML back to disk as (R)Markdown
+#' Write front-matter (YAML, TOML or JSON) and XML back to disk as (R)Markdown
 #'
-#' @param yaml_xml_list result from a call to [to_xml()] and editing.
+#' @param frontmatter_xml_list result from a call to [to_xml()] and editing.
+#' @param yaml_xml_list `r lifecycle::badge('deprecated')` Use `frontmatter_xml_list()`.
 #' @param path path of the new file. Defaults to `NULL`, which will not write
 #'   any file, but will still produce the conversion and pass the output as
 #'   a character vector.
@@ -13,20 +14,20 @@
 #' the path to your XSL stylesheet as argument.
 #'
 #'
-#' @return 
-#'  - `to_md()`: `\[character\]` the converted document, invisibly as a character vector containing two elements: the yaml list and the markdown body.
+#' @return
+#'  - `to_md()`: `\[character\]` the converted document, invisibly as a character vector containing two elements: the frontmatter list and the markdown body.
 #'  - `to_md_vec()`: `\[character\]` the markdown representation of each node.
 #'
 #' @export
 #'
 #' @examples
 #' path <- system.file("extdata", "example1.md", package = "tinkr")
-#' yaml_xml_list <- to_xml(path)
-#' names(yaml_xml_list)
+#' frontmatter_xml_list <- to_xml(path)
+#' names(frontmatter_xml_list)
 #' # extract the level 3 headers from the body
 #' headers3 <- xml2::xml_find_all(
-#'   yaml_xml_list$body,
-#'   xpath = './/md:heading[@level="3"]', 
+#'   frontmatter_xml_list$body,
+#'   xpath = './/md:heading[@level="3"]',
 #'   ns = md_ns()
 #' )
 #' # show the headers
@@ -39,17 +40,20 @@
 #' print(h1 <- to_md_vec(headers3))
 #' # save back and have a look
 #' newmd <- tempfile("newmd", fileext = ".md")
-#' res <- to_md(yaml_xml_list, newmd)
+#' res <- to_md(frontmatter_xml_list, newmd)
 #' # show that it works
 #' regmatches(res[[2]], gregexpr(h1[1], res[[2]], fixed = TRUE))
 #' # file.edit("newmd.md")
 #' file.remove(newmd)
-#' 
-to_md <- function(yaml_xml_list, path = NULL, stylesheet_path = stylesheet()){
+#'
+to_md <- function(frontmatter_xml_list,
+                  path = NULL,
+                  stylesheet_path = stylesheet(),
+                  yaml_xml_list = deprecated()){
 
   # duplicate document to avoid overwriting
-  body <- copy_xml(yaml_xml_list$body)
-  yaml <- yaml_xml_list$yaml
+  body <- copy_xml(frontmatter_xml_list$body)
+  frontmatter <- frontmatter_xml_list$frontmatter
 
   # read stylesheet and fail early if it doesn't exist
   stylesheet <- read_stylesheet(stylesheet_path)
@@ -57,7 +61,7 @@ to_md <- function(yaml_xml_list, path = NULL, stylesheet_path = stylesheet()){
   transform_code_blocks(body)
   remove_phantom_text(body)
 
-  md_out <- transform_to_md(body, yaml, stylesheet)
+  md_out <- transform_to_md(body, frontmatter, stylesheet)
 
   if (!is.null(path)) {
     writeLines(md_out, con = path, useBytes = TRUE, sep =  "\n\n")
@@ -80,15 +84,15 @@ to_md_vec <- function(nodelist, stylesheet_path = stylesheet()) {
 }
 
 
-# convert body and yaml to markdown text given a stylesheet
-transform_to_md <- function(body, yaml, stylesheet) {
+# convert body and frontmatter to markdown text given a stylesheet
+transform_to_md <- function(body, frontmatter, stylesheet) {
   body <- xslt::xml_xslt(body, stylesheet = stylesheet)
 
-  if (length(yaml) > 0) {
-    yaml <- glue::glue_collapse(yaml, sep = "\n")
+  if (length(frontmatter) > 0) {
+    frontmatter <- glue::glue_collapse(frontmatter, sep = "\n")
   }
 
-  c(yaml, body)
+  c(frontmatter, body)
 }
 
 # remove phantom text nodes that occur before links, images, and asis nodes that

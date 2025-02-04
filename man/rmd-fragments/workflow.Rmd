@@ -1,7 +1,11 @@
 Only the body of the (R) Markdown file is cast to XML, using the Commonmark specification via the [`commonmark` package](https://github.com/r-lib/commonmark). 
-YAML metadata could be edited using the [`yaml` package](https://cran.r-project.org/package=yaml), which is not the goal of this package.
+Frontmatter metadata can be stored in the YAML, TOML or JSON format.
+YAML-formatted metadata could be edited using the [`yaml` package](https://cran.r-project.org/package=yaml), 
+JSON-formatted metadata could be edited using the [`jsonlite` package](https://jeroen.r-universe.dev/jsonlite).
+which is not the goal of this package.
 
-We have created an [R6 class](https://r6.r-lib.org/) object called **yarn** to store the representation of both the YAML and the XML data, both of which are accessible through the `$body` and `$yaml` elements. 
+We have created an [R6 class](https://r6.r-lib.org/) object called **yarn** to store the representation of both the frontmatter and the XML data, both of which are accessible through the `$body` and `$frontmatter` elements. 
+The field called `$frontmatter_format` contains the format of the metadata (YAML, TOML, or JSON).
 In addition, the namespace prefix is set to "md" in the `$ns` element.
 
 You can perform XPath queries using the `$body` and `$ns` elements:

@@ -10,8 +10,8 @@ md_ns()
 an \code{xml_namespace} object (see \code{\link[xml2:xml_ns]{xml2::xml_ns()}})
 }
 \description{
-The {commonmark} package is used to translate markdown to XML, but it does
-not assign a namespace prefix, which means that {xml2} will auto-assign a
+The commonmark package is used to translate markdown to XML, but it does
+not assign a namespace prefix, which means that xml2 will auto-assign a
 default prefix of \code{d1}.
 }
 \details{
@@ -22,11 +22,11 @@ queries that are slightly more descriptive.
 
 tink <- tinkr::to_xml(system.file("extdata", "example1.md", package = "tinkr"))
 # with default namespace
-xml2::xml_find_all(tink$body, 
+xml2::xml_find_all(tink$body,
   ".//d1:link[starts-with(@destination, 'https://ropensci')]"
 )
 # with tinkr namespace
-xml2::xml_find_all(tink$body, 
+xml2::xml_find_all(tink$body,
   ".//md:link[starts-with(@destination, 'https://ropensci')]",
   tinkr::md_ns()
 )

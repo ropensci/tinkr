@@ -5,7 +5,7 @@
 \title{R6 class containing XML representation of Markdown}
 \description{
 Wrapper around an XML representation of a Markdown document. It contains four
-publicly accessible slots: path, yaml, body, and ns.
+publicly accessible slots: path, frontmatter, body, and ns.
 }
 \details{
 This class is a fancy wrapper around the results of \code{\link[=to_xml]{to_xml()}} and
@@ -140,8 +140,8 @@ ex <- tinkr::yarn$new(path, sourcepos = TRUE)
 # protect curly braces
 ex$protect_curly()
 # add math and protect it
-ex$add_md(c("## math\n", 
-  "$c^2 = a^2 + b^2$\n", 
+ex$add_md(c("## math\n",
+  "$c^2 = a^2 + b^2$\n",
   "$$",
   "\\\\sum_{i}^k = x_i + 1",
   "$$\n")
@@ -160,12 +160,21 @@ nodelist without a yarn object
 \describe{
 \item{\code{path}}{[\code{character}] path to file on disk}
 
-\item{\code{yaml}}{[\code{character}] text block at head of file}
+\item{\code{frontmatter}}{[\code{character}] text block at head of file}
+
+\item{\code{frontmatter_format}}{[\code{character}] 'YAML', 'TOML' or 'JSON'}
 
 \item{\code{body}}{[\code{xml_document}] an xml document of the (R)Markdown file.}
 
 \item{\code{ns}}{[\code{xml_document}] an xml namespace object defining "md" to
 commonmark.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{yaml}}{[\code{character}] \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{frontmatter}}
 }
 \if{html}{\out{</div>}}
 }
@@ -547,8 +556,8 @@ ex <- tinkr::yarn$new(path, sourcepos = TRUE)
 # protect curly braces
 ex$protect_curly()
 # add math and protect it
-ex$add_md(c("## math\n", 
-  "$c^2 = a^2 + b^2$\n", 
+ex$add_md(c("## math\n",
+  "$c^2 = a^2 + b^2$\n",
   "$$",
   "\\\\sum_{i}^k = x_i + 1",
   "$$\n")

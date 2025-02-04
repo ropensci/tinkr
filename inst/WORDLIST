@@ -8,6 +8,8 @@ filepath
 flavoured
 funder
 https
+json
+JSON
 lossy
 md
 munges
@@ -31,6 +33,8 @@ testthat
 tickboxes
 tinkr’
 tinkr
+toml
+TOML
 unnested
 XPath
 xsl
