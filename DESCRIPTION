@@ -21,7 +21,7 @@ Authors@R:
              comment = "Nick Wellnhofer wrote the XSLT stylesheet."),
       person(given = "rOpenSci",
              role = "fnd",
-             comment = "https://ropensci.org/"),
+             comment = c(ROR = "019jywm96")),
       person(given = "Peter",
              family = "Daengeli",
              role = "ctb"))
