@@ -20,3 +20,4 @@ a copy of the XML object with the markdown inserted.
 Add markdown content to an XML object
 }
 \keyword{internal}
+\keyword{internal}

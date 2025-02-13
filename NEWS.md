@@ -2,6 +2,8 @@
 
 ## NEW FEATURES
 
+* `yarn$append_md()` and `yarn$prepend_md()` methods allow you to add new
+  markdown to specific places in the document using XPath expressions. 
 * `to_md_vec()` takes an xml node or nodelist and returns a character vector of
   the markdown produced.
 * `show_list()`, `show_block()`, and `show_censor()` will show the markdown
