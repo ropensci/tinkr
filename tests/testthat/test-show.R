@@ -1,27 +1,27 @@
 test_that("show_list() will isolate elements", {
-  
+
   path <- system.file("extdata", "show-example.md", package = "tinkr")
   y <- tinkr::yarn$new(path, sourcepos = TRUE)
   links <- xml2::xml_find_all(y$body, ".//md:link", tinkr::md_ns())
   headings <- xml2::xml_find_all(y$body, ".//md:heading", tinkr::md_ns())
   code <- xml2::xml_find_all(y$body, ".//md:code", tinkr::md_ns())
   blocks <- xml2::xml_find_all(y$body, ".//md:code_block", tinkr::md_ns())
-  # show a list of items 
+  # show a list of items
   expect_snapshot(show_user(show_list(links), force = TRUE))
   expect_snapshot(show_user(show_list(code), force = TRUE))
   expect_snapshot(show_user(show_list(blocks), force = TRUE))
-  
+
 })
 
 test_that("show_list() will isolate groups of elements", {
-  
+
   path <- system.file("extdata", "show-example.md", package = "tinkr")
   y <- tinkr::yarn$new(path, sourcepos = TRUE)
   links <- xml2::xml_find_all(y$body, ".//md:link", tinkr::md_ns())
   headings <- xml2::xml_find_all(y$body, ".//md:heading", tinkr::md_ns())
-  # show a list of items 
+  # show a list of items
   expect_snapshot(show_user(show_list(list(links, headings)), force = TRUE))
-  
+
 })
 
 
@@ -53,7 +53,7 @@ test_that("show_censor() will censor elements", {
   blocks <- xml2::xml_find_all(y$body, ".//md:code_block", tinkr::md_ns())
   # give us the original for comparison
   orig <- y$show()
-  n <- length(orig) - length(y$yaml) + 1
+  n <- length(orig) - length(y$frontmatter) + 1
   # the censor option can be adjusted
   withr::local_options(list(
       tinkr.censor.mark = ".",
@@ -77,7 +77,7 @@ test_that("show_censor() will censor elements", {
 test_that("tinkr.censor.regex can adjust for symbols", {
   path <- system.file("extdata", "show-example.md", package = "tinkr")
   y <- tinkr::yarn$new(path, sourcepos = TRUE)
-  items <- xml2::xml_find_all(y$body, ".//node()[not(self::md:code_block)]", 
+  items <- xml2::xml_find_all(y$body, ".//node()[not(self::md:code_block)]",
     tinkr::md_ns())
 
   # the censor option can be adjusted
@@ -91,7 +91,7 @@ test_that("tinkr.censor.regex can adjust for symbols", {
   # the length of the documents are identical
   # give us the original for comparison
   orig <- y$show()
-  n <- length(orig) - length(y$yaml) + 1
+  n <- length(orig) - length(y$frontmatter) + 1
   expect_length(itms, n)
 
   expect_snapshot(show_user(itms, force = TRUE))

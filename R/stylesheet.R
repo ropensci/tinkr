@@ -1,9 +1,9 @@
-#' The {tinkr} stylesheet
+#' The tinkr stylesheet
 #'
-#' This function returns the path to the {tinkr} stylesheet
+#' This function returns the path to the tinkr stylesheet
 #'
-#' @return a single element character vector representing the path to the 
-#'   stylesheet used by {tinkr}.
+#' @return a single element character vector representing the path to the
+#'   stylesheet used by tinkr.
 #' @export
 #' @examples
 #' tinkr::stylesheet()
@@ -12,13 +12,13 @@ stylesheet <- function() {
 }
 
 is_stylesheet <- function(stylesheet) {
-  inherits(stylesheet, "xml_document") && 
+  inherits(stylesheet, "xml_document") &&
     length(xml2::xml_name(stylesheet)) == 1L    &&
     xml2::xml_name(stylesheet) == "stylesheet"
 }
 
 read_stylesheet <- function(stylesheet_path) {
-  
+
   # if the stylesheet already is an XML stylesheet, just return.
   if (is_stylesheet(stylesheet_path)) {
     return(stylesheet_path)
@@ -40,5 +40,5 @@ read_stylesheet <- function(stylesheet_path) {
   } else {
     stop(glue::glue("'{stylesheet_path}' is not a valid stylesheet"))
   }
-  
+
 }

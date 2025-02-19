@@ -24,36 +24,45 @@ unbalanced_math_error <- function(bmath, endless, headless, le, lh) {
 }
 # from blogdown
 # https://github.com/rstudio/blogdown/blob/9c7f7db5f11a481e1606031e88142b4a96139cce/R/utils.R#L391
-split_yaml_body = function(x) {
-  i = grep('^---\\s*$', x)
+split_thing_body = function(x, regex, regex2 = regex) {
+  i = c(grep(regex, x), grep(regex2, x))
   n = length(x)
   res = if (n < 2 || length(i) < 2 || (i[1] > 1 && !is_blank(x[seq(i[1] - 1)]))) {
-    list(yaml = character(), body = x)
+    list(frontmatter = character(), body = x)
   } else list(
-    yaml = x[i[1]:i[2]], yaml_range = i[1:2],
+    frontmatter = x[i[1]:i[2]], frontmatter_range = i[1:2],
     body = if (i[2] == n) character() else x[(i[2] + 1):n]
   )
-  res$yaml_list = if ((n <- length(res$yaml)) >= 3) {
-    yaml_load(res$yaml[-c(1, n)])
-  }
+
   res
 }
 
-# https://github.com/rstudio/blogdown/blob/9c7f7db5f11a481e1606031e88142b4a96139cce/R/utils.R#L407
-# anotate seq type values because both single value and list values are
-# converted to vector by default
-yaml_load = function(x) yaml::yaml.load(
-  x, handlers = list(
-    seq = function(x) {
-      # continue coerce into vector because many places of code already assume this
-      if (length(x) > 0) {
-        x = unlist(x, recursive = FALSE)
-        attr(x, 'yml_type') = 'seq'
-      }
-      x
-    }
+split_frontmatter_body <- function(x) {
+  yamlish <- split_thing_body(x, '^---\\s*$')
+  if (length(yamlish[["frontmatter"]]) > 0) {
+    yamlish$frontmatter_format <- "YAML"
+    return(yamlish)
+  }
+
+  tomlish <- split_thing_body(x, '^\\+\\+\\+\\s*$')
+  if (length(tomlish[["frontmatter"]]) > 0) {
+    tomlish$frontmatter_format <- "TOML"
+    return(tomlish)
+  }
+
+  jsonish <- split_thing_body(x, '^\\{\\s*$', '^[^{]*\\}$')
+  if (length(jsonish[["frontmatter"]]) > 0) {
+    jsonish$frontmatter_format <- "JSON"
+    return(jsonish)
+  }
+
+  list(
+    frontmatter = character(0),
+    body = x,
+    frontmatter_format = NA
   )
-)
+}
+
 
 # from knitr via namer
 # https://github.com/lockedata/namer/blob/2d88c5cb200724f775631946fc8e08903ff110de/R/utils.R#L3
