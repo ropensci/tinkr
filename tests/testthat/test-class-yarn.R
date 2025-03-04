@@ -189,9 +189,17 @@ test_that("Inline markdown can be appended (to a degree)", {
     ".//md:code[contains(text(), ' <-- READ THIS')]", ex$ns)
   expect_length(nodes, 0)
   ex$append_md("`<-- READ THIS`", ".//md:link")
-  nodes <- xml2::xml_find_all(ex$body, 
-    ".//md:code[contains(text(), ' <-- READ THIS')]", ex$ns)
+  nodes <- xml2::xml_find_all(ex$body,
+    ".//md:code[text()='<-- READ THIS']/preceding-sibling::md:text[text()=' ']", ex$ns)
   expect_length(nodes, 1)
+
+  tst <- tinkr::yarn$new(con <- textConnection("how are you?"))
+  withr::defer(close(con))
+  tst$append_md("_hello_?", ".//md:text")
+  expect_equal(tst$show()[1], "how are you? *hello*?")
+  expect_equal(tst$append_md("**oh hai**", ".//md:emph")$show()[1],
+    "how are you? *hello* **oh hai**?"
+  )
 })
 
 
@@ -232,13 +240,16 @@ test_that("markdown can be prepended", {
 
 
 test_that("inline markdown can be prepended", {
-  con <- textConnection("how are you?")
+  tst <- tinkr::yarn$new(con <- textConnection("how are you?"))
   withr::defer(close(con))
-  tst <- tinkr::yarn$new(con)
   tst$prepend_md("_hello_?", ".//md:text")
   # should be "*hello*? how are you?"
-  expect_equal(tst$show(), "*hello*? how are you?")
-  #> *hello *?how are you?
+  expect_equal(tst$show()[1], "*hello*? how are you?")
+  #> *hello*? how are you?
+  expect_equal(tst$prepend_md("**oh hai**", ".//md:emph")$show()[1],
+    "**oh hai** *hello*? how are you?"
+  )
+  
 
 })
 

@@ -97,13 +97,31 @@ add_nodes_to_nodes <- function(new, old, where = "after", space = TRUE) {
       )
     }
     # make sure the new nodes are inline by extracting the children. 
+    parents <- new
     new <- xml2::xml_children(new)
     if (space) {
       # For inline nodes, we want to make sure they are separated from existing
-      # nodes by a space. 
-      lead <- if (inherits(new, "xml_node")) new else new[[1]]
-      txt <- if (where == "after") " %s" else "%s " 
-      xml2::xml_set_text(lead, sprintf(txt, xml2::xml_text(lead)))
+      # node by a space. The lead node is the adjoining child of the new nodes.
+      lead <- if (inherits(new, "xml_node")) {
+        new
+      } else if (where == "after") {
+        new[[1]]
+      } else {
+        new[[length(new)]]
+      }
+      # If the lead node is a text node, we can add a space using regular text
+      # parsing. This is desirable to retain as much structure as possible.
+      # Otherwise, a new node is appended. 
+      if (xml2::xml_name(lead) == "text") {
+        txt <- if (where == "after") " %s" else "%s "
+        xml2::xml_set_text(lead, sprintf(txt, xml2::xml_text(lead)))
+      } else {
+        space_pos <- if (where == "after") "before" else "after"
+        sib <- xml2::xml_add_sibling(lead, "text", .where = space_pos)
+        xml2::xml_set_text(sib, " ")
+        # replace the child nodes
+        new <- xml2::xml_children(parents)
+      }
     }
   }
   if (single_node) {
