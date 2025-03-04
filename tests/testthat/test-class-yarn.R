@@ -2,7 +2,7 @@ test_that("an empty yarn object can be created", {
   y1 <- yarn$new()
   expect_s3_class(y1, "yarn")
   expect_null(y1$body)
-  expect_null(y1$yaml)
+  expect_null(y1$toml)
   expect_null(y1$ns)
   expect_null(y1$path)
 })
@@ -294,10 +294,51 @@ test_that("md_vec() will convert a query to a markdown vector", {
   )
   expect_equal(y1$md_vec(".//md:heading[@level=3]"), expected[1:4])
   expect_length(y1$md_vec(".//md:list//md:link"), 5)
-  
+
   skip_on_os("windows")
   expect_equal(y1$md_vec(".//md:heading[@level=4]"), expected[5:7])
   expect_equal(y1$md_vec(".//md:heading"), expected)
 
 })
 
+test_that("TOML is preserved", {
+
+  pathmd  <- system.file("extdata", "example-toml.md", package = "tinkr")
+  y1 <- yarn$new(pathmd)
+
+  expect_gt(length(y1$frontmatter), 0)
+  expect_equal(y1$frontmatter_format, "TOML")
+
+  path <- withr::local_tempfile()
+  y1$write(path)
+  expect_snapshot_file(path, name = "example-toml.md")
+})
+
+
+test_that("TOML is preserved", {
+
+  pathmd  <- system.file("extdata", "example-json.md", package = "tinkr")
+  y1 <- yarn$new(pathmd)
+
+  expect_gt(length(y1$frontmatter), 0)
+  expect_equal(y1$frontmatter_format, "JSON")
+
+  path <- withr::local_tempfile()
+  y1$write(path)
+  expect_snapshot_file(path, name = "example-json.md")
+
+})
+
+
+test_that("no metadata, chunk works", {
+
+  pathmd  <- system.file("extdata", "example-chunk-not-json.md", package = "tinkr")
+  y1 <- yarn$new(pathmd)
+
+  expect_equal(length(y1$frontmatter), 0)
+
+  path <- withr::local_tempfile()
+  y1$write(path)
+  expect_snapshot_file(path, name = "example-chunk-not-json.md")
+
+})

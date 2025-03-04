@@ -2,16 +2,16 @@
 % Please edit documentation in R/stylesheet.R
 \name{stylesheet}
 \alias{stylesheet}
-\title{The {tinkr} stylesheet}
+\title{The tinkr stylesheet}
 \usage{
 stylesheet()
 }
 \value{
 a single element character vector representing the path to the
-stylesheet used by {tinkr}.
+stylesheet used by tinkr.
 }
 \description{
-This function returns the path to the {tinkr} stylesheet
+This function returns the path to the tinkr stylesheet
 }
 \examples{
 tinkr::stylesheet()

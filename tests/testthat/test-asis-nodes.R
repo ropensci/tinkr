@@ -7,6 +7,15 @@ test_that("(#121) single dollar lines dont throw errors", {
   expect_equal(actual, expected)
 })
 
+test_that("(#124) french dollar lines dont throw errors", {
+  expected <- "I've only got 2$ in the bank. Feels bad, man. Feels bad to not have 2 $\n"
+  math <- commonmark::markdown_xml(expected)
+  txt <- xml2::read_xml(math)
+  expect_no_error(protxt <- protect_inline_math(txt, md_ns()))
+  actual <- to_md(list(yaml = NULL, body = protxt))
+  expect_equal(actual, expected)
+})
+
 test_that("mal-formed inline math throws an informative error", {
   patherr  <- system.file("extdata", "basic-math.md", package = "tinkr")
   me <- yarn$new(patherr, sourcepos = TRUE)

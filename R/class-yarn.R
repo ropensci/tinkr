@@ -2,7 +2,7 @@
 #'
 #' @description
 #' Wrapper around an XML representation of a Markdown document. It contains four
-#' publicly accessible slots: path, yaml, body, and ns.
+#' publicly accessible slots: path, frontmatter, body, and ns.
 #' @details
 #' This class is a fancy wrapper around the results of [tinkr::to_xml()] and
 #' has methods that make it easier to add, analyze, remove, or write elements
@@ -14,8 +14,11 @@ yarn <- R6::R6Class("yarn",
     #' @field path \[`character`\] path to file on disk
     path = NULL,
 
-    #' @field yaml \[`character`\] text block at head of file
-    yaml = NULL,
+    #' @field frontmatter \[`character`\] text block at head of file
+    frontmatter = NULL,
+
+    #' @field frontmatter_format \[`character`\] 'YAML', 'TOML' or 'JSON'
+    frontmatter_format = NULL,
 
     #' @field body \[`xml_document`\] an xml document of the (R)Markdown file.
     body = NULL,
@@ -48,7 +51,8 @@ yarn <- R6::R6Class("yarn",
         xml <- to_xml(path, encoding, sourcepos, ...)
       }
       self$path <- path
-      self$yaml <- xml$yaml
+      self$frontmatter <- xml$frontmatter
+      self$frontmatter_format <- xml$frontmatter_format
       self$body <- xml$body
       self$ns   <- tinkr::md_ns()
       private$sourcepos <- sourcepos
@@ -69,7 +73,7 @@ yarn <- R6::R6Class("yarn",
     reset = function() {
       x <- to_xml(self$path, encoding = private$encoding, sourcepos = private$sourcepos)
       self$body <- x$body
-      self$yaml <- x$yaml
+      self$frontmatter <- x$frontmatter
       invisible(self)
     },
 
@@ -117,10 +121,10 @@ yarn <- R6::R6Class("yarn",
         new_call <- capture.output(print(the_call))
         rlang::warn(
           c(
-            "!" = "In {tinkr} 0.3.0, the $show() method gains the `lines` argument as the first argument.", 
-            "i" = "To remove this warning, use the following code:", 
+            "!" = "In {tinkr} 0.3.0, the $show() method gains the `lines` argument as the first argument.",
+            "i" = "To remove this warning, use the following code:",
             " " = new_call
-          ), 
+          ),
           call. = FALSE)
       }
       show_user(private$md_lines(stylesheet = stylesheet_path)[lines])
@@ -274,7 +278,7 @@ yarn <- R6::R6Class("yarn",
       invisible(self)
     },
     #' @description Protect unescaped square braces from being escaped.
-    #' 
+    #'
     #' This is applied by default when you use `yarn$new(sourcepos = TRUE)`.
     #'
     #' @note this requires the `sourcepos` attribute to be recorded when the
@@ -287,7 +291,7 @@ yarn <- R6::R6Class("yarn",
     #' ex$protect_unescaped()$tail()
     protect_unescaped = function() {
       if (private$sourcepos) {
-        txt <- readLines(self$path)[-seq_along(self$yaml)]
+        txt <- readLines(self$path)[-seq_along(self$frontmatter)]
         self$body <- protect_unescaped(self$body, txt, self$ns)
       } else {
         message("to use the `protect_unescaped()` method, you will need to re-read your document with `yarn$new(sourcepos = TRUE)`")
@@ -307,8 +311,8 @@ yarn <- R6::R6Class("yarn",
     #' # protect curly braces
     #' ex$protect_curly()
     #' # add math and protect it
-    #' ex$add_md(c("## math\n", 
-    #'   "$c^2 = a^2 + b^2$\n", 
+    #' ex$add_md(c("## math\n",
+    #'   "$c^2 = a^2 + b^2$\n",
     #'   "$$",
     #'   "\\sum_{i}^k = x_i + 1",
     #'   "$$\n")
@@ -319,6 +323,18 @@ yarn <- R6::R6Class("yarn",
     #' ex$get_protected(c("math", "curly")) # only show the math and curly
     get_protected = function(type = NULL) {
       get_protected(self$body, type = type, self$ns)
+    }
+  ),
+  active = list(
+    #' @field yaml \[`character`\] `r lifecycle::badge("deprecated")` `frontmatter`
+    yaml = function(yml) {
+      lifecycle::deprecate_soft(
+        "0.2.1",
+        I("The yaml field of yarn objects"),
+        I("frontmatter")
+      )
+      if (!missing(yml)) self$frontmatter <- yml
+      self$frontmatter
     }
   ),
   private = list(

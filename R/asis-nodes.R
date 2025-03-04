@@ -97,11 +97,11 @@ find_broken_math <- function(math) {
 #'   "This sentence contains $I_A$ $\\frac{\\pi}{2}$ inline $\\LaTeX$ math."
 #' )
 #' txt <- xml2::read_xml(txt)
-#' cat(tinkr::to_md(list(body = txt, yaml = "")), sep = "\n")
+#' cat(tinkr::to_md(list(body = txt, frontmatter = "")), sep = "\n")
 #' ns  <- tinkr::md_ns()
 #' if (requireNamespace("withr")) {
 #' protxt <- withr::with_namespace("tinkr", protect_inline_math(txt, ns))
-#' cat(tinkr::to_md(list(body = protxt, yaml = "")), sep = "\n")
+#' cat(tinkr::to_md(list(body = protxt, frontmatter = "")), sep = "\n")
 #' }
 protect_inline_math <- function(body, ns) {
   body  <- copy_xml(body)
@@ -144,9 +144,9 @@ protect_inline_math <- function(body, ns) {
     # an error.
     le <- length(bmath[endless])
     lh <- length(bmath[headless])
-    # 2024-10-10: if the number of headless tags is zero, then we are dealing
-    # with currency. See issue #121 
-    if (lh == 0) {
+    # 2024-10-10: if the number of headless OR endless tags is zero, then we
+    # are dealing with currency. See issue #121 and #124
+    if (lh == 0 || le == 0) {
       return(copy_xml(body))
     }
     if (le != lh) {
@@ -252,9 +252,9 @@ make_text_nodes <- function(txt) {
 
 find_block_math <- function(body, ns) {
   # https://github.com/ropensci/tinkr/issues/113#issue-2302065427
-  find_between(body, 
-    ns, 
-    pattern = "md:text[contains(text(), '$$')]", 
+  find_between(body,
+    ns,
+    pattern = "md:text[contains(text(), '$$')]",
     include = TRUE
   )
 }
@@ -368,7 +368,7 @@ protect_tickbox <- function(body, ns) {
 #' md <- yarn$new(f, sourcepos = TRUE, unescaped = FALSE)
 #' md$show()
 #' if (requireNamespace("withr")) {
-#' lines <- readLines(f)[-length(md$yaml)]
+#' lines <- readLines(f)[-length(md$frontmatter)]
 #' lnks <- withr::with_namespace("tinkr",
 #'   protect_unescaped(body = md$body, txt = lines))
 #' md$body <- lnks
