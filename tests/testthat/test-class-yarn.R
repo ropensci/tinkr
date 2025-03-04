@@ -231,6 +231,17 @@ test_that("markdown can be prepended", {
 })
 
 
+test_that("inline markdown can be prepended", {
+  con <- textConnection("how are you?")
+  withr::defer(close(con))
+  tst <- tinkr::yarn$new(con)
+  tst$prepend_md("_hello_?", ".//md:text")
+  # should be "*hello*? how are you?"
+  expect_equal(tst$show(), "*hello*? how are you?")
+  #> *hello *?how are you?
+
+})
+
 test_that("an error happens when you try to append with a number", {
   path <- system.file("extdata", "example2.Rmd", package = "tinkr")
   ex <- tinkr::yarn$new(path)
