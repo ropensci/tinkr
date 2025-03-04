@@ -106,6 +106,27 @@ ex$write(tmp)
 readLines(tmp, n = 20)
 
 ## ------------------------------------------------
+## Method `yarn$append_md`
+## ------------------------------------------------
+
+path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+# append a note after the first heading
+
+txt <- c("> Hello from *tinkr*!", ">", ">  :heart: R")
+ex$append_md(txt, ".//md:heading[1]")$head(20)
+
+## ------------------------------------------------
+## Method `yarn$prepend_md`
+## ------------------------------------------------
+
+path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+
+# prepend a table description to the birds table
+ex$prepend_md("Table: BIRDS, NERDS", ".//md:table[1]")$tail(20)
+
+## ------------------------------------------------
 ## Method `yarn$protect_math`
 ## ------------------------------------------------
 
@@ -189,6 +210,8 @@ commonmark.}
 \item \href{#method-yarn-tail}{\code{yarn$tail()}}
 \item \href{#method-yarn-md_vec}{\code{yarn$md_vec()}}
 \item \href{#method-yarn-add_md}{\code{yarn$add_md()}}
+\item \href{#method-yarn-append_md}{\code{yarn$append_md()}}
+\item \href{#method-yarn-prepend_md}{\code{yarn$prepend_md()}}
 \item \href{#method-yarn-protect_math}{\code{yarn$protect_math()}}
 \item \href{#method-yarn-protect_curly}{\code{yarn$protect_curly()}}
 \item \href{#method-yarn-protect_unescaped}{\code{yarn$protect_unescaped()}}
@@ -457,6 +480,101 @@ xml2::xml_find_all(ex$body, "md:list", ex$ns)
 tmp <- tempfile()
 ex$write(tmp)
 readLines(tmp, n = 20)
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-yarn-append_md"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-append_md}{}}}
+\subsection{Method \code{append_md()}}{
+append abritrarily markdown to a node or set of nodes
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$append_md(md, nodes = NULL, space = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{md}}{a string of markdown formatted text.}
+
+\item{\code{nodes}}{an XPath expression that evaulates to object of class
+\code{xml_node} or \code{xml_nodeset} that are all either inline or block nodes
+(never both). The XPath expression is passed to \code{\link[xml2:xml_find_all]{xml2::xml_find_all()}}.
+If you want to append a specific node, you can pass that node to this
+parameter.}
+
+\item{\code{space}}{if \code{TRUE}, inline nodes will have a space inserted before
+they are appended.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+this is similar to the \code{add_md()} method except that it can do
+the following:
+\enumerate{
+\item append content after a \emph{specific} node or set of nodes
+\item append content to multiple places in the document
+}
+}
+
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+# append a note after the first heading
+
+txt <- c("> Hello from *tinkr*!", ">", ">  :heart: R")
+ex$append_md(txt, ".//md:heading[1]")$head(20)
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-yarn-prepend_md"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-prepend_md}{}}}
+\subsection{Method \code{prepend_md()}}{
+prepend abritrarily markdown to a node or set of nodes
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$prepend_md(md, nodes = NULL, space = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{md}}{a string of markdown formatted text.}
+
+\item{\code{nodes}}{an XPath expression that evaulates to object of class
+\code{xml_node} or \code{xml_nodeset} that are all either inline or block nodes
+(never both). The XPath expression is passed to \code{\link[xml2:xml_find_all]{xml2::xml_find_all()}}.
+If you want to append a specific node, you can pass that node to this
+parameter.}
+
+\item{\code{space}}{if \code{TRUE}, inline nodes will have a space inserted before
+they are prepended.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+this is similar to the \code{add_md()} method except that it can do
+the following:
+\enumerate{
+\item prepend content after a \emph{specific} node or set of nodes
+\item prepend content to multiple places in the document
+}
+}
+
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "example2.Rmd", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+
+# prepend a table description to the birds table
+ex$prepend_md("Table: BIRDS, NERDS", ".//md:table[1]")$tail(20)
 }
 \if{html}{\out{</div>}}
 
