@@ -80,3 +80,59 @@ protect_curly <- function(body, ns = md_ns()) {
   }
   copy_xml(body)
 }
+
+#' Protect fences of Pandoc fences divs for further processing
+#'
+#' @inheritParams protect_math
+#' @return a copy of the modified XML object
+#' @details Commonmark will render text such as `::: footer`
+#' as normal text which might be problematic if trying to extract
+#' real text from the XML.
+#'
+#' If sending the XML to, say, a translation API that allows some tags
+#' to be ignored, you could first transform the text tags with the
+#' attribute `fences` to `fences` tags, and then transform them back
+#' to text tags before using `to_md()`.
+#'
+#' @note this function is also a method in the [tinkr::yarn] object.
+#'
+#' @export
+#' @examples
+#' m <- tinkr::to_xml(system.file("extdata", "fenced-divs.md", package = "tinkr"))
+#' xml2::xml_child(m$body)
+#' m$body <- protect_fences(m$body)
+#' xml2::xml_child(m$body)
+protect_fences <- function(body, ns = md_ns()) {
+  body <- copy_xml(body)
+  fences <- find_fences(body, ns)
+  new_nodes <- purrr::map(fences, digest_fence, ns = ns)
+  copy_xml(body)
+}
+
+find_fences <- function(body, ns) {
+  i <- ".//d1:text[starts-with(text(),':::')]"
+  fences <- xml2::xml_find_all(body, i)
+  attr_texts <- xml2::xml_text(fences)
+  no_closing <- grepl(" ", attr_texts)
+  if (any(no_closing)) {
+    close_xpath <- "self::*/following-sibling::md:text[contains(text(), '^:*$')]"
+    for (not_closed in fences[no_closing]) {
+      closing <- xml2::xml_find_all(
+        not_closed,
+        glue::glue("./{close_xpath}"),
+        ns
+      )
+      xml2::xml_text(not_closed) <- paste(
+        xml2::xml_text(not_closed),
+        xml2::xml_text(closing),
+        sep = "\n"
+      )
+      xml2::xml_remove(closing)
+    }
+  }
+  fences
+}
+
+digest_fence <- function(fence, ns) {
+  xml2::xml_attr(fence, "fence") <- 'true'
+}

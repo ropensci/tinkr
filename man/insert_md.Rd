@@ -7,7 +7,7 @@
 insert_md(body, md, nodes, where = "after", space = TRUE)
 }
 \arguments{
-\item{body}{an XML object generated via {tinkr}}
+\item{body}{an XML object generated via tinkr}
 
 \item{md}{markdown text to insert}
 

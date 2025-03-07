@@ -28,7 +28,10 @@
   A new field called `frontmatter_format` ("YAML", "TOML", or "JSON")
   contains the format of the frontmatter.
   (issue: #126, @maelle)
-  
+  * New `protect_fences()` function will add a `fence='true'` attribute to fences of Pandoc fenced divs to allow parsing of the XML for sending to
+  external APIs. 
+* New `$protect_fences()` method implements `protect_fences()` on yarn objects
+
 ## NEW IMPORTS
 
 * We now import {rlang} for error handling. Because we already import {purrr},

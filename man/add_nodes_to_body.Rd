@@ -7,7 +7,7 @@
 add_nodes_to_body(body, nodes, where = 0L)
 }
 \arguments{
-\item{body}{an XML object generated via {tinkr}}
+\item{body}{an XML object generated via tinkr}
 
 \item{nodes}{an object of \code{xml_node} or list of nodes}
 
