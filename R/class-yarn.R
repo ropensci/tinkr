@@ -8,7 +8,8 @@
 #' has methods that make it easier to add, analyze, remove, or write elements
 #' of your markdown document.
 #' @export
-yarn <- R6::R6Class("yarn",
+yarn <- R6::R6Class(
+  "yarn",
   portable = TRUE,
   public = list(
     #' @field path \[`character`\] path to file on disk
@@ -44,7 +45,12 @@ yarn <- R6::R6Class("yarn",
     #' path2 <- system.file("extdata", "example2.Rmd", package = "tinkr")
     #' ex2 <- tinkr::yarn$new(path2)
     #' ex2
-    initialize = function(path = NULL, encoding = "UTF-8", sourcepos = FALSE, ...) {
+    initialize = function(
+      path = NULL,
+      encoding = "UTF-8",
+      sourcepos = FALSE,
+      ...
+    ) {
       if (is.null(path)) {
         return(self)
       } else {
@@ -54,9 +60,9 @@ yarn <- R6::R6Class("yarn",
       self$frontmatter <- xml$frontmatter
       self$frontmatter_format <- xml$frontmatter_format
       self$body <- xml$body
-      self$ns   <- tinkr::md_ns()
+      self$ns <- tinkr::md_ns()
       private$sourcepos <- sourcepos
-      private$encoding  <- encoding
+      private$encoding <- encoding
       invisible(self)
     },
 
@@ -71,7 +77,11 @@ yarn <- R6::R6Class("yarn",
     #' ex1$reset()
     #' ex1$body
     reset = function() {
-      x <- to_xml(self$path, encoding = private$encoding, sourcepos = private$sourcepos)
+      x <- to_xml(
+        self$path,
+        encoding = private$encoding,
+        sourcepos = private$sourcepos
+      )
       self$body <- x$body
       self$frontmatter <- x$frontmatter
       invisible(self)
@@ -90,7 +100,7 @@ yarn <- R6::R6Class("yarn",
     #' ex1$write(tmp)
     #' head(readLines(tmp)) # now a markdown file
     #' unlink(tmp)
-    write = function(path = NULL, stylesheet_path = stylesheet()){
+    write = function(path = NULL, stylesheet_path = stylesheet()) {
       if (is.null(path)) {
         stop("Please provide a file path", call. = FALSE)
       }
@@ -125,7 +135,8 @@ yarn <- R6::R6Class("yarn",
             "i" = "To remove this warning, use the following code:",
             " " = new_call
           ),
-          call. = FALSE)
+          call. = FALSE
+        )
       }
       show_user(private$md_lines(stylesheet = stylesheet_path)[lines])
     },
@@ -229,7 +240,13 @@ yarn <- R6::R6Class("yarn",
     #' txt <- c("> Hello from *tinkr*!", ">", ">  :heart: R")
     #' ex$append_md(txt, ".//md:heading[1]")$head(20)
     append_md = function(md, nodes = NULL, space = TRUE) {
-      self$body <- insert_md(self$body, md, nodes, where = "after", space = space)
+      self$body <- insert_md(
+        self$body,
+        md,
+        nodes,
+        where = "after",
+        space = space
+      )
       invisible(self)
     },
     #' @description prepend arbitrary markdown to a node or set of nodes
@@ -253,7 +270,13 @@ yarn <- R6::R6Class("yarn",
     #' # prepend a table description to the birds table
     #' ex$prepend_md("Table: BIRDS, NERDS", ".//md:table[1]")$tail(20)
     prepend_md = function(md, nodes = NULL, space = TRUE) {
-      self$body <- insert_md(self$body, md, nodes, where = "before", space = space)
+      self$body <- insert_md(
+        self$body,
+        md,
+        nodes,
+        where = "before",
+        space = space
+      )
       invisible(self)
     },
     #' @description Protect math blocks from being escaped
@@ -277,6 +300,16 @@ yarn <- R6::R6Class("yarn",
       self$body <- protect_curly(self$body, self$ns)
       invisible(self)
     },
+    #' @description Protect fences of Pandoc fenced divs `:::`
+    #'
+    #' @examples
+    #' path <- system.file("extdata", "fenced-divs.md", package = "tinkr")
+    #' ex <- tinkr::yarn$new(path)
+    #' ex$protect_fences()$head()
+    protect_fences = function() {
+      self$body <- protect_fences(self$body, self$ns)
+      invisible(self)
+    },
     #' @description Protect unescaped square braces from being escaped.
     #'
     #' This is applied by default when you use `yarn$new(sourcepos = TRUE)`.
@@ -294,7 +327,9 @@ yarn <- R6::R6Class("yarn",
         txt <- readLines(self$path)[-seq_along(self$frontmatter)]
         self$body <- protect_unescaped(self$body, txt, self$ns)
       } else {
-        message("to use the `protect_unescaped()` method, you will need to re-read your document with `yarn$new(sourcepos = TRUE)`")
+        message(
+          "to use the `protect_unescaped()` method, you will need to re-read your document with `yarn$new(sourcepos = TRUE)`"
+        )
       }
       invisible(self)
     },
@@ -303,6 +338,7 @@ yarn <- R6::R6Class("yarn",
     #'   Defaults to `NULL`, which includes all protected nodes:
     #'   - math: via the [protect_math()] function
     #'   - curly: via the `protect_curly()` function
+    #'   - fence: via the `protect_fences()` function
     #'   - unescaped: via the `protect_unescaped()` function
     #'
     #' @examples
@@ -310,6 +346,12 @@ yarn <- R6::R6Class("yarn",
     #' ex <- tinkr::yarn$new(path, sourcepos = TRUE)
     #' # protect curly braces
     #' ex$protect_curly()
+    #' # add fenced divs and protect then
+    #' ex$add_md(c("::: alert\n",
+    #'   "blabla",
+    #'   ":::")
+    #' )
+    #' ex$protect_fences()
     #' # add math and protect it
     #' ex$add_md(c("## math\n",
     #'   "$c^2 = a^2 + b^2$\n",
@@ -339,7 +381,7 @@ yarn <- R6::R6Class("yarn",
   ),
   private = list(
     sourcepos = FALSE,
-    encoding  = "UTF-8",
+    encoding = "UTF-8",
     # converts the document to markdown and separates the output into lines
     md_lines = function(path = NULL, stylesheet = NULL) {
       print_lines(self, path = path, stylesheet = stylesheet)

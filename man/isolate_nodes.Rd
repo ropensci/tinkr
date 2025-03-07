@@ -41,7 +41,7 @@ as a list of paragraphs.
 }
 }
 \examples{
-\dontshow{if (isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))) withAutoprint(\{ # examplesIf}
 path <- system.file("extdata", "show-example.md", package = "tinkr")
 y <- tinkr::yarn$new(path, sourcepos = TRUE)
 y$protect_math()$protect_curly()
