@@ -64,8 +64,7 @@
       <!DOCTYPE document SYSTEM "CommonMark.dtd">
       <document xmlns="http://commonmark.org/xml/1.0" sourcepos="1:1-16:18">
         <paragraph sourcepos="2:1-3:20">
-          <text sourcepos="2:1-2:25" xml:space="preserve" fence="true">::::: {#special .sidebar}
-      </text>
+          <text sourcepos="2:1-2:25" xml:space="preserve" fence="true">::::: {#special .sidebar}</text>
           <softbreak/>
           <text sourcepos="3:1-3:20" xml:space="preserve">Here is a paragraph.</text>
         </paragraph>
@@ -78,14 +77,12 @@
           <text sourcepos="8:1-8:94" xml:space="preserve">Fenced divs can be nested. Opening fences are distinguished because they must have attributes:</text>
         </paragraph>
         <paragraph sourcepos="10:1-11:18">
-          <text sourcepos="10:1-10:18" xml:space="preserve" fence="true">::: Warning ::::::
-      </text>
+          <text sourcepos="10:1-10:18" xml:space="preserve" fence="true">::: Warning ::::::</text>
           <softbreak/>
           <text sourcepos="11:1-11:18" xml:space="preserve">This is a warning.</text>
         </paragraph>
         <paragraph sourcepos="13:1-16:18">
-          <text sourcepos="13:1-13:10" xml:space="preserve" fence="true">::: Danger
-      </text>
+          <text sourcepos="13:1-13:10" xml:space="preserve" fence="true">::: Danger</text>
           <softbreak/>
           <text sourcepos="14:1-14:35" xml:space="preserve">This is a warning within a warning.</text>
           <softbreak/>
