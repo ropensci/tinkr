@@ -110,26 +110,9 @@ protect_fences <- function(body, ns = md_ns()) {
 }
 
 find_fences <- function(body, ns) {
-  i <- ".//d1:text[starts-with(text(),':::')]"
-  fences <- xml2::xml_find_all(body, i)
+  i <- ".//md:text[starts-with(text(),':::')]"
+  fences <- xml2::xml_find_all(body, i, ns = ns)
   attr_texts <- xml2::xml_text(fences)
-  no_closing <- grepl(" ", attr_texts)
-  if (any(no_closing)) {
-    close_xpath <- "self::*/following-sibling::md:text[contains(text(), '^:*$')]"
-    for (not_closed in fences[no_closing]) {
-      closing <- xml2::xml_find_all(
-        not_closed,
-        glue::glue("./{close_xpath}"),
-        ns
-      )
-      xml2::xml_text(not_closed) <- paste(
-        xml2::xml_text(not_closed),
-        xml2::xml_text(closing),
-        sep = "\n"
-      )
-      xml2::xml_remove(closing)
-    }
-  }
   fences
 }
 
