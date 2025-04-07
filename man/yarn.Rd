@@ -144,6 +144,14 @@ ex <- tinkr::yarn$new(path)
 ex$protect_curly()$head()
 
 ## ------------------------------------------------
+## Method `yarn$protect_fences`
+## ------------------------------------------------
+
+path <- system.file("extdata", "fenced-divs.md", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+ex$protect_fences()$head()
+
+## ------------------------------------------------
 ## Method `yarn$protect_unescaped`
 ## ------------------------------------------------
 
@@ -160,6 +168,12 @@ path <- system.file("extdata", "basic-curly.md", package = "tinkr")
 ex <- tinkr::yarn$new(path, sourcepos = TRUE)
 # protect curly braces
 ex$protect_curly()
+# add fenced divs and protect then
+ex$add_md(c("::: alert\n",
+  "blabla",
+  ":::")
+)
+ex$protect_fences()
 # add math and protect it
 ex$add_md(c("## math\n",
   "$c^2 = a^2 + b^2$\n",
@@ -214,6 +228,7 @@ commonmark.}
 \item \href{#method-yarn-prepend_md}{\code{yarn$prepend_md()}}
 \item \href{#method-yarn-protect_math}{\code{yarn$protect_math()}}
 \item \href{#method-yarn-protect_curly}{\code{yarn$protect_curly()}}
+\item \href{#method-yarn-protect_fences}{\code{yarn$protect_fences()}}
 \item \href{#method-yarn-protect_unescaped}{\code{yarn$protect_unescaped()}}
 \item \href{#method-yarn-get_protected}{\code{yarn$get_protected()}}
 \item \href{#method-yarn-clone}{\code{yarn$clone()}}
@@ -490,7 +505,7 @@ readLines(tmp, n = 20)
 \if{html}{\out{<a id="method-yarn-append_md"></a>}}
 \if{latex}{\out{\hypertarget{method-yarn-append_md}{}}}
 \subsection{Method \code{append_md()}}{
-append abritrarily markdown to a node or set of nodes
+append abritrary markdown to a node or set of nodes
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{yarn$append_md(md, nodes = NULL, space = TRUE)}\if{html}{\out{</div>}}
 }
@@ -538,7 +553,7 @@ ex$append_md(txt, ".//md:heading[1]")$head(20)
 \if{html}{\out{<a id="method-yarn-prepend_md"></a>}}
 \if{latex}{\out{\hypertarget{method-yarn-prepend_md}{}}}
 \subsection{Method \code{prepend_md()}}{
-prepend abritrarily markdown to a node or set of nodes
+prepend arbitrary markdown to a node or set of nodes
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{yarn$prepend_md(md, nodes = NULL, space = TRUE)}\if{html}{\out{</div>}}
 }
@@ -623,6 +638,26 @@ ex$protect_curly()$head()
 
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-yarn-protect_fences"></a>}}
+\if{latex}{\out{\hypertarget{method-yarn-protect_fences}{}}}
+\subsection{Method \code{protect_fences()}}{
+Protect fences of Pandoc fenced divs \code{:::}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{yarn$protect_fences()}\if{html}{\out{</div>}}
+}
+
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{path <- system.file("extdata", "fenced-divs.md", package = "tinkr")
+ex <- tinkr::yarn$new(path)
+ex$protect_fences()$head()
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-yarn-protect_unescaped"></a>}}
 \if{latex}{\out{\hypertarget{method-yarn-protect_unescaped}{}}}
 \subsection{Method \code{protect_unescaped()}}{
@@ -662,6 +697,7 @@ Defaults to \code{NULL}, which includes all protected nodes:
 \itemize{
 \item math: via the \code{\link[=protect_math]{protect_math()}} function
 \item curly: via the \code{protect_curly()} function
+\item fence: via the \code{protect_fences()} function
 \item unescaped: via the \code{protect_unescaped()} function
 }}
 }
@@ -673,6 +709,12 @@ Defaults to \code{NULL}, which includes all protected nodes:
 ex <- tinkr::yarn$new(path, sourcepos = TRUE)
 # protect curly braces
 ex$protect_curly()
+# add fenced divs and protect then
+ex$add_md(c("::: alert\n",
+  "blabla",
+  ":::")
+)
+ex$protect_fences()
 # add math and protect it
 ex$add_md(c("## math\n",
   "$c^2 = a^2 + b^2$\n",
