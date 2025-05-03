@@ -59,3 +59,4 @@ Roxygen: list(markdown = TRUE, roclets = c("collate", "rd", "namespace", "devtag
 RoxygenNote: 7.3.2.9000
 VignetteBuilder: knitr
 Config/Needs/build: moodymudskipper/devtag
+Language: en-US
