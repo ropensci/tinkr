@@ -17,8 +17,6 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![R build status](https://github.com/ropensci/tinkr/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/tinkr/actions)
-[![Coverage status](https://codecov.io/gh/ropensci/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropensci/tinkr?branch=master)
 [![R-CMD-check](https://github.com/ropensci/tinkr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/tinkr/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/ropensci/tinkr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ropensci/tinkr?branch=main)
 <!-- badges: end -->

@@ -1,6 +1,6 @@
 This is a basic example. 
 We read "example1.md", change all headers 3 to headers 1, and save it back to md. 
-Because the xml2 objects are [passed by reference](https://blog.penjee.com/wp-content/uploads/2015/02/pass-by-reference-vs-pass-by-value-animation.gif), manipulating them does not require reassignment. 
+Because the xml2 objects are [passed by reference](https://www.mathwarehouse.com/programming/images/pass-by-reference-vs-pass-by-value-animation.gif), manipulating them does not require reassignment. 
 
 ```{r}
 library("magrittr")

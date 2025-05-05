@@ -8,10 +8,6 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![R build
-status](https://github.com/ropensci/tinkr/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/tinkr/actions)
-[![Coverage
-status](https://codecov.io/gh/ropensci/tinkr/branch/master/graph/badge.svg)](https://codecov.io/github/ropensci/tinkr?branch=master)
 [![R-CMD-check](https://github.com/ropensci/tinkr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/tinkr/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/ropensci/tinkr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ropensci/tinkr?branch=main)
@@ -41,15 +37,20 @@ Possible applications are R scripts using tinkr, and XPath via xml2 to:
 
 Only the body of the (R) Markdown file is cast to XML, using the
 Commonmark specification via the [`commonmark`
-package](https://github.com/r-lib/commonmark). YAML metadata could be
-edited using the [`yaml`
-package](https://cran.r-project.org/package=yaml), which is not the goal
+package](https://github.com/r-lib/commonmark). Frontmatter metadata can
+be stored in the YAML, TOML or JSON format. YAML-formatted metadata
+could be edited using the [`yaml`
+package](https://cran.r-project.org/package=yaml), JSON-formatted
+metadata could be edited using the [`jsonlite`
+package](https://jeroen.r-universe.dev/jsonlite). which is not the goal
 of this package.
 
 We have created an [R6 class](https://r6.r-lib.org/) object called
-**yarn** to store the representation of both the YAML and the XML data,
-both of which are accessible through the `$body` and `$yaml` elements.
-In addition, the namespace prefix is set to “md” in the `$ns` element.
+**yarn** to store the representation of both the frontmatter and the XML
+data, both of which are accessible through the `$body` and
+`$frontmatter` elements. The field called `$frontmatter_format` contains
+the format of the metadata (YAML, TOML, or JSON). In addition, the
+namespace prefix is set to “md” in the `$ns` element.
 
 You can perform XPath queries using the `$body` and `$ns` elements:
 
@@ -96,7 +97,7 @@ install.packages("tinkr", repos = "https://ropensci.r-universe.dev")
 This is a basic example. We read “example1.md”, change all headers 3 to
 headers 1, and save it back to md. Because the xml2 objects are [passed
 by
-reference](https://blog.penjee.com/wp-content/uploads/2015/02/pass-by-reference-vs-pass-by-value-animation.gif),
+reference](https://www.mathwarehouse.com/programming/images/pass-by-reference-vs-pass-by-value-animation.gif),
 manipulating them does not require reassignment.
 
 ``` r

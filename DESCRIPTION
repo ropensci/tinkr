@@ -1,6 +1,6 @@
 Package: tinkr
 Title: Cast '(R)Markdown' Files to 'XML' and Back Again
-Version: 0.2.0.9002
+Version: 0.3.0
 Authors@R: 
     c(person(given = "Maëlle",
              family = "Salmon",
@@ -59,3 +59,4 @@ Roxygen: list(markdown = TRUE, roclets = c("collate", "rd", "namespace", "devtag
 RoxygenNote: 7.3.2.9000
 VignetteBuilder: knitr
 Config/Needs/build: moodymudskipper/devtag
+Language: en-US
