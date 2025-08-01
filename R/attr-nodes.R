@@ -105,15 +105,13 @@ protect_curly <- function(body, ns = md_ns()) {
 protect_fences <- function(body, ns = md_ns()) {
   body <- copy_xml(body)
   fences <- find_fences(body, ns)
-  new_nodes <- purrr::map(fences, digest_fence, ns = ns)
-  copy_xml(body)
+  purrr::map(fences, digest_fence, ns = ns)
+  body
 }
 
 find_fences <- function(body, ns) {
   i <- ".//md:text[starts-with(text(),':::')]"
-  fences <- xml2::xml_find_all(body, i, ns = ns)
-  attr_texts <- xml2::xml_text(fences)
-  fences
+  xml2::xml_find_all(body, i, ns = ns)
 }
 
 digest_fence <- function(fence, ns) {
