@@ -153,7 +153,7 @@ protect_inline_math <- function(body, ns) {
       unbalanced_math_error(bmath, endless, headless, le, lh)
     }
     # assign sequential tags to the pairs of inline math elements
-    tags <- seq(length(bmath[endless]))
+    tags <- seq_along(bmath[endless])
     xml2::xml_set_attr(bmath[endless], "latex-pair", tags)
     xml2::xml_set_attr(bmath[headless], "latex-pair", tags)
     for (i in tags) {

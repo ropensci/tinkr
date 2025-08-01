@@ -71,8 +71,8 @@ digest_curly <- function(curly, ns) {
 #' m$body <- protect_curly(m$body)
 #' xml2::xml_child(m$body)
 protect_curly <- function(body, ns = md_ns()) {
-  body  <- copy_xml(body)
-  curly  <- find_curly(body, ns)
+  body <- copy_xml(body)
+  curly <- find_curly(body, ns)
   new_nodes <- purrr::map(curly, digest_curly, ns = ns)
   # since we split up the nodes, we have to do this node by node
   for (i in seq(new_nodes)) {
@@ -105,17 +105,16 @@ protect_curly <- function(body, ns = md_ns()) {
 protect_fences <- function(body, ns = md_ns()) {
   body <- copy_xml(body)
   fences <- find_fences(body, ns)
-  new_nodes <- purrr::map(fences, digest_fence, ns = ns)
-  copy_xml(body)
+  purrr::map(fences, digest_fence, ns = ns)
+  body
 }
 
 find_fences <- function(body, ns) {
   i <- ".//md:text[starts-with(text(),':::')]"
-  fences <- xml2::xml_find_all(body, i, ns = ns)
-  attr_texts <- xml2::xml_text(fences)
-  fences
+  xml2::xml_find_all(body, i, ns = ns)
 }
 
 digest_fence <- function(fence, ns) {
-  xml2::xml_attr(fence, "fence") <- 'true'
+  xml2::xml_attr(fence, "fence") <- "true"
 }
+
