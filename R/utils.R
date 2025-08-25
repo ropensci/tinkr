@@ -1,12 +1,15 @@
 show_user <- function(out, force = FALSE) {
-  if (force || !identical(Sys.getenv("TESTTHAT"), "true")) cat(out, sep = "\n")
+  if (force || !identical(Sys.getenv("TESTTHAT"), "true")) {
+    cat(out, sep = "\n")
+  }
   invisible(out)
 }
 
 unbalanced_math_error <- function(bmath, endless, headless, le, lh) {
   no_end <- xml2::xml_text(bmath[endless])
   no_beginning <- xml2::xml_text(bmath[headless])
-  msg <- glue::glue("
+  msg <- glue::glue(
+    "
     Inline math delimiters are not balanced.
 
     HINT: If you are writing BASIC code, make sure you wrap variable
@@ -27,12 +30,17 @@ unbalanced_math_error <- function(bmath, endless, headless, le, lh) {
 split_thing_body = function(x, regex, regex2 = regex) {
   i = c(grep(regex, x), grep(regex2, x))
   n = length(x)
-  res = if (n < 2 || length(i) < 2 || (i[1] > 1 && !is_blank(x[seq(i[1] - 1)]))) {
+  res = if (
+    n < 2 || length(i) < 2 || (i[1] > 1 && !is_blank(x[seq(i[1] - 1)]))
+  ) {
     list(frontmatter = character(), body = x)
-  } else list(
-    frontmatter = x[i[1]:i[2]], frontmatter_range = i[1:2],
-    body = if (i[2] == n) character() else x[(i[2] + 1):n]
-  )
+  } else {
+    list(
+      frontmatter = x[i[1]:i[2]],
+      frontmatter_range = i[1:2],
+      body = if (i[2] == n) character() else x[(i[2] + 1):n]
+    )
+  }
 
   res
 }
@@ -67,7 +75,6 @@ split_frontmatter_body <- function(x) {
 # from knitr via namer
 # https://github.com/lockedata/namer/blob/2d88c5cb200724f775631946fc8e08903ff110de/R/utils.R#L3
 transform_params <- function(params) {
-
   # Step 1: parse the parameters and their labels into a list
   params_list <- try(parse_params(params), silent = TRUE)
 
@@ -78,6 +85,12 @@ transform_params <- function(params) {
 
   label <- parse_label(params_list[[1]])
   result <- c(label, params_list[-1])
+
+  ## Step 1': if unnamed param it can be the name
+  if (!nzchar(result[["name"]]) && !nzchar(names(result)[3])) {
+    result[["name"]] <- trimws(result[[3]])
+    result <- result[-3]
+  }
 
   # Step 2: find the parameters that are characters because we need to add
   # quotes around them (as all parameters are coerced as characters)
@@ -92,7 +105,6 @@ transform_params <- function(params) {
   result[needs_quoting] <- shQuote(result[needs_quoting], type = "cmd")
 
   result
-
 }
 
 parse_params <- function(params) {
@@ -100,8 +112,7 @@ parse_params <- function(params) {
 }
 
 parse_label <- function(label) {
-
-  language_name <- str_replace(label, " ", "\\/")
+  language_name <- str_replace(label, "[, ]", "\\/")
   language_name <- str_split(language_name, "\\/")
 
   if (length(language_name) == 1) {
