@@ -15,3 +15,13 @@
       ## [1] 522
       ```
 
+# list subitems keep their 4 spaces
+
+    Code
+      md
+    Output
+      [[1]]
+      [1] "1. My list item"      "   "                  "   - First sub-item" 
+      [4] "   - Second sub-item"
+      
+
