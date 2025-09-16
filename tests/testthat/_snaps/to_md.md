@@ -33,7 +33,7 @@
       [1] "- My list item"      "  - First sub-item"  "  - Second sub-item"
       
 
-# list subitems not preceded by empty line
+# list subitems keep empty line
 
     Code
       md

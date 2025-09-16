@@ -260,10 +260,10 @@ test_that("list subitems keep their 2 spaces (unordered)", {
 })
 
 
-test_that("list subitems not preceded by empty line", {
+test_that("list subitems keep empty line", {
   input <- c(
     "- My list item",
-    "", # will go away
+    "",
     "   - First sub-item",
     "   - Second sub-item",
     ""
