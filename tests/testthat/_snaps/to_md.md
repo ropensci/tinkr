@@ -43,3 +43,13 @@
       [4] "  - Second sub-item"
       
 
+---
+
+    Code
+      md
+    Output
+      [[1]]
+      [1] "1. My list item"      "   "                  "   - First sub-item" 
+      [4] "   - Second sub-item"
+      
+

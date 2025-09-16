@@ -275,3 +275,20 @@ test_that("list subitems keep empty line", {
   md <- strsplit(md, split = "\n")
   expect_snapshot(md)
 })
+
+
+test_that("list subitems keep empty line", {
+  input <- c(
+    "1. My list item",
+    "",
+    "   - First sub-item",
+    "   - Second sub-item",
+    ""
+  )
+  tmp <- withr::local_tempfile()
+  writeLines(input, tmp)
+  xml <- to_xml(tmp)
+  md <- to_md(xml)
+  md <- strsplit(md, split = "\n")
+  expect_snapshot(md)
+})
