@@ -229,12 +229,43 @@ test_that("(#59) Bare links are not transformed to markdown links", {
   expect_identical(expected, md)
 })
 
-test_that("list subitems keep their 4 spaces", {
+test_that("list subitems keep their 3 spaces (ordered)", {
   input <- c(
     "1. My list item",
-    "",
-    "    - First sub-item",
-    "    - Second sub-item",
+    "   - First sub-item",
+    "   - Second sub-item",
+    ""
+  )
+  tmp <- withr::local_tempfile()
+  writeLines(input, tmp)
+  xml <- to_xml(tmp)
+  md <- to_md(xml)
+  md <- strsplit(md, split = "\n")
+  expect_snapshot(md)
+})
+
+test_that("list subitems keep their 2 spaces (unordered)", {
+  input <- c(
+    "- My list item",
+    "   - First sub-item",
+    "   - Second sub-item",
+    ""
+  )
+  tmp <- withr::local_tempfile()
+  writeLines(input, tmp)
+  xml <- to_xml(tmp)
+  md <- to_md(xml)
+  md <- strsplit(md, split = "\n")
+  expect_snapshot(md)
+})
+
+
+test_that("list subitems not preceded by empty line", {
+  input <- c(
+    "- My list item",
+    "", # will go away
+    "   - First sub-item",
+    "   - Second sub-item",
     ""
   )
   tmp <- withr::local_tempfile()
