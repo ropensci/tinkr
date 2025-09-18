@@ -85,37 +85,6 @@
       <xsl:apply-templates select="md:*"/>
     </xsl:template>
 
-<xsl:template match="md:item" mode="indent">
-  <xsl:variable name="list-ancestors" select="count(ancestor::md:list)"/>
-  <xsl:choose>
-    <xsl:when test="../@type = 'bullet' and $list-ancestors > 1">
-      <xsl:choose>
-        <xsl:when test="ancestor::md:list[2]/@type = 'ordered'">
-          <xsl:text>   </xsl:text> <!-- 3 spaces when ancestor is ordered -->
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:text>  </xsl:text> <!-- 2 spaces when ancestor is bullet -->
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:when>
-    <xsl:when test="../@type = 'bullet'">
-      <xsl:text>  </xsl:text> <!-- 2 spaces for top-level bullet items -->
-    </xsl:when>
-    <xsl:when test="../@type = 'ordered' and $list-ancestors > 1">
-      <xsl:choose>
-        <xsl:when test="ancestor::md:list[2]/@type = 'ordered'">
-          <xsl:text>    </xsl:text> <!-- 4 spaces when ancestor is ordered -->
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:text>   </xsl:text> <!-- 3 spaces when ancestor is bullet -->
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:when>
-    <xsl:when test="../@type = 'ordered'">
-      <xsl:text>   </xsl:text> <!-- 3 spaces for top-level ordered items -->
-    </xsl:when>
-  </xsl:choose>
-</xsl:template>
 
 
     <!-- Table -->
