@@ -85,9 +85,6 @@
       <xsl:apply-templates select="md:*"/>
     </xsl:template>
 
-    <xsl:template match="md:item" mode="indent">
-      <xsl:text>  </xsl:text>
-    </xsl:template>
 
 
     <!-- Table -->
