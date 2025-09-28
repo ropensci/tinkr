@@ -17,7 +17,7 @@ test_that("(#124) french dollar lines dont throw errors", {
 })
 
 test_that("mal-formed inline math throws an informative error", {
-  patherr  <- system.file("extdata", "basic-math.md", package = "tinkr")
+  patherr <- system.file("extdata", "basic-math.md", package = "tinkr")
   me <- yarn$new(patherr, sourcepos = TRUE)
   expect_snapshot_error(me$protect_math())
 })
@@ -35,41 +35,35 @@ test_that("multi-line inline math can have punctutation after", {
 })
 
 test_that("math with inline code still works", {
-
   expected <- "some inline math, for example $R^2 = `r runif(1)`$, is failing with code\n"
   math <- commonmark::markdown_xml(expected)
   txt <- xml2::read_xml(math)
   protxt <- protect_inline_math(txt, md_ns())
   actual <- to_md(list(yaml = NULL, body = protxt))
   expect_equal(actual, expected)
-
 })
 
 test_that("math with inline code still works", {
-
   expected <- "example\n\n- 42 $\\alpha$,\n- $R^2 = `r runif(1)`$,\n- is working with $\\beta$ code\n"
   math <- commonmark::markdown_xml(expected)
   txt <- xml2::read_xml(math)
   protxt <- protect_inline_math(txt, md_ns())
   actual <- to_md(list(yaml = NULL, body = protxt))
   expect_equal(actual, expected)
-
 })
 
 test_that("math with inline code works -- one character", {
-
   expected <- "example\n\n- 42 $R$ note\n"
   math <- commonmark::markdown_xml(expected)
   txt <- xml2::read_xml(math)
   protxt <- protect_inline_math(txt, md_ns())
   actual <- to_md(list(yaml = NULL, body = protxt))
   expect_equal(actual, expected)
-
 })
 
 
 test_that("math that starts a line will be protected", {
-  expected <-  "- so $\\beta^2 = `r runif(1)`$ works and\n- $\\beta$ does too\n"
+  expected <- "- so $\\beta^2 = `r runif(1)`$ works and\n- $\\beta$ does too\n"
   math <- commonmark::markdown_xml(expected)
   txt <- xml2::read_xml(math)
   protxt <- protect_inline_math(txt, md_ns())
@@ -90,8 +84,6 @@ test_that("block math can be protected", {
   expect_length(grep("$$", m$show(), fixed = TRUE), 12)
   # 3 math delimiters included in the get_protected
   expect_equal(sum(xml2::xml_text(m$get_protected("math")) == "$$"), 6)
-
-
 })
 
 
@@ -107,8 +99,10 @@ test_that("tick boxes can be protected without needing intervention", {
 
   new <- protect_tickbox(xml, md_ns())
   expect_failure(expect_identical(protect_tickbox(xml, md_ns()), xml))
-  expect_identical(to_md(list(body = new, yaml = NULL)),
-    "- [ ] a\n- b\n- [x] c\n")
+  expect_identical(
+    to_md(list(body = new, yaml = NULL)),
+    "- [ ] a\n- b\n- [x] c\n"
+  )
 })
 
 test_that("tick boxes are protected by default", {
@@ -137,7 +131,10 @@ test_that("protect_unescaped() will throw a warning if no sourcpos is available"
   m <- yarn$new(pathmath, sourcepos = TRUE)
   x <- to_xml(m$path)
   expect_warning({
-    protect_unescaped(x$body, txt = readLines(m$path)[-seq_along(m$yaml)], "sourcepos")
+    protect_unescaped(
+      x$body,
+      txt = readLines(m$path)[-seq_along(m$yaml)],
+      "sourcepos"
+    )
   })
 })
-

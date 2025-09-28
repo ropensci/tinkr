@@ -57,7 +57,7 @@ A link or image in XML is represented by a node with the following attributes
 \item title: an optional title for the link
 }
 
-For example, this markdown link \verb{[link text](https://example.com "example  link")} is represented in XML as text inside of a link node:
+For example, this markdown link \verb{[link text](https://example.com "example link")} is represented in XML as text inside of a link node:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{lnk <- "[link text](https://example.com 'example link')"
 xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
@@ -111,7 +111,7 @@ f <- system.file("extdata", "link-test.md", package = "tinkr")
 md <- yarn$new(f, sourcepos = TRUE, anchor_links = FALSE)
 md$show()
 if (requireNamespace("withr")) {
-lnks <- withr::with_namespace("tinkr", 
+lnks <- withr::with_namespace("tinkr",
   resolve_anchor_links(md$body, readLines(md$path)))
 md$body <- lnks
 md$show()

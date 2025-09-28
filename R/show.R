@@ -109,7 +109,8 @@ show_censor <- function(nodelist, stylesheet_path = stylesheet()) {
 #' tnk$isolate_nodes(items, type = "censor")
 #' tnk$isolate_nodes(items, type = "list")
 isolate_nodes <- function(nodelist, type = "context") {
-  switch(type,
+  switch(
+    type,
     "context" = isolate_nodes_block(nodelist),
     "censor" = isolate_nodes_censor(nodelist),
     "list" = isolate_nodes_list(nodelist),
@@ -165,8 +166,11 @@ provision_isolation <- function(nodelist) {
   predicate <- sprintf("@tnk-key=%s", key)
   ancestor <- sprintf("ancestor::*[%s]", predicate)
   descendant <- sprintf("descendant::*[%s]", predicate)
-  xpth <- sprintf("not(%s) and not(%s) and not(%s)",
-    ancestor, descendant, predicate
+  xpth <- sprintf(
+    "not(%s) and not(%s) and not(%s)",
+    ancestor,
+    descendant,
+    predicate
   )
   unrelated <- xml2::xml_find_all(doc, sprintf("//node()[%s]", xpth))
   return(list(doc = doc, key = key, unrelated = unrelated))
@@ -212,22 +216,32 @@ isolate_nodes_censor <- function(nodelist) {
 
 add_isolation_context <- function(nodelist, isolated) {
   sib <- sprintf("sibling::*[1][not(@tnk-key=%s)]", isolated$key)
-  pretext <- xml2::xml_find_lgl(nodelist,
+  pretext <- xml2::xml_find_lgl(
+    nodelist,
     sprintf("boolean(count(preceding-%s)!=0)", sib)
   )
-  postext <- xml2::xml_find_lgl(nodelist,
+  postext <- xml2::xml_find_lgl(
+    nodelist,
     sprintf("boolean(count(following-%s)!=0)", sib)
   )
   xpath <- sprintf(".//node()[@tnk-key=%s]", isolated$key)
   labelled <- xml2::xml_find_all(isolated$doc, xpath)
   purrr::walk(labelled[pretext], function(node) {
-    xml2::xml_add_sibling(node, .where = "before",
-      "text", "[...] ", asis = "true"
+    xml2::xml_add_sibling(
+      node,
+      .where = "before",
+      "text",
+      "[...] ",
+      asis = "true"
     )
   })
   purrr::walk(labelled[postext], function(node) {
-    xml2::xml_add_sibling(node, .where = "after",
-      "text", " [...]", asis = "true"
+    xml2::xml_add_sibling(
+      node,
+      .where = "after",
+      "text",
+      " [...]",
+      asis = "true"
     )
   })
   return(isolated)
@@ -237,9 +251,7 @@ add_isolation_context <- function(nodelist, isolated) {
 censor_attr <- function(nodes, attr) {
   attrs <- xml2::xml_attr(nodes, attr)
   nomiss <- !is.na(attrs)
-  xml2::xml_set_attr(nodes[nomiss], attr,
-    censor(attrs[nomiss])
-  )
+  xml2::xml_set_attr(nodes[nomiss], attr, censor(attrs[nomiss]))
 }
 
 censor <- function(x) {
@@ -264,7 +276,7 @@ print_lines <- function(xml, path = NULL, stylesheet = NULL) {
   if (length(md) == 2) {
     md[1] <- paste0(md[1], "\n")
   }
-  f  <- textConnection(md)
+  f <- textConnection(md)
   on.exit(close(f))
   readLines(f)
 }
@@ -272,6 +284,7 @@ print_lines <- function(xml, path = NULL, stylesheet = NULL) {
 label_nodes <- function(xpath, doc, label = "save") {
   xml2::xml_set_attr(
     xml2::xml_find_all(doc, xpath, ns = md_ns()),
-    "tnk-key", label)
+    "tnk-key",
+    label
+  )
 }
-

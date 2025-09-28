@@ -1,5 +1,4 @@
 test_that("show_list() will isolate elements", {
-
   path <- system.file("extdata", "show-example.md", package = "tinkr")
   y <- tinkr::yarn$new(path, sourcepos = TRUE)
   links <- xml2::xml_find_all(y$body, ".//md:link", tinkr::md_ns())
@@ -10,18 +9,15 @@ test_that("show_list() will isolate elements", {
   expect_snapshot(show_user(show_list(links), force = TRUE))
   expect_snapshot(show_user(show_list(code), force = TRUE))
   expect_snapshot(show_user(show_list(blocks), force = TRUE))
-
 })
 
 test_that("show_list() will isolate groups of elements", {
-
   path <- system.file("extdata", "show-example.md", package = "tinkr")
   y <- tinkr::yarn$new(path, sourcepos = TRUE)
   links <- xml2::xml_find_all(y$body, ".//md:link", tinkr::md_ns())
   headings <- xml2::xml_find_all(y$body, ".//md:heading", tinkr::md_ns())
   # show a list of items
   expect_snapshot(show_user(show_list(list(links, headings)), force = TRUE))
-
 })
 
 
@@ -35,10 +31,9 @@ test_that("show_censor() will show a censored list of disparate elements", {
   expect_length(nodes, 3)
   # the censor option can be adjusted
   withr::local_options(list(
-      tinkr.censor.mark = ".",
-      tinkr.censor.regex = "[^[:space:]]"
-    )
-  )
+    tinkr.censor.mark = ".",
+    tinkr.censor.regex = "[^[:space:]]"
+  ))
   disp <- show_censor(nodes)[1:29]
   expect_snapshot(show_user(disp, force = TRUE))
 })
@@ -56,10 +51,9 @@ test_that("show_censor() will censor elements", {
   n <- length(orig) - length(y$frontmatter) + 1
   # the censor option can be adjusted
   withr::local_options(list(
-      tinkr.censor.mark = ".",
-      tinkr.censor.regex = "[^[:space:]]"
-    )
-  )
+    tinkr.censor.mark = ".",
+    tinkr.censor.regex = "[^[:space:]]"
+  ))
   lnks <- show_censor(links)
   cd <- show_censor(code)
   blks <- show_censor(blocks)
@@ -77,15 +71,17 @@ test_that("show_censor() will censor elements", {
 test_that("tinkr.censor.regex can adjust for symbols", {
   path <- system.file("extdata", "show-example.md", package = "tinkr")
   y <- tinkr::yarn$new(path, sourcepos = TRUE)
-  items <- xml2::xml_find_all(y$body, ".//node()[not(self::md:code_block)]",
-    tinkr::md_ns())
+  items <- xml2::xml_find_all(
+    y$body,
+    ".//node()[not(self::md:code_block)]",
+    tinkr::md_ns()
+  )
 
   # the censor option can be adjusted
   withr::local_options(list(
-      tinkr.censor.mark = "A",
-      tinkr.censor.regex = "[^[:space:][:punct:]]"
-    )
-  )
+    tinkr.censor.mark = "A",
+    tinkr.censor.regex = "[^[:space:][:punct:]]"
+  ))
   itms <- show_censor(items)
 
   # the length of the documents are identical
@@ -96,7 +92,6 @@ test_that("tinkr.censor.regex can adjust for symbols", {
 
   expect_snapshot(show_user(itms, force = TRUE))
 })
-
 
 
 test_that("show_block() will provide context for the elements", {
@@ -117,6 +112,4 @@ test_that("show_block() will provide context for the elements", {
   bmark_code <- show_block(code, mark = TRUE)
   expect_snapshot(show_user(bmark_links, force = TRUE))
   expect_snapshot(show_user(bmark_code, force = TRUE))
-
 })
-
