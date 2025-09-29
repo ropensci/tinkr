@@ -162,7 +162,7 @@ add_node_siblings <- function(node, new, where = "after", remove = TRUE) {
       # node as a reference.
       new <- rev(new)
     }
-    purrr::walk(new, ~ xml2::xml_add_sibling(node, .x, .where = where))
+    purrr::walk(new, \(x) xml2::xml_add_sibling(node, x, .where = where))
   }
   if (remove) xml2::xml_remove(node)
 }
