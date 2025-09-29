@@ -23,7 +23,7 @@ add_nodes_to_body <- function(body, nodes, where = 0L) {
   if (inherits(nodes, "xml_node")) {
     xml2::xml_add_child(body, nodes, .where = where)
   } else {
-    purrr::walk(rev(nodes), ~ xml2::xml_add_child(body, .x, .where = where))
+    purrr::walk(rev(nodes), \(x) xml2::xml_add_child(body, x, .where = where))
   }
 }
 
