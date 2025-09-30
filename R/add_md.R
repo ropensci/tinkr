@@ -23,7 +23,7 @@ add_nodes_to_body <- function(body, nodes, where = 0L) {
   if (inherits(nodes, "xml_node")) {
     xml2::xml_add_child(body, nodes, .where = where)
   } else {
-    purrr::walk(rev(nodes), ~xml2::xml_add_child(body, .x, .where = where))
+    purrr::walk(rev(nodes), \(x) xml2::xml_add_child(body, x, .where = where))
   }
 }
 
@@ -33,7 +33,7 @@ add_nodes_to_body <- function(body, nodes, where = 0L) {
 #' @inheritParams add_md
 #' @param md markdown text to insert
 #' @param nodes a character vector of an XPath expression OR an `xml_node` or
-#'   `xml_nodeset` object. 
+#'   `xml_nodeset` object.
 #' @param space when `TRUE` (default) inline nodes have a single space appended
 #'   or prepended to avoid the added markdown abutting text.
 #' @return a copy of the XML object with the translated markdown inserted
@@ -57,15 +57,17 @@ shove_nodes_in <- function(body, new, nodes, where = "after", space = TRUE) {
   if (length(nodes) == 0) {
     msg <- glue::glue("No nodes matched the expression {sQuote(xpath)}")
     rlang::abort(msg, class = "insert-md-xpath")
-  } 
+  }
   if (!inherits(nodes, c("xml_node", "xml_nodeset"))) {
-    rlang::abort("an object of class `xml_node` or `xml_nodeset` was expected",
+    rlang::abort(
+      "an object of class `xml_node` or `xml_nodeset` was expected",
       class = "insert-md-node"
     )
   }
   root <- xml2::xml_root(nodes)
   if (!identical(root, body)) {
-    rlang::abort("nodes must come from the same body as the yarn document",
+    rlang::abort(
+      "nodes must come from the same body as the yarn document",
       class = "insert-md-body"
     )
   }
@@ -74,9 +76,19 @@ shove_nodes_in <- function(body, new, nodes, where = "after", space = TRUE) {
 
 
 node_is_inline <- function(node) {
-  blocks <- c("document", "paragraph", "heading", "block_quote", "list",
-  "item", "code_block", "html_block", "custom_block", "thematic_break",
-  "table")
+  blocks <- c(
+    "document",
+    "paragraph",
+    "heading",
+    "block_quote",
+    "list",
+    "item",
+    "code_block",
+    "html_block",
+    "custom_block",
+    "thematic_break",
+    "table"
+  )
   !xml2::xml_name(node) %in% blocks
 }
 
@@ -88,15 +100,16 @@ add_nodes_to_nodes <- function(new, old, where = "after", space = TRUE) {
   n <- sum(inlines)
   # when there are any inline nodes, we need to adjust the new node so that
   # we extract child-level elements. Note that we assume that the user will
-  # be supplying strictly inline markdown, but it may not be so neat. 
+  # be supplying strictly inline markdown, but it may not be so neat.
   if (n > 0) {
     if (!single_node && n < length(old)) {
-      rlang::abort("Nodes must be either block type or inline, but not both", 
+      rlang::abort(
+        "Nodes must be either block type or inline, but not both",
         class = "insert-md-dual-type",
         call. = FALSE
       )
     }
-    # make sure the new nodes are inline by extracting the children. 
+    # make sure the new nodes are inline by extracting the children.
     parents <- new
     new <- xml2::xml_children(new)
     if (space) {
@@ -111,7 +124,7 @@ add_nodes_to_nodes <- function(new, old, where = "after", space = TRUE) {
       }
       # If the lead node is a text node, we can add a space using regular text
       # parsing. This is desirable to retain as much structure as possible.
-      # Otherwise, a new node is appended. 
+      # Otherwise, a new node is appended.
       if (xml2::xml_name(lead) == "text") {
         txt <- if (where == "after") " %s" else "%s "
         xml2::xml_set_text(lead, sprintf(txt, xml2::xml_text(lead)))
@@ -128,8 +141,12 @@ add_nodes_to_nodes <- function(new, old, where = "after", space = TRUE) {
     # allow purrr::walk() to work on a single node
     old <- list(old)
   }
-  purrr::walk(.x = old, .f = add_node_siblings,
-    new = new, where = where, remove = FALSE
+  purrr::walk(
+    .x = old,
+    .f = add_node_siblings,
+    new = new,
+    where = where,
+    remove = FALSE
   )
 }
 
@@ -145,7 +162,7 @@ add_node_siblings <- function(node, new, where = "after", remove = TRUE) {
       # node as a reference.
       new <- rev(new)
     }
-    purrr::walk(new, ~xml2::xml_add_sibling(node, .x, .where = where))
+    purrr::walk(new, \(x) xml2::xml_add_sibling(node, x, .where = where))
   }
   if (remove) xml2::xml_remove(node)
 }

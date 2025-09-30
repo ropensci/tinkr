@@ -37,8 +37,8 @@ ex$add_md(c("::: alert\n",
 )
 ex$protect_fences()
 # add math and protect it
-ex$add_md(c("## math\n", 
-  "$c^2 = a^2 + b^2$\n", 
+ex$add_md(c("## math\n",
+  "$c^2 = a^2 + b^2$\n",
   "$$",
   "\\\\sum_{i}^k = x_i + 1",
   "$$\n")

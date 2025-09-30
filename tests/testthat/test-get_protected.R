@@ -1,10 +1,11 @@
 test_that("protected nodes can be accessed", {
   path <- withr::local_tempfile()
   # five protected curly elements
-  curlies <- c("## curlies",
+  curlies <- c(
+    "## curlies",
     "\nThis line has {xml2} one and {tinkr} two curlies!",
     "\n![a pretty kitten](https://placekitten.com/200/300){#kitteh alt='a picture of a kitten'}",
-    "\n![a pretty puppy](https://placedog.net/200/300){#dog alt=\"a picture", 
+    "\n![a pretty puppy](https://placedog.net/200/300){#dog alt=\"a picture",
     "of a dog\"}",
     # two protected unescaped elements
     "\n[span with attributes]{.span-with-attributes ",
@@ -12,7 +13,8 @@ test_that("protected nodes can be accessed", {
     ""
   )
   # six protected math elements
-  math <- c("## math", 
+  math <- c(
+    "## math",
     "\n$c^2 = a^2 + b^2$", # 1
     "\n$$", # 2
     # 3 <softbreak>
@@ -38,8 +40,5 @@ test_that("protected nodes can be accessed", {
   expect_length(ex$get_protected("math"), 6)
   expect_length(ex$get_protected("unescaped"), 2)
 
-  expect_error(ex$get_protected(c("curly", "shemp")), 
-    "not \"shemp\""
-  )
+  expect_error(ex$get_protected(c("curly", "shemp")), "not \"shemp\"")
 })
-

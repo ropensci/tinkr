@@ -375,7 +375,9 @@ yarn <- R6::R6Class(
         I("The yaml field of yarn objects"),
         I("frontmatter")
       )
-      if (!missing(yml)) self$frontmatter <- yml
+      if (!missing(yml)) {
+        self$frontmatter <- yml
+      }
       self$frontmatter
     }
   ),

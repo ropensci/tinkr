@@ -14,8 +14,8 @@
 #'    [inline text describing link][link-reference]
 #'    ```
 #' 2. The anchor part, which can be anywhere in the document, contains a pair
-#'    of square brackets followed by a colon and space with the link and 
-#'    optionally the link title. Example: 
+#'    of square brackets followed by a colon and space with the link and
+#'    optionally the link title. Example:
 #'    ```
 #'    [link-reference]: https://docs.ropensci.org/tinkr/ 'documentation for tinkr'
 #'    ```
@@ -24,14 +24,14 @@
 #' pain when converting large documents. This function resolves these
 #' links by reading in the source document, finding the reference-style links,
 #' and adding them back at the end of the document with the 'anchor' attribute
-#' and appending the reference to the link with the 'ref' attribute. 
+#' and appending the reference to the link with the 'ref' attribute.
 #'
 #' @details
-#' 
+#'
 #' ## Nomenclature
 #'
 #' The reference-style link contains two parts, but they don't have common names
-#' (the [markdown guide](https://www.markdownguide.org/basic-syntax/) calls 
+#' (the [markdown guide](https://www.markdownguide.org/basic-syntax/) calls
 #' these "first part and second part"), so in this documentation, we call the
 #' link pattern of `[link text][link-ref]` as the "inline reference-style link"
 #' and the pattern of `[link-ref]: <URL>` as the "anchor references-style link".
@@ -39,11 +39,11 @@
 #' ## Reference-style links in commonmark's XML representation
 #'
 #' A link or image in XML is represented by a node with the following attributes
-#'  
+#'
 #'  - destination: the URL for the link
 #'  - title: an optional title for the link
 #'
-#' For example, this markdown link `[link text](https://example.com "example 
+#' For example, this markdown link `[link text](https://example.com "example
 #' link")` is represented in XML as text inside of a link node:
 #'
 #' ```{r}
@@ -51,9 +51,9 @@
 #' xml <- xml2::read_xml(commonmark::markdown_xml(lnk))
 #' cat(as.character(xml2::xml_find_first(xml, ".//d1:link")))
 #' ```
-#' 
-#' However, reference-style links are rendered equivalently: 
-#' 
+#'
+#' However, reference-style links are rendered equivalently:
+#'
 #' ```{r}
 #' lnk <- "
 #' [link text][link-ref]
@@ -76,8 +76,8 @@
 #' al <- withr::with_namespace("tinkr", build_anchor_links(lnk))
 #' cat(as.character(xml2::xml_find_first(al, ".//link")))
 #' ```
-#' 
-#' From there, we add the anchor text to the node that is present in our 
+#'
+#' From there, we add the anchor text to the node that is present in our
 #' document as the `ref` attribute:
 #'
 #' ```{r, echo = FALSE, comment = NA}
@@ -103,7 +103,7 @@
 #' md <- yarn$new(f, sourcepos = TRUE, anchor_links = FALSE)
 #' md$show()
 #' if (requireNamespace("withr")) {
-#' lnks <- withr::with_namespace("tinkr", 
+#' lnks <- withr::with_namespace("tinkr",
 #'   resolve_anchor_links(md$body, readLines(md$path)))
 #' md$body <- lnks
 #' md$show()
@@ -116,15 +116,15 @@ resolve_anchor_links <- function(body, txt, ns = md_ns()) {
   if (length(links) == 0) {
     return(invisible(body))
   }
-  # Search for the pattern that resolves to `]: <LINK>( <TITLE>)` and return the 
-  # line number the link was found on 
-  dests  <- xml2::xml_attr(links, "destination")
+  # Search for the pattern that resolves to `]: <LINK>( <TITLE>)` and return the
+  # line number the link was found on
+  dests <- xml2::xml_attr(links, "destination")
   titles <- xml2::xml_attr(links, "title")
   targets <- paste0(clean_targets(dests), "\\s?['\"]?", clean_targets(titles))
   rel <- paste0("\\]:\\s+?", targets, "['\"]?\\s*$")
   pos <- purrr::map_int(rel, find_anchor_link, txt)
   if (sum(pos) == 0) {
-    return(invisible(body))  
+    return(invisible(body))
   }
   # extract all of matches from the document
   anchors <- txt[pos]
@@ -159,12 +159,12 @@ build_anchor_links <- function(link) {
   txt <- glue::glue("<text>{al_name(link)}</text>")
   attrs <- glue::glue(
     "destination='{al_dest(link)}' title='{al_title(link)}' anchor='true'"
-  ) 
+  )
   # wrap the nodes in a paragraph to make sure they don't get screwed up by
   # any footer text
   make_text_nodes(c(
     "<paragraph>",
-      glue::glue("<link {attrs}>{txt}</link>"),
+    glue::glue("<link {attrs}>{txt}</link>"),
     "</paragraph>"
   ))
 }
@@ -185,15 +185,24 @@ al_name <- function(link) {
 }
 
 al_dest <- function(link) {
-  res <- sub("^[\\[].+?[\\]]:\\s([^\\s]+?)(\\s['\"]?.*?)?$", "\\1", link, perl = TRUE)
+  res <- sub(
+    "^[\\[].+?[\\]]:\\s([^\\s]+?)(\\s['\"]?.*?)?$",
+    "\\1",
+    link,
+    perl = TRUE
+  )
   escape_ampersand(res)
 }
 
 al_title <- function(link) {
   # try to find titles, but if they don't exist, they will match exactly with
   # the original string, so we need to censor them.
-  titles <- sub("^[\\[].+?[\\]]:\\s[^\\s]+?(\\s['\"](.*?)['\"])$", "\\2", 
-    link, perl = TRUE)
+  titles <- sub(
+    "^[\\[].+?[\\]]:\\s[^\\s]+?(\\s['\"](.*?)['\"])$",
+    "\\2",
+    link,
+    perl = TRUE
+  )
   titles[titles == link] <- ""
   escape_ampersand(titles)
 }
@@ -212,7 +221,7 @@ get_pos <- function(x, e = 1) {
 
 # helpers for get_pos
 get_linestart <- function(x) get_pos(x, e = 1)
-get_colstart  <- function(x) get_pos(x, e = 2)
-get_lineend   <- function(x) get_pos(x, e = 3)
-get_colend    <- function(x) get_pos(x, e = 4)
+get_colstart <- function(x) get_pos(x, e = 2)
+get_lineend <- function(x) get_pos(x, e = 3)
+get_colend <- function(x) get_pos(x, e = 4)
 #nocov end

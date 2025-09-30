@@ -46,11 +46,12 @@
 #' # file.edit("newmd.md")
 #' file.remove(newmd)
 #'
-to_md <- function(frontmatter_xml_list,
-                  path = NULL,
-                  stylesheet_path = stylesheet(),
-                  yaml_xml_list = deprecated()){
-
+to_md <- function(
+  frontmatter_xml_list,
+  path = NULL,
+  stylesheet_path = stylesheet(),
+  yaml_xml_list = deprecated()
+) {
   # duplicate document to avoid overwriting
   body <- copy_xml(frontmatter_xml_list$body)
   frontmatter <- frontmatter_xml_list$frontmatter
@@ -64,7 +65,7 @@ to_md <- function(frontmatter_xml_list,
   md_out <- transform_to_md(body, frontmatter, stylesheet)
 
   if (!is.null(path)) {
-    writeLines(md_out, con = path, useBytes = TRUE, sep =  "\n\n")
+    writeLines(md_out, con = path, useBytes = TRUE, sep = "\n\n")
   }
 
   invisible(md_out)
@@ -103,8 +104,11 @@ remove_phantom_text <- function(body) {
   # to_protect <- xml2::xml_find_all(body,
   #   ".//md:link | .//md:image | .//md:text[@asis]", ns = md_ns())
   # # find the nodes that precede these nodes with zero length text
-  to_sever <- xml2::xml_find_all(body,
-    ".//md:text[string-length(text())=0]", ns = md_ns())
+  to_sever <- xml2::xml_find_all(
+    body,
+    ".//md:text[string-length(text())=0]",
+    ns = md_ns()
+  )
   if (length(to_sever)) {
     xml2::xml_remove(to_sever)
   }
@@ -115,13 +119,12 @@ copy_xml <- function(xml) {
   xml2::read_xml(as.character(xml))
 }
 
-transform_code_blocks <- function(xml){
+transform_code_blocks <- function(xml) {
   # Find all code blocks with a language attribute (those without it are not processed)
   code_blocks <- xml %>%
-    xml2::xml_find_all(xpath = './/d1:code_block[@language]',
-                       xml2::xml_ns(.))
+    xml2::xml_find_all(xpath = './/d1:code_block[@language]', xml2::xml_ns(.))
 
-  if(length(code_blocks) == 0){
+  if (length(code_blocks) == 0) {
     return(TRUE)
   }
 
@@ -130,28 +133,29 @@ transform_code_blocks <- function(xml){
   purrr::walk(code_blocks, to_info)
 }
 
-to_info <- function(code_block){
- attrs <- xml2::xml_attrs(code_block)
- options <- attrs[!names(attrs) %in%
-                  c("language", "name", "space", "sourcepos", "xmlns", "xmlns:xml")]
+to_info <- function(code_block) {
+  attrs <- xml2::xml_attrs(code_block)
+  options <- attrs[
+    !names(attrs) %in%
+      c("language", "name", "space", "sourcepos", "xmlns", "xmlns:xml")
+  ]
 
- if(length(options) > 0){
-   options <- glue::glue("{names(options)}={options}") %>%
-     glue::glue_collapse(sep = ", ")
-   options <- paste(",", options)
- }else{
-   options <- ""
- }
+  if (length(options) > 0) {
+    options <- glue::glue("{names(options)}={options}") %>%
+      glue::glue_collapse(sep = ", ")
+    options <- paste(",", options)
+  } else {
+    options <- ""
+  }
 
- if (attrs["name"] != ""){
-   attrs["name"] <- paste0(" ", attrs["name"])
- }
+  if (attrs["name"] != "") {
+    attrs["name"] <- paste0(" ", attrs["name"])
+  }
 
- info <- glue::glue('{attrs["language"]}{attrs["name"]}{options}')
- info <- paste0("{", info)
- info <- paste0(info, "}")
- names(info) <- "info"
+  info <- glue::glue('{attrs["language"]}{attrs["name"]}{options}')
+  info <- paste0("{", info)
+  info <- paste0(info, "}")
+  names(info) <- "info"
 
- xml2::xml_set_attr(code_block, "info", info)
+  xml2::xml_set_attr(code_block, "info", info)
 }
-

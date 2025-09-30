@@ -36,8 +36,8 @@ set_asis <- function(nodes) {
 
 # finding inline math consists of searching for $ and excluding $$
 find_inline_math <- function(body, ns) {
-   i <- ".//md:text[not(@asis) and contains(text(), '$') and not(contains(text(), '$$'))]"
-   xml2::xml_find_all(body, i, ns = ns)
+  i <- ".//md:text[not(@asis) and contains(text(), '$') and not(contains(text(), '$$'))]"
+  xml2::xml_find_all(body, i, ns = ns)
 }
 
 # Helper function to return the proper regex for inline math.
@@ -45,7 +45,7 @@ find_inline_math <- function(body, ns) {
 # union between them to find the incomplete cases.
 inline_dollars_regex <- function(type = c("start", "stop", "full")) {
   # any space
-  ace   <- "[:space:]"
+  ace <- "[:space:]"
   punks <- glue::glue("[{ace}[:punct:]]")
   # Note about this regex: the first part is a lookahead (?=...) that searches
   # for the line start, space, or punctuation. Importantly about lookaheads,
@@ -60,8 +60,9 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
   post_punks <- "]})>[:space:],;.?$-"
   no_punks <- glue::glue("{minus_maybe}[^{post_punks}])")
   start <- glue::glue("(?=^|{punks})[$]?[$]{no_punks}")
-  stop  <- glue::glue("[^{ace}$][$][$]?(?={punks}|$)")
-  switch(type,
+  stop <- glue::glue("[^{ace}$][$][$]?(?={punks}|$)")
+  switch(
+    type,
     start = start,
     stop = stop,
     full = glue::glue('({start}.*?{stop})')
@@ -104,20 +105,20 @@ find_broken_math <- function(math) {
 #' cat(tinkr::to_md(list(body = protxt, frontmatter = "")), sep = "\n")
 #' }
 protect_inline_math <- function(body, ns) {
-  body  <- copy_xml(body)
-  math  <- find_inline_math(body, ns)
+  body <- copy_xml(body)
+  math <- find_inline_math(body, ns)
   if (length(math) == 0) {
     return(body)
   }
 
   broke <- find_broken_math(math)
 
-  bespoke  <- !(broke$no_end | broke$no_beginning | broke$ambiguous)
-  endless  <- broke$no_end[!bespoke]
+  bespoke <- !(broke$no_end | broke$no_beginning | broke$ambiguous)
+  endless <- broke$no_end[!bespoke]
   headless <- broke$no_beginning[!bespoke]
 
-  imath   <- math[bespoke]
-  bmath   <- math[!bespoke]
+  imath <- math[bespoke]
+  bmath <- math[!bespoke]
 
   # protect math that is strictly inline
   if (length(imath)) {
@@ -135,8 +136,10 @@ protect_inline_math <- function(body, ns) {
       # $R^2 = `r runif(1)`$
       # In this case, we can detect it and properly address it as a headless
       # part.
-      has_inline_code <- xml2::xml_find_lgl(bmath,
-        "boolean(.//preceding-sibling::md:code)", ns
+      has_inline_code <- xml2::xml_find_lgl(
+        bmath,
+        "boolean(.//preceding-sibling::md:code)",
+        ns
       )
       headless <- headless | has_inline_code
     }
@@ -252,7 +255,8 @@ make_text_nodes <- function(txt) {
 
 find_block_math <- function(body, ns) {
   # https://github.com/ropensci/tinkr/issues/113#issue-2302065427
-  find_between(body,
+  find_between(
+    body,
     ns,
     pattern = "md:text[contains(text(), '$$')]",
     include = TRUE
@@ -378,7 +382,10 @@ protect_unescaped <- function(body, txt, ns = md_ns()) {
   has_sourcepos <- xml2::xml_find_lgl(body, "boolean(.//@sourcepos)")
   if (!has_sourcepos) {
     msg <- "`protect_unescaped()` requires nodes with the `sourcepos` attribute."
-    msg <- c(msg, "use `to_xml(sourcepos = TRUE)` or `yarn$new(sourcepos = TRUE).`")
+    msg <- c(
+      msg,
+      "use `to_xml(sourcepos = TRUE)` or `yarn$new(sourcepos = TRUE).`"
+    )
     msg <- c(msg, "\nNo modification taking place.")
     msg <- paste(msg, collapse = "\n")
     warning(msg, call. = FALSE)
@@ -428,7 +435,7 @@ fix_unescaped_squares <- function(nodes, txt) {
   squares <- find_escaped_squares(txt)
   # indicator of which lines have escaped square braces
   escapes <- which(vapply(squares, sum, integer(1)) > 0L)
-  lines   <- get_linestart(nodes)
+  lines <- get_linestart(nodes)
   for (i in seq_along(lines)) {
     this_line <- lines[[i]]
     this_node <- nodes[[i]]
@@ -441,7 +448,7 @@ fix_unescaped_squares <- function(nodes, txt) {
       # an example of a link). This will tell us if the node we are handling
       # contain the characters we need to escape (markup splits the nodes).
       start <- get_colstart(this_node)
-      end   <- get_colend(this_node)
+      end <- get_colend(this_node)
       escape_sequence <- squares[[this_line]]
       overlaps <- start <= max(escape_sequence) & end >= min(escape_sequence)
       if (overlaps) {
@@ -493,7 +500,6 @@ fix_unescaped_squares <- function(nodes, txt) {
 #' @return new XML nodes, invisibly
 #' @noRd
 fix_unescaped <- function(node, escaped = integer(0), offset = 1L) {
-
   txt <- as.character(node)
   if (length(escaped) == 0) {
     # If we have no escaped characters, then we can do a broad substitution
@@ -521,4 +527,3 @@ fix_unescaped <- function(node, escaped = integer(0), offset = 1L) {
   new_nodes <- make_text_nodes(paste(chars, collapse = ""))
   add_node_siblings(node, new_nodes, remove = TRUE)
 }
-

@@ -9,4 +9,3 @@ test_that("str_remove_all() removes all", {
   expects <- "I have a order and a tale"
   expect_equal(str_remove_all(txt, "tall "), expects)
 })
-

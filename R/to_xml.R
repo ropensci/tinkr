@@ -38,7 +38,13 @@
 #' path2 <- system.file("extdata", "example2.Rmd", package = "tinkr")
 #' post_list2 <- to_xml(path2)
 #' post_list2
-to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = TRUE, unescaped = TRUE){
+to_xml <- function(
+  path,
+  encoding = "UTF-8",
+  sourcepos = FALSE,
+  anchor_links = TRUE,
+  unescaped = TRUE
+) {
   content <- readLines(path, encoding = encoding, warn = FALSE)
 
   splitted_content <- split_frontmatter_body(content)
@@ -69,7 +75,7 @@ to_xml <- function(path, encoding = "UTF-8", sourcepos = FALSE, anchor_links = T
 }
 
 
-clean_content <- function(content){
+clean_content <- function(content) {
   illegal_control_chars <- "[^\u0009\u000a\u000d\u0020-\uD7FF\uE000-\uFFFD]"
   smart_double_quotes <- "[\u201C\u201D]"
   smart_single_quotes <- "[\u2018\u2019]"
@@ -80,7 +86,7 @@ clean_content <- function(content){
 }
 
 
-transform_block <- function(code_block){
+transform_block <- function(code_block) {
   info <- xml2::xml_attr(code_block, "info")
 
   if (is.na(info) || !str_detect(info, "^\\{.+?\\}$")) {
@@ -104,10 +110,9 @@ transform_block <- function(code_block){
   code_block
 }
 
-parse_rmd <- function(body){
+parse_rmd <- function(body) {
   code_blocks <- body %>%
-    xml2::xml_find_all(xpath = './/d1:code_block',
-                       xml2::xml_ns(.))
+    xml2::xml_find_all(xpath = './/d1:code_block', xml2::xml_ns(.))
 
   purrr::walk(code_blocks, transform_block)
 }

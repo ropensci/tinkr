@@ -117,4 +117,3 @@ find_fences <- function(body, ns) {
 digest_fence <- function(fence, ns) {
   xml2::xml_attr(fence, "fence") <- "true"
 }
-
