@@ -29,7 +29,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Nick Wellnhofer (Nick Wellnhofer wrote the XSLT stylesheet.) [copyright holder]
-  \item rOpenSci (https://ropensci.org/) [funder]
+  \item rOpenSci (\href{https://ror.org/019jywm96}{ROR}) [funder]
   \item Peter Daengeli [contributor]
 }
 

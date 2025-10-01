@@ -7,7 +7,7 @@
 add_md(body, md, where = 0L)
 }
 \arguments{
-\item{body}{an XML object generated via {tinkr}}
+\item{body}{an XML object generated via tinkr}
 
 \item{md}{a string of new markdown to insert}
 
@@ -19,4 +19,5 @@ a copy of the XML object with the markdown inserted.
 \description{
 Add markdown content to an XML object
 }
+\keyword{internal}
 \keyword{internal}

@@ -19,3 +19,7 @@
 ^inst/scripts/samples.R
 ^inst/extdata/bigsample.*$
 ^inst/extdata/xml_table.xml$
+^air\.toml$
+^man/add_md\.Rd$
+^man/add_nodes_to_body\.Rd$
+^man/insert_md\.Rd$

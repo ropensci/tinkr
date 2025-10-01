@@ -18,6 +18,7 @@ reference:
   contents:
   - '`protect_math`'
   - '`protect_curly`'
+  - '`protect_fences`'
   - '`get_protected`'
   - '`show_list`'
   - '`find_between`'

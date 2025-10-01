@@ -14,9 +14,15 @@
 #' ex <- tinkr::yarn$new(path, sourcepos = TRUE)
 #' # protect curly braces
 #' ex$protect_curly()
+#' # add fenced divs and protect then
+#' ex$add_md(c("::: alert\n",
+#'   "blabla",
+#'   ":::")
+#' )
+#' ex$protect_fences()
 #' # add math and protect it
-#' ex$add_md(c("## math\n", 
-#'   "$c^2 = a^2 + b^2$\n", 
+#' ex$add_md(c("## math\n",
+#'   "$c^2 = a^2 + b^2$\n",
 #'   "$$",
 #'   "\\sum_{i}^k = x_i + 1",
 #'   "$$\n")
@@ -29,6 +35,7 @@ get_protected <- function(body, type = NULL, ns = md_ns()) {
   protections <- c(
     math = "@math",
     curly = "@curly",
+    fence = "@fence",
     unescaped = "(@asis and text()='[' or text()=']')"
   )
   if (!is.null(type)) {

@@ -41,7 +41,7 @@ md <- glue::glue("
  ----
 
  section *text* with [a link](https://ropensci.org/)
- 
+
  :::
 ")
 x <- xml2::read_xml(commonmark::markdown_xml(md))

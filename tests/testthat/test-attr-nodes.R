@@ -17,3 +17,9 @@ test_that("a curly-protected yarn object can be written back to markdown", {
   expect_snapshot_file(scarf1)
   expect_snapshot_file(scarf2)
 })
+
+test_that("protect_fences() works", {
+  pathcurly <- system.file("extdata", "fenced-divs.md", package = "tinkr")
+  curly <- yarn$new(pathcurly, sourcepos = TRUE)
+  expect_snapshot(cat(as.character(protect_fences(curly$body))))
+})

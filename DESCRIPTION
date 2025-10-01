@@ -1,6 +1,6 @@
 Package: tinkr
 Title: Cast '(R)Markdown' Files to 'XML' and Back Again
-Version: 0.2.0.9001
+Version: 0.3.0
 Authors@R: 
     c(person(given = "Maëlle",
              family = "Salmon",
@@ -21,7 +21,7 @@ Authors@R:
              comment = "Nick Wellnhofer wrote the XSLT stylesheet."),
       person(given = "rOpenSci",
              role = "fnd",
-             comment = "https://ropensci.org/"),
+             comment = c(ROR = "019jywm96")),
       person(given = "Peter",
              family = "Daengeli",
              role = "ctb"))
@@ -39,13 +39,13 @@ BugReports: https://github.com/ropensci/tinkr/issues
 Imports: 
     commonmark (>= 1.6),
     glue,
+    lifecycle,
     magrittr,
     purrr,
     R6,
     rlang (>= 0.4.5),
     xml2,
-    xslt,
-    yaml
+    xslt
 Suggests: 
     knitr,
     rmarkdown,
@@ -55,6 +55,8 @@ Suggests:
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
-Roxygen: list(markdown = TRUE)
+Roxygen: list(markdown = TRUE, roclets = c("collate", "rd", "namespace", "devtag::dev_roclet"))
 RoxygenNote: 7.3.2.9000
 VignetteBuilder: knitr
+Config/Needs/build: moodymudskipper/devtag
+Language: en-US

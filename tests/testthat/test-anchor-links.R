@@ -11,7 +11,6 @@ test_that("anchor links with duplicate id and text are not doubled", {
   #>
   #> [thing]: what
   #> [^1]: pof
-
 })
 
 
@@ -34,7 +33,6 @@ test_that("links can go round trip", {
   m$write(tmp)
   mt <- yarn$new(tmp)
   expect_equal(m$show(), mt$show())
-
 })
 
 test_that("singluar nodes can be added to the body", {
@@ -56,5 +54,4 @@ test_that("singluar nodes can be added to the body", {
   buddy_node2 <- xml2::xml_find_all(buddy, ".//md:link", md_ns())[[2]]
   expect_equal(xml2::xml_text(buddy_node2), "A")
   expect_equal(xml2::xml_attr(buddy_node2, "anchor"), "true")
-
 })

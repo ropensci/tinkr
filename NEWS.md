@@ -1,15 +1,17 @@
-# tinkr 0.2.0.9001
+# tinkr 0.3.0
 
 ## NEW FEATURES
 
+* `yarn$show()` method now gains the `lines` parameter, which allows you to
+  subset the output by the lines of text. A warning is produced if a stylesheet
+  is supplied in place of `lines`.
+* `yarn$append_md()` and `yarn$prepend_md()` methods allow you to add new
+  markdown to specific places in the document using XPath expressions. 
 * `to_md_vec()` takes an xml node or nodelist and returns a character vector of
   the markdown produced.
 * `show_list()`, `show_block()`, and `show_censor()` will show the markdown
   content of a node, nodelist, or list of nodes without needing to print the
   entire document.
-* `yarn$show()` method now gains the `lines` parameter, which allows you to
-  subset the output by the lines of text. A warning is produced if a stylesheet
-  is supplied in place of `lines`.
 * `yarn$md_vec()` is a new method that will generate a character vector of
   markdown elements from a query. This is a convenience method that uses
   `xml2::xml_find_all()` and `to_md_vec()` in the background.
@@ -20,6 +22,14 @@
   (@zkamvar, #111; reviewed: @maelle)
 * Block math will now include the delimiters and the softbreaks for protection
   (issue/review: #113, @maelle; implemented: #111, @zkamvar)
+* Frontmatter in TOML and JSON is now preserved too. The `yaml` field is
+  replaced (softly deprecated) with a field called `frontmatter`. A new field
+  called `frontmatter_format` ("YAML", "TOML", or "JSON") contains the format
+  of the frontmatter. (issue: #126, @maelle)
+* New `protect_fences()` function will add a `fence='true'` attribute to fences
+  of Pandoc fenced divs to allow parsing of the XML for sending to external
+  APIs. 
+* New `$protect_fences()` method implements `protect_fences()` on yarn objects
 
 ## NEW IMPORTS
 
@@ -47,7 +57,7 @@
 * Testing code outside of `test_that()` has been removed (issue: #83, fix: #102,
   @maelle)
 
-# tinkr 0.2.0 
+# tinkr 0.2.0
 
 ## BUG FIX
 
