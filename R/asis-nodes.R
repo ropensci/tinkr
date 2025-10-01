@@ -152,9 +152,9 @@ protect_inline_math <- function(body, ns) {
     }
     # 2024-10-15: if the number of headless tags is _less_ than the number of
     # endless tags, then we _might_ be dealing with currency and should try to
-    # trim them out. 
+    # trim them out.
     if (le > lh) {
-      trm <- remove_money(bmath, endless, headless) 
+      trm <- remove_money(bmath, endless, headless)
       bmath <- trm$bmath
       endless <- trm$endless
       headless <- trm$headless
@@ -177,7 +177,7 @@ protect_inline_math <- function(body, ns) {
   copy_xml(body)
 }
 
-# remove the non-math from the math. 
+# remove the non-math from the math.
 remove_money <- function(bmath, endless, headless) {
   actual_math <- toss_broken_teeth(endless, headless)
   bmath <- bmath[actual_math]
@@ -220,8 +220,8 @@ toss_broken_teeth <- function(endless, headless) {
     idx <- -(1:2)
   } else {
     # CASE 2: MISMATCHED PAIRS --------------------------------
-    # When the pairs do not match, it's not likely broken math, 
-    # so we toss it and move to the next element. 
+    # When the pairs do not match, it's not likely broken math,
+    # so we toss it and move to the next element.
     result <- FALSE
     idx <- -1
   }
