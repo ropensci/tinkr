@@ -7,6 +7,21 @@ test_that("(#121) single dollar lines dont throw errors", {
   expect_equal(actual, expected)
 })
 
+
+test_that("(#121) money dollars mixed with broken math don't break", {
+  okay <- test_path("examples", "math-money-mix.md")
+  dollar_math <- yarn$new(okay, sourcepos = TRUE)
+  expect_no_error(dollar_math$protect_math())
+  expect_snapshot(show_user(dollar_math$show(), force = TRUE))
+})
+
+test_that("postfix dollars throws an informative error", {
+  expected <- "INKEY$\n"
+  math <- commonmark::markdown_xml(expected)
+  txt <- xml2::read_xml(math)
+  expect_snapshot_error(protxt <- protect_inline_math(txt, md_ns()))
+})
+
 test_that("(#124) french dollar lines dont throw errors", {
   expected <- "I've only got 2$ in the bank. Feels bad, man. Feels bad to not have 2 $\n"
   math <- commonmark::markdown_xml(expected)

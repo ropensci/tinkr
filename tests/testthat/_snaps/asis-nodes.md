@@ -1,4 +1,62 @@
-# mal-formed inline math throws an informative error
+# (#121) money dollars mixed with broken math don't break
+
+    Code
+      show_user(dollar_math$show(), force = TRUE)
+    Output
+      ---
+      title: "Dollar as currency mixed with math"
+      ---
+      
+      ## currency and ambiguous math
+      
+      I've got $5.45 and $A = `r runif(1)`$
+      
+      ## currency and math on the same line
+      
+      Math that starts on the dollar: I've got $5.45 and $A = \pi r^2$.
+      
+      Math that starts at the equation: I've got $5.45 *and* $A = \pi r^2$.
+      
+      ## broken math trailing currency
+      
+      The area of a circle is $A =
+      \pi r^2$.
+      
+      ## Currency preceding inline broken math (due to emph)
+      
+      It's 5:45 and I've got $5.45.
+      
+      Below is an example from <https://github.com/ropensci/tinkr/issues/38>
+      $\frac{\sum _{i=N-n}^{N}Q_i} {\sum_{j=N-n}^{N}{(\frac{C_j+C_{j-1}}2)}}$
+      
+      The area of circle is $A _i = \pi r_ i^2$.
+      
+      $P =
+      NP$
+      
+      ## Currency with inline broken math (due to emph)
+      
+      The following line is considered to *all* be math:
+      $199 and $\frac{\sum _{i=N-n}^{N}Q_i} {\sum_{j=N-n}^{N}{(\frac{C_j+C_{j-1}}2)}}$.
+      
+      The following line has math starting at the correct place:
+      $199 *and* $\frac{\sum _{i=N-n}^{N}Q_i} {\sum_{j=N-n}^{N}{(\frac{C_j+C_{j-1}}2)}}$.
+      
+      The following line correctly protects math because of the link
+      There is a $1 bet on [wikipedia](https://wikipedia.org) that the area of circle is $A _i = \pi r_ i^2$.
+      
+      $99
+      $9
+      
+      $P \ne
+      NP$
+      
+      ## Trailing currency does not affect the computation.
+      
+      Dang a whopper and a 40 cost $10 now, but I've only got $5.45.
+      
+
+# postfix dollars throws an informative error
 
     Inline math delimiters are not balanced.
     
@@ -6,11 +64,9 @@
           names and code in backtics like so: `INKEY$`.
     
     Below are the pairs that were found:
-               start...end
-               -----...---
-     Give you $2 to ... me what INKEY$ means.
-     Give you $2 to ... 2$ verbally.
-    We write $2 but ...
+    start...end
+    -----...---
+         ...INKEY$
 
 # block math can be protected
 

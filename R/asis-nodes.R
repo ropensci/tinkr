@@ -130,7 +130,7 @@ protect_inline_math <- function(body, ns) {
   }
 
   # protect math that is broken across lines or markdown elements
-  if (length(bmath)) {
+  if (length(bmath) > 0) {
     if (any(broke$ambiguous)) {
       # ambiguous math may be due to inline r code that produces an answer:
       # $R^2 = `r runif(1)`$
@@ -143,8 +143,6 @@ protect_inline_math <- function(body, ns) {
       )
       headless <- headless | has_inline_code
     }
-    # If the lengths of the beginning and ending tags don't match, we throw
-    # an error.
     le <- length(bmath[endless])
     lh <- length(bmath[headless])
     # 2024-10-10: if the number of headless OR endless tags is zero, then we
@@ -152,6 +150,19 @@ protect_inline_math <- function(body, ns) {
     if (lh == 0 || le == 0) {
       return(copy_xml(body))
     }
+    # 2024-10-15: if the number of headless tags is _less_ than the number of
+    # endless tags, then we _might_ be dealing with currency and should try to
+    # trim them out.
+    if (le > lh) {
+      trm <- remove_money(bmath, endless, headless)
+      bmath <- trm$bmath
+      endless <- trm$endless
+      headless <- trm$headless
+      lh <- trm$lh
+      le <- trm$le
+    }
+    # If the lengths of the beginning and ending tags don't match, we throw
+    # an error.
     if (le != lh) {
       unbalanced_math_error(bmath, endless, headless, le, lh)
     }
@@ -164,6 +175,58 @@ protect_inline_math <- function(body, ns) {
     }
   }
   copy_xml(body)
+}
+
+# remove the non-math from the math.
+remove_money <- function(bmath, endless, headless) {
+  actual_math <- toss_broken_teeth(endless, headless)
+  bmath <- bmath[actual_math]
+  endless <- endless[actual_math]
+  headless <- headless[actual_math]
+  lh <- length(bmath[headless])
+  le <- length(bmath[endless])
+  return(list(
+    bmath = bmath,
+    endless = endless,
+    headless = headless,
+    lh = lh,
+    le = le
+  ))
+}
+
+# Imagine a zipper. Every tooth fits in a groove directly opposite. If there
+# is a mistake and there is an extra tooth on one side, the zipper gets stuck.
+# the solution is to remove that tooth to realign the zipper.
+#
+# This function takes two logical vectors assuming the following:
+#
+# 1. endless starts with TRUE
+# 2. headless ends with TRUE
+# 3. endless and headless are the same length
+# @param endless [logical] vector indicating broken math elements that
+#   have no ending pair
+# @param headless [logical] vector of the same length as `endless` indicating
+#   broken math elements that have no opening pair.
+toss_broken_teeth <- function(endless, headless) {
+  if (length(endless) < 2) {
+    # EXIT CASE -----------------------------------------------
+    # less than 2 either returns FALSE or logical(0)
+    return(logical(length(endless)) == 2)
+  } else if (endless[1] == headless[2]) {
+    # CASE 1: MATCHING PAIRS ----------------------------------
+    # When the pairs match, these are likely broken math
+    # and we increment by two to move to the next pair
+    result <- c(TRUE, TRUE)
+    idx <- -(1:2)
+  } else {
+    # CASE 2: MISMATCHED PAIRS --------------------------------
+    # When the pairs do not match, it's not likely broken math,
+    # so we toss it and move to the next element.
+    result <- FALSE
+    idx <- -1
+  }
+  # return the result and iterate over the rest of the vector
+  return(c(result, toss_broken_teeth(endless[idx], headless[idx])))
 }
 
 # Partial inline math are math elements that are not entirely embedded in a
