@@ -30,6 +30,6 @@ Note, however, that there are a few caveats for this:
       ex <- textConnection("$5 for _any_ $\\pi$")
       tinkr::yarn$new(ex)$protect_math()$get_protected()
       ```
-   2. Postfix dollar signs (e.g. using BASIC code demostrations) should be
-      protected with backtics, or it will cause an error.
+   2. Postfix dollar signs (e.g. using BASIC code demonstrations) should be
+      protected with backticks, or it will cause an error.
 

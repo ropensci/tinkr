@@ -150,7 +150,7 @@ protect_inline_math <- function(body, ns) {
     if (lh == 0 || le == 0) {
       return(copy_xml(body))
     }
-    # 2024-10-15: if the number of headless tags is _less_ than the number of
+    # 2024-10-15: if the number of startless tags is _less_ than the number of
     # endless tags, then we _might_ be dealing with currency and should try to
     # trim them out.
     if (le > lh) {
