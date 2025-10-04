@@ -56,18 +56,6 @@
       Dang a whopper and a 40 cost $10 now, but I've only got $5.45.
       
 
-# postfix dollars throws an informative error
-
-    Inline math delimiters are not balanced.
-    
-    HINT: If you are writing BASIC code, make sure you wrap variable
-          names and code in backtics like so: `INKEY$`.
-    
-    Below are the pairs that were found:
-    start...end
-    -----...---
-         ...INKEY$
-
 # block math can be protected
 
     Code
