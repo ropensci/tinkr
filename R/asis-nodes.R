@@ -114,8 +114,8 @@ protect_inline_math <- function(body, ns) {
   broke <- find_broken_math(math)
 
   bespoke <- !(broke$no_end | broke$no_beginning | broke$ambiguous)
-  endless <- broke$no_end[!bespoke]
-  startless <- broke$no_beginning[!bespoke]
+  no_end <- broke$no_end[!bespoke]
+  no_start <- broke$no_beginning[!bespoke]
 
   imath <- math[bespoke]
   bmath <- math[!bespoke]
@@ -135,42 +135,42 @@ protect_inline_math <- function(body, ns) {
     if (any(broke$ambiguous)) {
       # ambiguous math may be due to inline r code that produces an answer:
       # $R^2 = `r runif(1)`$
-      # In this case, we can detect it and properly address it as a startless
+      # In this case, we can detect it and properly address it as a no_start
       # part.
       has_inline_code <- xml2::xml_find_lgl(
         bmath,
         "boolean(.//preceding-sibling::md:code)",
         ns
       )
-      startless <- startless | has_inline_code
+      no_start <- no_start | has_inline_code
     }
-    le <- length(bmath[endless])
-    lh <- length(bmath[startless])
-    # NOTE: 2024-10-10: if the number of startless OR endless tags is zero, then
+    le <- length(bmath[no_end])
+    lh <- length(bmath[no_start])
+    # NOTE: 2024-10-10: if the number of no_start OR no_end tags is zero, then
     # we are dealing with currency. See issue #121 and #124
     if (lh == 0 || le == 0) {
       return(copy_xml(body))
     }
-    # 2024-10-15: if the number of startless tags is _less_ than the number of
-    # endless tags, then we _might_ be dealing with currency and should try to
+    # 2024-10-15: if the number of no_start tags is _less_ than the number of
+    # no_end tags, then we _might_ be dealing with currency and should try to
     # trim them out.
     if (le > lh) {
-      trm <- remove_money(bmath, endless, startless)
+      trm <- remove_money(bmath, no_end, no_start)
       bmath <- trm$bmath
-      endless <- trm$endless
-      startless <- trm$startless
+      no_end <- trm$no_end
+      no_start <- trm$no_start
       lh <- trm$lh
       le <- trm$le
     }
     # If the lengths of the beginning and ending tags don't match, we throw
     # an error.
     if (le != lh) {
-      unbalanced_math_error(bmath, endless, startless, le, lh)
+      unbalanced_math_error(bmath, no_end, no_start, le, lh)
     }
     # assign sequential tags to the pairs of inline math elements
-    tags <- seq_along(bmath[endless])
-    xml2::xml_set_attr(bmath[endless], "latex-pair", tags)
-    xml2::xml_set_attr(bmath[startless], "latex-pair", tags)
+    tags <- seq_along(bmath[no_end])
+    xml2::xml_set_attr(bmath[no_end], "latex-pair", tags)
+    xml2::xml_set_attr(bmath[no_start], "latex-pair", tags)
     for (i in tags) {
       fix_partial_inline(i, body, ns)
     }
@@ -179,17 +179,17 @@ protect_inline_math <- function(body, ns) {
 }
 
 # remove the non-math from the math.
-remove_money <- function(bmath, endless, startless) {
-  actual_math <- toss_broken_teeth(endless, startless)
+remove_money <- function(bmath, no_end, no_start) {
+  actual_math <- toss_broken_teeth(no_end, no_start)
   bmath <- bmath[actual_math]
-  endless <- endless[actual_math]
-  startless <- startless[actual_math]
-  lh <- length(bmath[startless])
-  le <- length(bmath[endless])
+  no_end <- no_end[actual_math]
+  no_start <- no_start[actual_math]
+  lh <- length(bmath[no_start])
+  le <- length(bmath[no_end])
   return(list(
     bmath = bmath,
-    endless = endless,
-    startless = startless,
+    no_end = no_end,
+    no_start = no_start,
     lh = lh,
     le = le
   ))
@@ -201,19 +201,19 @@ remove_money <- function(bmath, endless, startless) {
 #
 # This function takes two logical vectors assuming the following:
 #
-# 1. endless starts with TRUE
-# 2. startless ends with TRUE
-# 3. endless and startless are the same length
-# @param endless [logical] vector indicating broken math elements that
+# 1. no_end starts with TRUE
+# 2. no_start ends with TRUE
+# 3. no_end and no_start are the same length
+# @param no_end [logical] vector indicating broken math elements that
 #   have no ending pair
-# @param startless [logical] vector of the same length as `endless` indicating
+# @param no_start [logical] vector of the same length as `no_end` indicating
 #   broken math elements that have no opening pair.
-toss_broken_teeth <- function(endless, startless) {
-  if (length(endless) < 2) {
+toss_broken_teeth <- function(no_end, no_start) {
+  if (length(no_end) < 2) {
     # EXIT CASE -----------------------------------------------
     # less than 2 either returns FALSE or logical(0)
-    return(logical(length(endless)) == 2)
-  } else if (endless[1] == startless[2]) {
+    return(logical(length(no_end)) == 2)
+  } else if (no_end[1] == no_start[2]) {
     # CASE 1: MATCHING PAIRS ----------------------------------
     # When the pairs match, these are likely broken math
     # and we increment by two to move to the next pair
@@ -227,7 +227,7 @@ toss_broken_teeth <- function(endless, startless) {
     idx <- -1
   }
   # return the result and iterate over the rest of the vector
-  return(c(result, toss_broken_teeth(endless[idx], startless[idx])))
+  return(c(result, toss_broken_teeth(no_end[idx], no_start[idx])))
 }
 
 # Partial inline math are math elements that are not entirely embedded in a
