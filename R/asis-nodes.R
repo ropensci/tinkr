@@ -195,19 +195,48 @@ remove_money <- function(bmath, no_end, no_start) {
   ))
 }
 
-# Imagine a zipper. Every tooth fits in a groove directly opposite. If there
-# is a mistake and there is an extra tooth on one side, the zipper gets stuck.
-# the solution is to remove that tooth to realign the zipper.
-#
-# This function takes two logical vectors assuming the following:
-#
-# 1. no_end starts with TRUE
-# 2. no_start ends with TRUE
-# 3. no_end and no_start are the same length
-# @param no_end [logical] vector indicating broken math elements that
-#   have no ending pair
-# @param no_start [logical] vector of the same length as `no_end` indicating
-#   broken math elements that have no opening pair.
+#' Re-align mis-aligned pairs of logical vectors
+#'
+#' @details
+#' The primary purpose of this function is to determine which nodes in a
+#' nodelist have a math expression broken across a line. We do this by feeding
+#' in two logical vectors: one for math beginning elements that have no end and
+#' one for math end elements that have no beginning. This function returns TRUE
+#' for each element that is a paired math expression and `FALSE` for each
+#' element that is unpaired.
+#'
+#' Imagine a zipper. Every tooth fits in a groove directly opposite. If there
+#' is a mistake and there is an extra tooth on one side, the zipper gets stuck.
+#' the solution is to remove that tooth to realign the zipper.
+#'
+#' This function takes two logical vectors assuming the following:
+#'
+#' 1. no_end starts with TRUE
+#' 2. no_start ends with TRUE
+#' 3. no_end and no_start are the same length
+#'
+#' This function recursively slides down the length of the vectors and applies
+#' these rules:
+#'
+#' 0. (exit case) if there are fewer than 2 elements left in the inputs, then
+#'    we return a `FALSE` for each element.
+#' 1. if the current no_end value matches the value of the next no_start, then
+#'    these two are complementary parts of the zipper and are both marked `TRUE`
+#'    and the index advances by two.
+#' 2. otherwise a single `FALSE` is returned and the index advances by 1.
+#'
+#'
+#' @param no_end [logical] vector indicating broken math elements that
+#'   have no ending pair
+#' @param no_start [logical] vector of the same length as `no_end` indicating
+#'   broken math elements that have no opening pair.
+#' @return a logical vector the same length as the inputs that indicates which
+#'   corresponding pairs of inputs are aligned.
+#' @dev
+#' @examples
+#' no_starts <- c(FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, TRUE)
+#' no_ends   <- c(TRUE,  FALSE, TRUE,  TRUE,  TRUE,  TRUE,  FALSE)
+#' toss_broken_teeth(no_ends, no_starts)
 toss_broken_teeth <- function(no_end, no_start) {
   if (length(no_end) < 2) {
     # EXIT CASE -----------------------------------------------
