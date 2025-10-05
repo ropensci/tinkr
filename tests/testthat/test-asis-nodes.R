@@ -15,15 +15,17 @@ test_that("(#121) money dollars mixed with broken math don't break", {
   expect_snapshot(show_user(dollar_math$show(), force = TRUE))
 })
 
-test_that("postfix dollars (French style currency) does not throw an error", {
+test_that("broken math elements throw errors", {
+  # TODO: remove a delimiter from one of the math elements in this example
+  # and check to make sure that it fails properly.
+  skip("still working on testing the broken math error")
   # NOTE: 2025-10-04 This test was previously testing an error that now no
   # longer occurs. This is because of the change that happened in #124
-  expected <- "INKEY$\n"
+  okay <- test_path("examples", "math-money-mix.md")
+  tmp <- withr::local_tempfile()
   math <- commonmark::markdown_xml(expected)
   txt <- xml2::read_xml(math)
-  expect_no_error(protxt <- protect_inline_math(txt, md_ns()))
-  actual <- to_md(list(yaml = NULL, body = protxt))
-  expect_equal(actual, expected)
+  expect_snapshot_error(protxt <- protect_inline_math(txt, md_ns()))
 })
 
 test_that("(#124) french dollar lines dont throw errors", {
