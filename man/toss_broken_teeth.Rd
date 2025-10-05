@@ -50,6 +50,16 @@ and the index advances by two.
 \item otherwise a single \code{FALSE} is returned and the index advances by 1.
 }
 }
+\note{
+this function probably could be a bit smarter in how it detects pairs.
+Right now it does not check if the current index is complementary (that is,
+it passes through a XOR gate). This would be the case for ambiguous elements
+that do not have no_start and no_end. If we check for this as well, we might
+be able to flag broken math early. That being said, it could also lead to
+more false-positive when it comes to reporting errors. At the moment, having
+more permissive math protection seems better than being more aggressive with
+errors.
+}
 \examples{
 no_starts <- c(FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, TRUE)
 no_ends   <- c(TRUE,  FALSE, TRUE,  TRUE,  TRUE,  TRUE,  FALSE)

@@ -180,13 +180,22 @@ protect_inline_math <- function(body, ns) {
 
 # remove the non-math from the math.
 remove_money <- function(bmath, no_end, no_start) {
+  # NOTE: the toss_broken_teeth will filter out any ambiguous or broken elements.
+  # But it cannot tell you what an ambiguous element and a broken element.
   actual_math <- toss_broken_teeth(no_end, no_start)
+  # broken_math <- xor(actual_math, (no_start | no_end))
+  # if (any(broken_math)) {
+  #   no_end <- broken_math & no_end
+  #   no_start <- broken_math & no_start
+  #   unbalanced_math_error(bmath, no_end, no_start, sum(no_end), sum(no_start))
+  # }
   bmath <- bmath[actual_math]
   no_end <- no_end[actual_math]
   no_start <- no_start[actual_math]
   lh <- length(bmath[no_start])
   le <- length(bmath[no_end])
   return(list(
+    broken = broken_math,
     bmath = bmath,
     no_end = no_end,
     no_start = no_start,
@@ -225,6 +234,14 @@ remove_money <- function(bmath, no_end, no_start) {
 #'    and the index advances by two.
 #' 2. otherwise a single `FALSE` is returned and the index advances by 1.
 #'
+#' @note this function probably could be a bit smarter in how it detects pairs.
+#' Right now it does not check if the current index is complementary (that is,
+#' it passes through a XOR gate). This would be the case for ambiguous elements
+#' that do not have no_start and no_end. If we check for this as well, we might
+#' be able to flag broken math early. That being said, it could also lead to
+#' more false-positive when it comes to reporting errors. At the moment, having
+#' more permissive math protection seems better than being more aggressive with
+#' errors.
 #'
 #' @param no_end [logical] vector indicating broken math elements that
 #'   have no ending pair
