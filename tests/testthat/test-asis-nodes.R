@@ -16,16 +16,11 @@ test_that("(#121) money dollars mixed with broken math don't break", {
 })
 
 test_that("broken math elements throw errors", {
-  # TODO: remove a delimiter from one of the math elements in this example
-  # and check to make sure that it fails properly.
-  skip("still working on testing the broken math error")
-  # NOTE: 2025-10-04 This test was previously testing an error that now no
-  # longer occurs. This is because of the change that happened in #124
-  okay <- test_path("examples", "math-money-mix.md")
+  pathmath <- system.file("extdata", "math-example.md", package = "tinkr")
   tmp <- withr::local_tempfile()
-  math <- commonmark::markdown_xml(expected)
-  txt <- xml2::read_xml(math)
-  expect_snapshot_error(protxt <- protect_inline_math(txt, md_ns()))
+  sub("tau$", "tau", readLines(pathmath), fixed = TRUE) %>% writeLines(tmp)
+  broken_math <- yarn$new(tmp)
+  expect_snapshot_error(broken_math$protect_math())
 })
 
 test_that("(#124) french dollar lines dont throw errors", {

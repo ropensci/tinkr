@@ -56,6 +56,20 @@
       Dang a whopper and a 40 cost $10 now, but I've only got $5.45.
       
 
+# broken math elements throw errors
+
+    Inline math delimiters are not balanced.
+    
+    HINT: If you are writing BASIC code, make sure you wrap variable
+          names and code in backtics like so: `INKEY$`.
+    
+    Below are the pairs that were found:
+                                                          start...end
+                                                          -----...---
+    text. It is intended to demonstrate that m $\alpha_\tau h...mx + b$
+                                 mode can work with tinkr. $y =...{j=N-n}^{N}{(\frac{C_j+C_{j-1}}2)}}$
+                                                 $\frac{\sum ...
+
 # block math can be protected
 
     Code
