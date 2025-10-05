@@ -195,7 +195,6 @@ remove_money <- function(bmath, no_end, no_start) {
   lh <- length(bmath[no_start])
   le <- length(bmath[no_end])
   return(list(
-    broken = broken_math,
     bmath = bmath,
     no_end = no_end,
     no_start = no_start,
