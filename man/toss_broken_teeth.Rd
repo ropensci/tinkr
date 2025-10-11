@@ -4,7 +4,7 @@
 \alias{toss_broken_teeth}
 \title{Re-align mis-aligned pairs of logical vectors}
 \usage{
-toss_broken_teeth(no_end, no_start)
+toss_broken_teeth(no_end, no_start, compat = xor(no_end, no_start))
 }
 \arguments{
 \item{no_end}{\link{logical} vector indicating broken math elements that
@@ -12,6 +12,9 @@ have no ending pair}
 
 \item{no_start}{\link{logical} vector of the same length as \code{no_end} indicating
 broken math elements that have no opening pair.}
+
+\item{compat}{\link{logical} vector of the same length as the others that defauts
+to a \code{\link[=xor]{xor()}} comparison between \code{no_end} and \code{no_start}.}
 }
 \value{
 a logical vector the same length as the inputs that indicates which
@@ -34,7 +37,6 @@ the solution is to remove that tooth to realign the zipper.
 
 This function takes two logical vectors assuming the following:
 \enumerate{
-\item no_end starts with TRUE
 \item no_start ends with TRUE
 \item no_end and no_start are the same length
 }
@@ -44,21 +46,11 @@ these rules:
 \enumerate{
 \item (exit case) if there are fewer than 2 elements left in the inputs, then
 we return a \code{FALSE} for each element.
-\item if the current no_end value matches the value of the next no_start, then
-these two are complementary parts of the zipper and are both marked \code{TRUE}
-and the index advances by two.
+\item if the current and next elements are mutually exclusive (detected by the
+\code{compat} argument AND if the current \verb{no_end`` value matches the value of the next }no_start``, then these two are complementary parts of the
+zipper and are both marked \code{TRUE} and the index advances by two.
 \item otherwise a single \code{FALSE} is returned and the index advances by 1.
 }
-}
-\note{
-this function probably could be a bit smarter in how it detects pairs.
-Right now it does not check if the current index is complementary (that is,
-it passes through a XOR gate). This would be the case for ambiguous elements
-that do not have no_start and no_end. If we check for this as well, we might
-be able to flag broken math early. That being said, it could also lead to
-more false-positive when it comes to reporting errors. At the moment, having
-more permissive math protection seems better than being more aggressive with
-errors.
 }
 \examples{
 no_starts <- c(FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, TRUE)

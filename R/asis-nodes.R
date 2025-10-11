@@ -9,6 +9,11 @@
 #' This function protects inline and block math elements that use `$` and `$$`
 #' for delimiters, respectively.
 #'
+#' There are elements that prove to be ambiguous, such as mixing dollar amounts
+#' with inline math or broken inline math (e.g. a forgotten closing `$`). These
+#' elements will be filtered out and ignored. If you would like tinkr to report
+#' on these elements, you can set the "tinkr.warn_math" option.
+#'
 #' @note this function is also a method in the [tinkr::yarn] object.
 #'
 #' @export
@@ -183,12 +188,19 @@ remove_money <- function(bmath, no_end, no_start) {
   # NOTE: the toss_broken_teeth will filter out any ambiguous or broken elements.
   # But it cannot tell you what an ambiguous element and a broken element.
   actual_math <- toss_broken_teeth(no_end, no_start)
-  # broken_math <- xor(actual_math, (no_start | no_end))
-  # if (any(broken_math)) {
-  #   no_end <- broken_math & no_end
-  #   no_start <- broken_math & no_start
-  #   unbalanced_math_error(bmath, no_end, no_start, sum(no_end), sum(no_start))
-  # }
+  broken_math <- xor(actual_math, (no_start | no_end))
+  if (any(broken_math) && nzchar(getOption("tinkr.warn_math", ""))) {
+    bno_end <- broken_math & no_end
+    bno_start <- broken_math & no_start
+    unbalanced_math_error(
+      bmath,
+      bno_end,
+      bno_start,
+      sum(bno_end),
+      sum(bno_start),
+      error = FALSE
+    )
+  }
   bmath <- bmath[actual_math]
   no_end <- no_end[actual_math]
   no_start <- no_start[actual_math]
@@ -219,33 +231,26 @@ remove_money <- function(bmath, no_end, no_start) {
 #'
 #' This function takes two logical vectors assuming the following:
 #'
-#' 1. no_end starts with TRUE
-#' 2. no_start ends with TRUE
-#' 3. no_end and no_start are the same length
+#' 1. no_start ends with TRUE
+#' 2. no_end and no_start are the same length
 #'
 #' This function recursively slides down the length of the vectors and applies
 #' these rules:
 #'
 #' 0. (exit case) if there are fewer than 2 elements left in the inputs, then
 #'    we return a `FALSE` for each element.
-#' 1. if the current no_end value matches the value of the next no_start, then
-#'    these two are complementary parts of the zipper and are both marked `TRUE`
-#'    and the index advances by two.
+#' 1. if the current and next elements are mutually exclusive (detected by the
+#'    `compat` argument AND if the current `no_end`` value matches the value of
+#'    the next `no_start``, then these two are complementary parts of the
+#'    zipper and are both marked `TRUE` and the index advances by two.
 #' 2. otherwise a single `FALSE` is returned and the index advances by 1.
-#'
-#' @note this function probably could be a bit smarter in how it detects pairs.
-#' Right now it does not check if the current index is complementary (that is,
-#' it passes through a XOR gate). This would be the case for ambiguous elements
-#' that do not have no_start and no_end. If we check for this as well, we might
-#' be able to flag broken math early. That being said, it could also lead to
-#' more false-positive when it comes to reporting errors. At the moment, having
-#' more permissive math protection seems better than being more aggressive with
-#' errors.
 #'
 #' @param no_end [logical] vector indicating broken math elements that
 #'   have no ending pair
 #' @param no_start [logical] vector of the same length as `no_end` indicating
 #'   broken math elements that have no opening pair.
+#' @param compat [logical] vector of the same length as the others that defauts
+#'   to a [xor()] comparison between `no_end` and `no_start`.
 #' @return a logical vector the same length as the inputs that indicates which
 #'   corresponding pairs of inputs are aligned.
 #' @dev
@@ -253,12 +258,16 @@ remove_money <- function(bmath, no_end, no_start) {
 #' no_starts <- c(FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, TRUE)
 #' no_ends   <- c(TRUE,  FALSE, TRUE,  TRUE,  TRUE,  TRUE,  FALSE)
 #' toss_broken_teeth(no_ends, no_starts)
-toss_broken_teeth <- function(no_end, no_start) {
+toss_broken_teeth <- function(
+  no_end,
+  no_start,
+  compat = xor(no_end, no_start)
+) {
   if (length(no_end) < 2) {
     # EXIT CASE -----------------------------------------------
     # less than 2 either returns FALSE or logical(0)
     return(logical(length(no_end)) == 2)
-  } else if (no_end[1] == no_start[2]) {
+  } else if (compat[1] && compat[2] && no_end[1] == no_start[2]) {
     # CASE 1: MATCHING PAIRS ----------------------------------
     # When the pairs match, these are likely broken math
     # and we increment by two to move to the next pair
@@ -272,7 +281,7 @@ toss_broken_teeth <- function(no_end, no_start) {
     idx <- -1
   }
   # return the result and iterate over the rest of the vector
-  return(c(result, toss_broken_teeth(no_end[idx], no_start[idx])))
+  return(c(result, toss_broken_teeth(no_end[idx], no_start[idx], compat[idx])))
 }
 
 # Partial inline math are math elements that are not entirely embedded in a

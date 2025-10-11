@@ -5,7 +5,14 @@ show_user <- function(out, force = FALSE) {
   invisible(out)
 }
 
-unbalanced_math_error <- function(bmath, endless, headless, le, lh) {
+unbalanced_math_error <- function(
+  bmath,
+  endless,
+  headless,
+  le,
+  lh,
+  error = TRUE
+) {
   no_end <- xml2::xml_text(bmath[endless])
   no_beginning <- xml2::xml_text(bmath[headless])
   msg <- glue::glue(
@@ -23,7 +30,11 @@ unbalanced_math_error <- function(bmath, endless, headless, le, lh) {
   no_end <- format(c("start", "-----", no_end), justify = "right")
   pairs <- glue::glue("{no_end}...{c('end', '---', no_beginning)}")
   msg <- glue::glue_collapse(c(msg, pairs), sep = "\n")
-  stop(msg, call. = FALSE)
+  if (error) {
+    stop(msg, call. = FALSE)
+  } else {
+    warning(msg, call. = FALSE)
+  }
 }
 # from blogdown
 # https://github.com/rstudio/blogdown/blob/9c7f7db5f11a481e1606031e88142b4a96139cce/R/utils.R#L391

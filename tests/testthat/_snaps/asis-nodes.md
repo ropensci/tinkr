@@ -58,17 +58,19 @@
 
 # broken math elements throw errors
 
-    Inline math delimiters are not balanced.
-    
-    HINT: If you are writing BASIC code, make sure you wrap variable
-          names and code in backtics like so: `INKEY$`.
-    
-    Below are the pairs that were found:
-                                                          start...end
-                                                          -----...---
-    text. It is intended to demonstrate that m $\alpha_\tau h...mx + b$
-                                 mode can work with tinkr. $y =...{j=N-n}^{N}{(\frac{C_j+C_{j-1}}2)}}$
-                                                 $\frac{\sum ...
+    Code
+      broken_math$protect_math()
+    Condition
+      Warning:
+      Inline math delimiters are not balanced.
+      
+      HINT: If you are writing BASIC code, make sure you wrap variable
+            names and code in backtics like so: `INKEY$`.
+      
+      Below are the pairs that were found:
+                                                            start...end
+                                                            -----...---
+      text. It is intended to demonstrate that m $\alpha_\tau h...
 
 # block math can be protected
 

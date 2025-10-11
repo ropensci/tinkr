@@ -20,7 +20,8 @@ test_that("broken math elements throw errors", {
   tmp <- withr::local_tempfile()
   sub("tau$", "tau", readLines(pathmath), fixed = TRUE) %>% writeLines(tmp)
   broken_math <- yarn$new(tmp)
-  expect_snapshot_error(broken_math$protect_math())
+  withr::local_options(list(tinkr.warn_math = TRUE))
+  expect_snapshot(broken_math$protect_math())
 })
 
 test_that("(#124) french dollar lines dont throw errors", {
