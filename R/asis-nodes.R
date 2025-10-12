@@ -76,6 +76,10 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
 
 # Find incomplete cases for inline math
 find_broken_math <- function(math) {
+  # TODO: use gregexpr and compare the lengths of full vs start and stop.
+  # This regex assumes that each line is either going to have complete or
+  # incomplete math, but it does not take into the fact that a single line could
+  # have three complete math items and a hanging incomplete math item.
   txt <- xml2::xml_text(math)
   start <- grepl(inline_dollars_regex("start"), txt, perl = TRUE)
   stop <- grepl(inline_dollars_regex("stop"), txt, perl = TRUE)
