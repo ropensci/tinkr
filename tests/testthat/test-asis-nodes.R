@@ -7,6 +7,14 @@ test_that("(#121) single dollar lines dont throw errors", {
   expect_equal(actual, expected)
 })
 
+test_that("(#146) interspersed emphasis does not drop text", {
+  skip("see #146")
+  okay <- test_path("examples", "simple-math-emph.md")
+  emph_math <- yarn$new(okay, sourcepos = TRUE)
+  expect_no_error(emph_math$protect_math())
+  expect_match(emph_math$show()[1], "TEXT6")
+})
+
 
 test_that("(#121) money dollars mixed with broken math don't break", {
   okay <- test_path("examples", "math-money-mix.md")
