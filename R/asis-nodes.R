@@ -245,7 +245,7 @@ make_text_nodes <- function(txt) {
   # a single element: {paste(txt, collapse = ''). This gets passed to glue where
   # it is expanded into nodes that we can read in via {xml2}, strip the
   # namespace, and extract all nodes below
-  doc <- sprintf("%s", commonmark::markdown_xml("paste(txt, collapse = '')"))
+  doc <- commonmark::markdown_xml(paste(txt, collapse = ''))
   nodes <- xml2::xml_ns_strip(xml2::read_xml(doc))
   xml2::xml_find_all(nodes, ".//paragraph/text/*")
 }
