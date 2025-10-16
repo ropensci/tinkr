@@ -9,6 +9,14 @@ test_that("(#121) single dollar lines dont throw errors", {
 
 test_that("(#146) interspersed emphasis does not drop text", {
   skip("see #146")
+  # FIXME: The reason this is being split up is because of a coincidence where
+  # there are exactly one pair of broken inline elements and the parser does
+  # not understand that they are not in fact adjacent to one another, so the
+  # first protected node is appended to the second protected node, which occurs
+  # in a different context entirely. This problem exists in
+  # find_between_inlines(), but is exacerbated by the facts that we do not
+  # detect multiple inline elements and we do not account for emph elements
+  # breaking across math elements
   okay <- test_path("examples", "simple-math-emph.md")
   emph_math <- yarn$new(okay, sourcepos = TRUE)
   expect_no_error(emph_math$protect_math())
