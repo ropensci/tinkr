@@ -37,8 +37,8 @@ License: GPL-3
 URL: https://docs.ropensci.org/tinkr/, https://github.com/ropensci/tinkr
 BugReports: https://github.com/ropensci/tinkr/issues
 Imports: 
+    cli,
     commonmark (>= 1.6),
-    glue,
     lifecycle,
     magrittr,
     purrr,

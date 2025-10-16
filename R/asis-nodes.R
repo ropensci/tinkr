@@ -46,7 +46,7 @@ find_inline_math <- function(body, ns) {
 inline_dollars_regex <- function(type = c("start", "stop", "full")) {
   # any space
   ace <- "[:space:]"
-  punks <- glue::glue("[{ace}[:punct:]]")
+  punks <- sprintf("[%s[:punct:]]", ace)
   # Note about this regex: the first part is a lookahead (?=...) that searches
   # for the line start, space, or punctuation. Importantly about lookaheads,
   # they do not consume the string
@@ -54,18 +54,18 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
   #
   # This looks for a potential minus sign followed by maybe a space to allow for
   # $\beta, $$\beta, $-\beta, $- \beta
-  minus_maybe <- glue::glue("(?=([-][{ace}]?)?")
+  minus_maybe <- sprintf("(?=([-][%s]?)?", ace)
   # punctuation marks that should _not_ occur after the dollar sign. I'm listing
   # them here because \ and - and opening symbols are valid afaict.
   post_punks <- "]})>[:space:],;.?$-"
-  no_punks <- glue::glue("{minus_maybe}[^{post_punks}])")
-  start <- glue::glue("(?=^|{punks})[$]?[$]{no_punks}")
-  stop <- glue::glue("[^{ace}$][$][$]?(?={punks}|$)")
+  no_punks <- sprintf("%s[^%s])", minus_maybe, post_punks)
+  start <- sprintf("(?=^|%s)[$]?[$]%s", punks, no_punks)
+  stop <- sprintf("[^%s$][$][$]?(?=%s|$)", ace, punks)
   switch(
     type,
     start = start,
     stop = stop,
-    full = glue::glue('({start}.*?{stop})')
+    full = sprintf('(%s.*?%s)', start, stop)
   )
 }
 
@@ -245,7 +245,7 @@ make_text_nodes <- function(txt) {
   # a single element: {paste(txt, collapse = ''). This gets passed to glue where
   # it is expanded into nodes that we can read in via {xml2}, strip the
   # namespace, and extract all nodes below
-  doc <- glue::glue(commonmark::markdown_xml("{paste(txt, collapse = '')}"))
+  doc <- sprintf("%s", commonmark::markdown_xml("paste(txt, collapse = '')"))
   nodes <- xml2::xml_ns_strip(xml2::read_xml(doc))
   xml2::xml_find_all(nodes, ".//paragraph/text/*")
 }
@@ -264,8 +264,8 @@ find_block_math <- function(body, ns) {
 }
 
 find_between_inlines <- function(body, ns, tag) {
-  to_find <- "md:text[@latex-pair='{tag}']"
-  find_between(body, ns, pattern = glue::glue(to_find), include = TRUE)
+  to_find <- sprintf("md:text[@latex-pair='%s']", tag)
+  find_between(body, ns, pattern = to_find, include = TRUE)
 }
 
 protect_block_math <- function(body, ns) {
@@ -280,7 +280,7 @@ protect_block_math <- function(body, ns) {
 
 tick_check <- function(body, ns) {
   predicate <- "starts-with(text(), '[ ]') or starts-with(text(), '[x]')"
-  cascade <- glue::glue(".//md:item/md:paragraph/md:text[{predicate}]")
+  cascade <- sprintf(".//md:item/md:paragraph/md:text[%s]", predicate)
   xml2::xml_find_all(body, cascade, ns = ns)
 }
 
@@ -381,14 +381,13 @@ protect_tickbox <- function(body, ns) {
 protect_unescaped <- function(body, txt, ns = md_ns()) {
   has_sourcepos <- xml2::xml_find_lgl(body, "boolean(.//@sourcepos)")
   if (!has_sourcepos) {
-    msg <- "`protect_unescaped()` requires nodes with the `sourcepos` attribute."
+    msg <- "{.fun protect_unescaped} requires nodes with the {.val sourcepos} attribute."
     msg <- c(
       msg,
-      "use `to_xml(sourcepos = TRUE)` or `yarn$new(sourcepos = TRUE).`"
+      "Use {.code to_xml(sourcepos = TRUE)} or {.code yarn$new(sourcepos = TRUE).}"
     )
     msg <- c(msg, "\nNo modification taking place.")
-    msg <- paste(msg, collapse = "\n")
-    warning(msg, call. = FALSE)
+    cli::cli_warn(msg, call = NULL)
     return(body)
   }
   body <- copy_xml(body)

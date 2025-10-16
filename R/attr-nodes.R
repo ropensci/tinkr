@@ -10,7 +10,7 @@ find_curly <- function(body, ns) {
     for (not_closed in curlies[no_closing]) {
       closing <- xml2::xml_find_all(
         not_closed,
-        glue::glue("./{close_xpath}"),
+        sprintf("./%s", close_xpath),
         ns
       )
       xml2::xml_text(not_closed) <- paste(
@@ -55,7 +55,7 @@ digest_curly <- function(curly, ns) {
 #' `{#hello .greeting .message style="color: red;"}`
 #' (Markdown custom block)
 #' as normal text which might be problematic if trying to extract
-#' real text from the XML.
+#' reald text from the XML.
 #'
 #' If sending the XML to, say, a translation API that allows some tags
 #' to be ignored, you could first transform the text tags with the

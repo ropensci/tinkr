@@ -129,13 +129,13 @@ yarn <- R6::R6Class(
         the_call$stylesheet_path <- the_call$lines
         the_call$lines <- NULL
         new_call <- capture.output(print(the_call))
-        rlang::warn(
-          c(
-            "!" = "In {tinkr} 0.3.0, the $show() method gains the `lines` argument as the first argument.",
-            "i" = "To remove this warning, use the following code:",
-            " " = new_call
+        lifecycle::deprecate_warn(
+          "0.3.0",
+          I(
+            "$show(stylesheet_path = )"
           ),
-          call. = FALSE
+          with = I(new_call),
+          details = "the $show() method gains the `lines` argument as the first argument."
         )
       }
       show_user(private$md_lines(stylesheet = stylesheet_path)[lines])
@@ -327,8 +327,8 @@ yarn <- R6::R6Class(
         txt <- readLines(self$path)[-seq_along(self$frontmatter)]
         self$body <- protect_unescaped(self$body, txt, self$ns)
       } else {
-        message(
-          "to use the `protect_unescaped()` method, you will need to re-read your document with `yarn$new(sourcepos = TRUE)`"
+        cli::cli_alert_info(
+          "to use the {.fun protect_unescaped} method, you will need to re-read your document with {.code yarn$new(sourcepos = TRUE)}."
         )
       }
       invisible(self)

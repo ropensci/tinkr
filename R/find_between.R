@@ -13,7 +13,7 @@
 #' @return a nodeset
 #' @export
 #' @examples
-#' md <- glue::glue("
+#' md <- "
 #'  h1
 #'  ====
 #'
@@ -25,7 +25,7 @@
 #'  section *text* with [a link](https://ropensci.org/)
 #'
 #'  :::
-#' ")
+#' "
 #' x <- xml2::read_xml(commonmark::markdown_xml(md))
 #' ns <- xml2::xml_ns_rename(xml2::xml_ns(x), d1 = "md")
 #' res <- find_between(x, ns)
@@ -40,9 +40,14 @@ find_between <- function(
 ) {
   after <- "following-sibling::"
   before <- "preceding-sibling::"
-  after_first_pattern <- glue::glue("{after}{pattern}")
-  before_last_pattern <- glue::glue("{before}md:*[{before}{pattern}]")
-  prefix <- if (include) glue::glue(".//{pattern} | .//") else ".//"
-  xpath <- glue::glue("{prefix}{after_first_pattern}/{before_last_pattern}")
+  after_first_pattern <- sprintf("%s%s", after, pattern)
+  before_last_pattern <- sprintf("%smd:*[%s%s]", before, before, pattern)
+  prefix <- if (include) sprintf(".//%s | .//", pattern) else ".//"
+  xpath <- sprintf(
+    "%s%s/%s",
+    prefix,
+    after_first_pattern,
+    before_last_pattern
+  )
   xml2::xml_find_all(body, xpath, ns = ns)
 }

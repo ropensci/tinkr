@@ -90,7 +90,7 @@ transform_to_md <- function(body, frontmatter, stylesheet) {
   body <- xslt::xml_xslt(body, stylesheet = stylesheet)
 
   if (length(frontmatter) > 0) {
-    frontmatter <- glue::glue_collapse(frontmatter, sep = "\n")
+    frontmatter <- paste(frontmatter, collapse = "\n")
   }
 
   c(frontmatter, body)
@@ -141,8 +141,8 @@ to_info <- function(code_block) {
   ]
 
   if (length(options) > 0) {
-    options <- glue::glue("{names(options)}={options}") %>%
-      glue::glue_collapse(sep = ", ")
+    options <- sprintf("%s=%s", names(options), options) %>%
+      toString()
     options <- paste(",", options)
   } else {
     options <- ""
@@ -152,7 +152,7 @@ to_info <- function(code_block) {
     attrs["name"] <- paste0(" ", attrs["name"])
   }
 
-  info <- glue::glue('{attrs["language"]}{attrs["name"]}{options}')
+  info <- sprintf('%s%s%s', attrs["language"], attrs["name"], options)
   info <- paste0("{", info)
   info <- paste0(info, "}")
   names(info) <- "info"
