@@ -55,7 +55,7 @@ digest_curly <- function(curly, ns) {
 #' `{#hello .greeting .message style="color: red;"}`
 #' (Markdown custom block)
 #' as normal text which might be problematic if trying to extract
-#' reald text from the XML.
+#' real text from the XML.
 #'
 #' If sending the XML to, say, a translation API that allows some tags
 #' to be ignored, you could first transform the text tags with the
