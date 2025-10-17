@@ -22,39 +22,37 @@ test_that("to_md fails if the stylesheet is not correct", {
   yaml_xml_list <- to_xml(path)
   xml2::write_xml(yaml_xml_list$body, tmp)
   # NULL for stylesheet
-  expect_error(
-    to_md(yaml_xml_list, stylesheet_path = NULL),
-    "'stylesheet_path' must be a path to an XSL stylesheet"
-  )
+  expect_snapshot(error = TRUE, to_md(yaml_xml_list, stylesheet_path = NULL))
   # NA for stylesheet
-  expect_error(
-    to_md(yaml_xml_list, stylesheet_path = NA),
-    "'stylesheet_path' must be a path to an XSL stylesheet"
-  )
+  expect_snapshot(error = TRUE, to_md(yaml_xml_list, stylesheet_path = NA))
   # multi-element vector
-  expect_error(
-    to_md(yaml_xml_list, stylesheet_path = letters),
-    "'stylesheet_path' must be a path to an XSL stylesheet"
-  )
+  expect_snapshot(error = TRUE, to_md(yaml_xml_list, stylesheet_path = letters))
   # zero-element vector
-  expect_error(
-    to_md(yaml_xml_list, stylesheet_path = character(0)),
-    "'stylesheet_path' must be a path to an XSL stylesheet"
+  expect_snapshot(
+    error = TRUE,
+    to_md(yaml_xml_list, stylesheet_path = character(0))
   )
   # xml document that is not a stylesheet
-  expect_error(
-    to_md(yaml_xml_list, stylesheet_path = tmp),
-    "'*.xml' is not a valid stylesheet"
+  expect_snapshot(
+    error = TRUE,
+    to_md(
+      yaml_xml_list,
+      stylesheet_path = system.file(
+        "extdata",
+        "basic-curly.md",
+        package = "tinkr"
+      )
+    )
   )
   # file that doesn't exist
-  expect_error(
-    to_md(yaml_xml_list, stylesheet_path = "path/to/stylesheet.xsl"),
-    "The file 'path/to/stylesheet.xsl' does not exist."
+  expect_snapshot(
+    error = TRUE,
+    to_md(yaml_xml_list, stylesheet_path = "path/to/stylesheet.xsl")
   )
   # xml object
-  expect_error(
-    to_md(yaml_xml_list, stylesheet_path = yaml_xml_list$body),
-    "'stylesheet_path' must be a path to an XSL stylesheet"
+  expect_snapshot(
+    error = TRUE,
+    to_md(yaml_xml_list, stylesheet_path = yaml_xml_list$body)
   )
 })
 
