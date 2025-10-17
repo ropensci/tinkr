@@ -1,3 +1,63 @@
+# to_md fails if the stylesheet is not correct
+
+    Code
+      to_md(yaml_xml_list, stylesheet_path = NULL)
+    Condition
+      Error:
+      ! 'stylesheet_path' must be a path to an XSL stylesheet
+
+---
+
+    Code
+      to_md(yaml_xml_list, stylesheet_path = NA)
+    Condition
+      Error:
+      ! 'stylesheet_path' must be a path to an XSL stylesheet
+
+---
+
+    Code
+      to_md(yaml_xml_list, stylesheet_path = letters)
+    Condition
+      Error:
+      ! 'stylesheet_path' must be a path to an XSL stylesheet
+
+---
+
+    Code
+      to_md(yaml_xml_list, stylesheet_path = character(0))
+    Condition
+      Error:
+      ! 'stylesheet_path' must be a path to an XSL stylesheet
+
+---
+
+    Code
+      to_md(yaml_xml_list, stylesheet_path = tmp, transform = function(x) {
+        sub(".* is not a valid stylesheet", "<path> is not a valid stylesheet", x)
+      })
+    Condition
+      Error in `to_md()`:
+      ! unused argument (transform = function(x) {
+          sub(".* is not a valid stylesheet", "<path> is not a valid stylesheet", x)
+      })
+
+---
+
+    Code
+      to_md(yaml_xml_list, stylesheet_path = "path/to/stylesheet.xsl")
+    Condition
+      Error:
+      ! Can't find 'path/to/stylesheet.xsl'.
+
+---
+
+    Code
+      to_md(yaml_xml_list, stylesheet_path = yaml_xml_list$body)
+    Condition
+      Error:
+      ! 'stylesheet_path' must be a path to an XSL stylesheet
+
 # to_md_vec() returns a vector of the same length as the nodelist
 
     Code

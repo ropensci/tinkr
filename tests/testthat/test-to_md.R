@@ -37,11 +37,14 @@ test_that("to_md fails if the stylesheet is not correct", {
     error = TRUE,
     to_md(
       yaml_xml_list,
-      stylesheet_path = system.file(
-        "extdata",
-        "basic-curly.md",
-        package = "tinkr"
-      )
+      stylesheet_path = tmp,
+      transform = \(x) {
+        sub(
+          ".* is not a valid stylesheet",
+          "<path> is not a valid stylesheet",
+          x
+        )
+      }
     )
   )
   # file that doesn't exist
