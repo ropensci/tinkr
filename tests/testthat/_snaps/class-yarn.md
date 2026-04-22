@@ -135,7 +135,7 @@
       writeLines(old)
     Output
       ![a pretty puppy](https://placedog.net/200/300){#dog alt="a picture
-      of a dog"}
+      of Mickey's dog"}
       
       \[a span with attributes\]{.span-with-attributes
       style='color: red;'}
@@ -147,7 +147,7 @@
       writeLines(new)
     Output
       ![a pretty puppy](https://placedog.net/200/300){#dog alt="a picture
-      of a dog"}
+      of Mickey's dog"}
       
       [a span with attributes]{.span-with-attributes
       style='color: red;'}
