@@ -33,14 +33,10 @@
 ---
 
     Code
-      to_md(yaml_xml_list, stylesheet_path = tmp, transform = function(x) {
-        sub(".* is not a valid stylesheet", "<path> is not a valid stylesheet", x)
-      })
+      to_md(yaml_xml_list, stylesheet_path = tmp)
     Condition
-      Error in `to_md()`:
-      ! unused argument (transform = function(x) {
-          sub(".* is not a valid stylesheet", "<path> is not a valid stylesheet", x)
-      })
+      Error in `read_stylesheet()`:
+      <path> is not a valid stylesheet
 
 ---
 
