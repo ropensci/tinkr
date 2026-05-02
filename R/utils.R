@@ -11,7 +11,7 @@ unbalanced_math_error <- function(bmath, endless, headless, le, lh) {
   msg <- c(
     x = "Inline math delimiters are not balanced.",
     i = "HINT: If you are writing BASIC code, make sure you wrap variable
-          names and code in backtics like so: {.code INKEY$}",
+        names and code in backtics like so: {.code INKEY$}",
     "Below are the pairs that were found:"
   )
 
@@ -25,15 +25,12 @@ unbalanced_math_error <- function(bmath, endless, headless, le, lh) {
   pairs <- purrr::map2(
     no_end,
     no_beginning,
-    \(x, y) c(x, "...", y)
+    \(x, y) paste(x, "...", y)
   ) |>
-    unlist()
+    unlist() |>
+    paste(collapse = "\n")
 
-  msg <- c(
-    msg,
-    cli::cli_format(cli::ansi_columns(pairs, fill = "rows", max_cols = 3))
-  )
-  stop(paste(msg, collapse = "\n"))
+  stop(paste(cli::format_error(msg), pairs, sep = "\n", collapse = "\n"))
 }
 # from blogdown
 # https://github.com/rstudio/blogdown/blob/9c7f7db5f11a481e1606031e88142b4a96139cce/R/utils.R#L391
