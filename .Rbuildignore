@@ -23,3 +23,4 @@
 ^man/add_md\.Rd$
 ^man/add_nodes_to_body\.Rd$
 ^man/insert_md\.Rd$
+^man/toss_broken_teeth\.Rd$

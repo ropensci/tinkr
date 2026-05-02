@@ -9,6 +9,11 @@
 #' This function protects inline and block math elements that use `$` and `$$`
 #' for delimiters, respectively.
 #'
+#' There are elements that prove to be ambiguous, such as mixing dollar amounts
+#' with inline math or broken inline math (e.g. a forgotten closing `$`). These
+#' elements will be filtered out and ignored. If you would like tinkr to report
+#' on these elements, you can set the "tinkr.warn_math" option.
+#'
 #' @note this function is also a method in the [tinkr::yarn] object.
 #'
 #' @export
@@ -71,6 +76,10 @@ inline_dollars_regex <- function(type = c("start", "stop", "full")) {
 
 # Find incomplete cases for inline math
 find_broken_math <- function(math) {
+  # TODO: use gregexpr and compare the lengths of full vs start and stop.
+  # This regex assumes that each line is either going to have complete or
+  # incomplete math, but it does not take into the fact that a single line could
+  # have three complete math items and a hanging incomplete math item.
   txt <- xml2::xml_text(math)
   start <- grepl(inline_dollars_regex("start"), txt, perl = TRUE)
   stop <- grepl(inline_dollars_regex("stop"), txt, perl = TRUE)
@@ -114,8 +123,8 @@ protect_inline_math <- function(body, ns) {
   broke <- find_broken_math(math)
 
   bespoke <- !(broke$no_end | broke$no_beginning | broke$ambiguous)
-  endless <- broke$no_end[!bespoke]
-  headless <- broke$no_beginning[!bespoke]
+  no_end <- broke$no_end[!bespoke]
+  no_start <- broke$no_beginning[!bespoke]
 
   imath <- math[bespoke]
   bmath <- math[!bespoke]
@@ -130,40 +139,153 @@ protect_inline_math <- function(body, ns) {
   }
 
   # protect math that is broken across lines or markdown elements
-  if (length(bmath)) {
+  has_broken_math <- length(bmath) > 0
+  if (has_broken_math) {
     if (any(broke$ambiguous)) {
       # ambiguous math may be due to inline r code that produces an answer:
       # $R^2 = `r runif(1)`$
-      # In this case, we can detect it and properly address it as a headless
+      # In this case, we can detect it and properly address it as a no_start
       # part.
       has_inline_code <- xml2::xml_find_lgl(
         bmath,
         "boolean(.//preceding-sibling::md:code)",
         ns
       )
-      headless <- headless | has_inline_code
+      no_start <- no_start | has_inline_code
     }
-    # If the lengths of the beginning and ending tags don't match, we throw
-    # an error.
-    le <- length(bmath[endless])
-    lh <- length(bmath[headless])
-    # 2024-10-10: if the number of headless OR endless tags is zero, then we
-    # are dealing with currency. See issue #121 and #124
+    le <- length(bmath[no_end])
+    lh <- length(bmath[no_start])
+    # NOTE: 2024-10-10: if the number of no_start OR no_end tags is zero, then
+    # we are dealing with currency. See issue #121 and #124
     if (lh == 0 || le == 0) {
       return(copy_xml(body))
     }
+    # 2024-10-15: if the number of no_start tags is _less_ than the number of
+    # no_end tags, then we _might_ be dealing with currency and should try to
+    # trim them out.
+    if (le > lh) {
+      trm <- remove_money(bmath, no_end, no_start)
+      bmath <- trm$bmath
+      no_end <- trm$no_end
+      no_start <- trm$no_start
+      lh <- trm$lh
+      le <- trm$le
+    }
+    # If the lengths of the beginning and ending tags don't match, we throw
+    # an error.
     if (le != lh) {
-      unbalanced_math_error(bmath, endless, headless, le, lh)
+      unbalanced_math_error(bmath, no_end, no_start, le, lh)
     }
     # assign sequential tags to the pairs of inline math elements
-    tags <- seq_along(bmath[endless])
-    xml2::xml_set_attr(bmath[endless], "latex-pair", tags)
-    xml2::xml_set_attr(bmath[headless], "latex-pair", tags)
+    tags <- seq_along(bmath[no_end])
+    xml2::xml_set_attr(bmath[no_end], "latex-pair", tags)
+    xml2::xml_set_attr(bmath[no_start], "latex-pair", tags)
     for (i in tags) {
       fix_partial_inline(i, body, ns)
     }
   }
   copy_xml(body)
+}
+
+# remove the non-math from the math.
+remove_money <- function(bmath, no_end, no_start) {
+  # NOTE: the toss_broken_teeth will filter out any ambiguous or broken elements.
+  # But it cannot tell you what an ambiguous element and a broken element.
+  actual_math <- toss_broken_teeth(no_end, no_start)
+  broken_math <- xor(actual_math, (no_start | no_end))
+  if (any(broken_math) && nzchar(getOption("tinkr.warn_math", ""))) {
+    bno_end <- broken_math & no_end
+    bno_start <- broken_math & no_start
+    unbalanced_math_error(
+      bmath,
+      bno_end,
+      bno_start,
+      sum(bno_end),
+      sum(bno_start),
+      error = FALSE
+    )
+  }
+  bmath <- bmath[actual_math]
+  no_end <- no_end[actual_math]
+  no_start <- no_start[actual_math]
+  lh <- length(bmath[no_start])
+  le <- length(bmath[no_end])
+  return(list(
+    bmath = bmath,
+    no_end = no_end,
+    no_start = no_start,
+    lh = lh,
+    le = le
+  ))
+}
+
+#' Re-align mis-aligned pairs of logical vectors
+#'
+#' @details
+#' The primary purpose of this function is to determine which nodes in a
+#' nodelist have a math expression broken across a line. We do this by feeding
+#' in two logical vectors: one for math beginning elements that have no end and
+#' one for math end elements that have no beginning. This function returns TRUE
+#' for each element that is a paired math expression and `FALSE` for each
+#' element that is unpaired.
+#'
+#' Imagine a zipper. Every tooth fits in a groove directly opposite. If there
+#' is a mistake and there is an extra tooth on one side, the zipper gets stuck.
+#' the solution is to remove that tooth to realign the zipper.
+#'
+#' This function takes two logical vectors assuming the following:
+#'
+#' 1. no_start ends with TRUE
+#' 2. no_end and no_start are the same length
+#'
+#' This function recursively slides down the length of the vectors and applies
+#' these rules:
+#'
+#' 0. (exit case) if there are fewer than 2 elements left in the inputs, then
+#'    we return a `FALSE` for each element.
+#' 1. if the current and next elements are mutually exclusive (detected by the
+#'    `compat` argument AND if the current `no_end`` value matches the value of
+#'    the next `no_start``, then these two are complementary parts of the
+#'    zipper and are both marked `TRUE` and the index advances by two.
+#' 2. otherwise a single `FALSE` is returned and the index advances by 1.
+#'
+#' @param no_end [logical] vector indicating broken math elements that
+#'   have no ending pair
+#' @param no_start [logical] vector of the same length as `no_end` indicating
+#'   broken math elements that have no opening pair.
+#' @param compat [logical] vector of the same length as the others that defauts
+#'   to a [xor()] comparison between `no_end` and `no_start`.
+#' @return a logical vector the same length as the inputs that indicates which
+#'   corresponding pairs of inputs are aligned.
+#' @dev
+#' @examples
+#' no_starts <- c(FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, TRUE)
+#' no_ends   <- c(TRUE,  FALSE, TRUE,  TRUE,  TRUE,  TRUE,  FALSE)
+#' toss_broken_teeth(no_ends, no_starts)
+toss_broken_teeth <- function(
+  no_end,
+  no_start,
+  compat = xor(no_end, no_start)
+) {
+  if (length(no_end) < 2) {
+    # EXIT CASE -----------------------------------------------
+    # less than 2 either returns FALSE or logical(0)
+    return(logical(length(no_end)) == 2)
+  } else if (compat[1] && compat[2] && no_end[1] == no_start[2]) {
+    # CASE 1: MATCHING PAIRS ----------------------------------
+    # When the pairs match, these are likely broken math
+    # and we increment by two to move to the next pair
+    result <- c(TRUE, TRUE)
+    idx <- -(1:2)
+  } else {
+    # CASE 2: MISMATCHED PAIRS --------------------------------
+    # When the pairs do not match, it's not likely broken math,
+    # so we toss it and move to the next element.
+    result <- FALSE
+    idx <- -1
+  }
+  # return the result and iterate over the rest of the vector
+  return(c(result, toss_broken_teeth(no_end[idx], no_start[idx], compat[idx])))
 }
 
 # Partial inline math are math elements that are not entirely embedded in a

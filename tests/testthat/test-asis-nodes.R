@@ -7,6 +7,39 @@ test_that("(#121) single dollar lines dont throw errors", {
   expect_equal(actual, expected)
 })
 
+test_that("(#146) interspersed emphasis does not drop text", {
+  skip("see #146")
+  # FIXME: The reason this is being split up is because of a coincidence where
+  # there are exactly one pair of broken inline elements and the parser does
+  # not understand that they are not in fact adjacent to one another, so the
+  # first protected node is appended to the second protected node, which occurs
+  # in a different context entirely. This problem exists in
+  # find_between_inlines(), but is exacerbated by the facts that we do not
+  # detect multiple inline elements and we do not account for emph elements
+  # breaking across math elements
+  okay <- test_path("examples", "simple-math-emph.md")
+  emph_math <- yarn$new(okay, sourcepos = TRUE)
+  expect_no_error(emph_math$protect_math())
+  expect_match(emph_math$show()[1], "TEXT6")
+})
+
+
+test_that("(#121) money dollars mixed with broken math don't break", {
+  okay <- test_path("examples", "math-money-mix.md")
+  dollar_math <- yarn$new(okay, sourcepos = TRUE)
+  expect_no_error(dollar_math$protect_math())
+  expect_snapshot(show_user(dollar_math$show(), force = TRUE))
+})
+
+test_that("broken math elements throw errors", {
+  pathmath <- system.file("extdata", "math-example.md", package = "tinkr")
+  tmp <- withr::local_tempfile()
+  sub("tau$", "tau", readLines(pathmath), fixed = TRUE) %>% writeLines(tmp)
+  broken_math <- yarn$new(tmp)
+  withr::local_options(list(tinkr.warn_math = TRUE))
+  expect_snapshot(broken_math$protect_math())
+})
+
 test_that("(#124) french dollar lines dont throw errors", {
   expected <- "I've only got 2$ in the bank. Feels bad, man. Feels bad to not have 2 $\n"
   math <- commonmark::markdown_xml(expected)
@@ -16,10 +49,12 @@ test_that("(#124) french dollar lines dont throw errors", {
   expect_equal(actual, expected)
 })
 
-test_that("mal-formed inline math throws an informative error", {
+test_that("prefix mixed with postfix dollars no longer throw errors", {
+  # NOTE: 2025-10-04 This test was previously testing an error that now no
+  # longer occurs. This is because of the change that happened in #124
   patherr <- system.file("extdata", "basic-math.md", package = "tinkr")
   me <- yarn$new(patherr, sourcepos = TRUE)
-  expect_snapshot_error(me$protect_math())
+  expect_no_error(me$protect_math())
 })
 
 test_that("multi-line inline math can have punctutation after", {

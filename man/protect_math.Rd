@@ -23,6 +23,11 @@ normal text. This means that content surrounded by underscores are
 interpreted as \verb{<emph>} elements and all backslashes are escaped by default.
 This function protects inline and block math elements that use \code{$} and \verb{$$}
 for delimiters, respectively.
+
+There are elements that prove to be ambiguous, such as mixing dollar amounts
+with inline math or broken inline math (e.g. a forgotten closing \code{$}). These
+elements will be filtered out and ignored. If you would like tinkr to report
+on these elements, you can set the "tinkr.warn_math" option.
 }
 \note{
 this function is also a method in the \link{yarn} object.
