@@ -31,15 +31,15 @@ read_stylesheet <- function(stylesheet_path) {
     stop("'stylesheet_path' must be a path to an XSL stylesheet", call. = FALSE)
   }
   if (!file.exists(stylesheet_path)) {
-    stop(
-      glue::glue("The file '{stylesheet_path}' does not exist."),
-      call. = FALSE
+    cli::cli_abort(
+      "Can't find {.path {stylesheet_path}}.",
+      call = NULL
     )
   }
   out <- xml2::read_xml(stylesheet_path)
   if (is_stylesheet(out)) {
     return(out)
   } else {
-    stop(glue::glue("'{stylesheet_path}' is not a valid stylesheet"))
+    cli::cli_abort("{.path {stylesheet_path}} is not a valid stylesheet")
   }
 }

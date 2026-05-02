@@ -19,7 +19,7 @@ test_that("(#124) french dollar lines dont throw errors", {
 test_that("mal-formed inline math throws an informative error", {
   patherr <- system.file("extdata", "basic-math.md", package = "tinkr")
   me <- yarn$new(patherr, sourcepos = TRUE)
-  expect_snapshot_error(me$protect_math())
+  expect_snapshot(error = TRUE, me$protect_math())
 })
 
 test_that("multi-line inline math can have punctutation after", {

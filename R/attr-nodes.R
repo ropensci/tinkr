@@ -10,7 +10,7 @@ find_curly <- function(body, ns) {
     for (not_closed in curlies[no_closing]) {
       closing <- xml2::xml_find_all(
         not_closed,
-        glue::glue("./{close_xpath}"),
+        sprintf("./%s", close_xpath),
         ns
       )
       xml2::xml_text(not_closed) <- paste(
