@@ -55,18 +55,20 @@ shove_nodes_in <- function(body, new, nodes, where = "after", space = TRUE) {
     xpath <- NULL
   }
   if (length(nodes) == 0) {
-    msg <- glue::glue("No nodes matched the expression {sQuote(xpath)}")
-    rlang::abort(msg, class = "insert-md-xpath")
+    cli::cli_abort(
+      "No nodes matched the expression {.val {xpath}}.",
+      class = "insert-md-xpath"
+    )
   }
   if (!inherits(nodes, c("xml_node", "xml_nodeset"))) {
-    rlang::abort(
-      "an object of class `xml_node` or `xml_nodeset` was expected",
+    cli::cli_abort(
+      "an object of class {.cls xml_node} or {.cls xml_nodeset} was expected.",
       class = "insert-md-node"
     )
   }
   root <- xml2::xml_root(nodes)
   if (!identical(root, body)) {
-    rlang::abort(
+    cli::cli_abort(
       "nodes must come from the same body as the yarn document",
       class = "insert-md-body"
     )
@@ -103,10 +105,10 @@ add_nodes_to_nodes <- function(new, old, where = "after", space = TRUE) {
   # be supplying strictly inline markdown, but it may not be so neat.
   if (n > 0) {
     if (!single_node && n < length(old)) {
-      rlang::abort(
+      cli::cli_abort(
         "Nodes must be either block type or inline, but not both",
         class = "insert-md-dual-type",
-        call. = FALSE
+        call = NULL
       )
     }
     # make sure the new nodes are inline by extracting the children.

@@ -296,7 +296,7 @@ test_that("an error happens when you try to append to a non-existant node", {
   ex <- tinkr::yarn$new(path)
   expect_error(
     ex$append_md("WRONG", ".//md:nope"),
-    "No nodes matched the expression './/md:nope'",
+    'No nodes matched the expression ".//md:nope"',
     class = "insert-md-xpath"
   )
 })

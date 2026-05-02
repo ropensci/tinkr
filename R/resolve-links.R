@@ -156,15 +156,17 @@ add_anchor_links <- function(body, links) {
 # Make an anchor link node from a text string
 # build_anchor_links("[CAT!]: https://placekitten.com/200/200 'cute kitty'")
 build_anchor_links <- function(link) {
-  txt <- glue::glue("<text>{al_name(link)}</text>")
-  attrs <- glue::glue(
-    "destination='{al_dest(link)}' title='{al_title(link)}' anchor='true'"
+  txt <- sprintf("<text>%s</text>", al_name(link))
+  attrs <- sprintf(
+    "destination='%s' title='%s' anchor='true'",
+    al_dest(link),
+    al_title(link)
   )
   # wrap the nodes in a paragraph to make sure they don't get screwed up by
   # any footer text
   make_text_nodes(c(
     "<paragraph>",
-    glue::glue("<link {attrs}>{txt}</link>"),
+    sprintf("<link %s>%s</link>", attrs, txt),
     "</paragraph>"
   ))
 }
@@ -213,7 +215,7 @@ get_pos <- function(x, e = 1) {
   as.integer(
     gsub(
       "^(\\d+?):(\\d+?)[-](\\d+?):(\\d+?)$",
-      glue::glue("\\{e}"),
+      sprintf("\\%s", e),
       xml2::xml_attr(x, "sourcepos")
     )
   )

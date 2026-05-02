@@ -31,7 +31,7 @@ Helper function to find all nodes between a standard pattern. This is useful
 if you want to find unnested pandoc tags.
 }
 \examples{
-md <- glue::glue("
+md <- "
  h1
  ====
 
@@ -43,7 +43,7 @@ md <- glue::glue("
  section *text* with [a link](https://ropensci.org/)
 
  :::
-")
+"
 x <- xml2::read_xml(commonmark::markdown_xml(md))
 ns <- xml2::xml_ns_rename(xml2::xml_ns(x), d1 = "md")
 res <- find_between(x, ns)
