@@ -17,7 +17,7 @@ to_xml(
 
 \item{encoding}{Encoding to be used by readLines.}
 
-\item{sourcepos}{passed to \code{\link[commonmark:commonmark]{commonmark::markdown_xml()}}. If \code{TRUE}, the
+\item{sourcepos}{passed to \code{\link[commonmark:markdown_xml]{commonmark::markdown_xml()}}. If \code{TRUE}, the
 source position of the file will be included as a "sourcepos" attribute.
 Defaults to \code{FALSE}.}
 
@@ -42,7 +42,7 @@ Transform file to XML
 }
 \details{
 This function will take a (R)markdown file, split the frontmatter
-from the body, and read in the body through \code{\link[commonmark:commonmark]{commonmark::markdown_xml()}}.
+from the body, and read in the body through \code{\link[commonmark:markdown_xml]{commonmark::markdown_xml()}}.
 Any RMarkdown code fences will be parsed to expose the chunk options in
 XML and tickboxes (aka checkboxes) in GitHub-flavored markdown will be
 preserved (both modifications from the commonmark standard).

@@ -92,3 +92,39 @@
         </paragraph>
       </document>
 
+# protect_emojis() works
+
+    Code
+      cat(as.character(protect_emojis(ex$body)))
+    Output
+      <?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE document SYSTEM "CommonMark.dtd">
+      <document xmlns="http://commonmark.org/xml/1.0" sourcepos="1:1-11:26">
+        <heading sourcepos="1:1-1:12" level="1">
+          <text sourcepos="1:3-1:12" xml:space="preserve">Emoji test</text>
+        </heading>
+        <paragraph sourcepos="3:1-3:19">
+          <text sourcepos="3:1-3:19" xml:space="preserve">Hello </text>
+          <text emoji="true">:wave:</text>
+          <text> world.</text>
+        </paragraph>
+        <paragraph sourcepos="5:1-5:28">
+          <text sourcepos="5:1-5:28" xml:space="preserve"/>
+          <text emoji="true">:snake:</text>
+          <text> is the Python emoji.</text>
+        </paragraph>
+        <paragraph sourcepos="7:1-7:36">
+          <text sourcepos="7:1-7:36" xml:space="preserve">Multiple emojis: </text>
+          <text emoji="true">:smile:</text>
+          <text> and </text>
+          <text emoji="true">:tada:</text>
+          <text>.</text>
+        </paragraph>
+        <paragraph sourcepos="9:1-9:26">
+          <text sourcepos="9:1-9:26" xml:space="preserve">The meeting is at 1:30:00.</text>
+        </paragraph>
+        <paragraph sourcepos="11:1-11:26">
+          <text sourcepos="11:1-11:26" xml:space="preserve">This is foo:bar: notation.</text>
+        </paragraph>
+      </document>
+

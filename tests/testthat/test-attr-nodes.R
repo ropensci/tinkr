@@ -23,3 +23,9 @@ test_that("protect_fences() works", {
   curly <- yarn$new(pathcurly, sourcepos = TRUE)
   expect_snapshot(cat(as.character(protect_fences(curly$body))))
 })
+
+test_that("protect_emojis() works", {
+  path <- system.file("extdata", "emoji.md", package = "tinkr")
+  ex <- yarn$new(path, sourcepos = TRUE)
+  expect_snapshot(cat(as.character(protect_emojis(ex$body))))
+})
