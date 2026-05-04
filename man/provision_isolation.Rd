@@ -22,7 +22,7 @@ descendant, or self relationship to the nodes in \code{nodelist}.
 }
 }
 \description{
-This uses \code{\link[xml2:xml_children]{xml2::xml_root()}} and \code{\link[xml2:xml_path]{xml2::xml_path()}} to make a copy of the
+This uses \code{\link[xml2:xml_root]{xml2::xml_root()}} and \code{\link[xml2:xml_path]{xml2::xml_path()}} to make a copy of the
 root document and then tag the corresponding nodes in the nodelist so that
 we can filter on nodes that are not connected to those present in the
 nodelist. This function is required for \code{\link[=isolate_nodes]{isolate_nodes()}} to work.
@@ -38,8 +38,8 @@ tnk$provision_isolation(items)
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-Other nodeset isolation functions: 
-\code{\link{isolate_nodes}()}
+Other nodeset isolation functions:
+\code{\link[=isolate_nodes]{isolate_nodes()}}
 }
 \concept{nodeset isolation functions}
 \keyword{internal}
