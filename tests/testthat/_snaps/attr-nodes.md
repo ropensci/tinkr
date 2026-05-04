@@ -29,7 +29,7 @@
             <text sourcepos="10:3-10:17" xml:space="preserve">a pretty kitten</text>
           </image>
           <text sourcepos="10:52-10:88" xml:space="preserve"/>
-          <text curly="true">{#kitteh alt='a picture of a kitten'}</text>
+          <text curly="true" alt="a picture of a kitten">{#kitteh alt='a picture of a kitten'}</text>
           <text/>
         </paragraph>
         <paragraph sourcepos="12:1-13:17">
@@ -37,7 +37,7 @@
             <text sourcepos="12:3-12:16" xml:space="preserve">a pretty puppy</text>
           </image>
           <text sourcepos="12:48-12:68" xml:space="preserve"/>
-          <text curly="true">{#dog alt="a picture
+          <text curly="true" alt="a picture of Mickey's dog">{#dog alt="a picture
       of Mickey's dog"}</text>
           <text/>
           <softbreak/>
