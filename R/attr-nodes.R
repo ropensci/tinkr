@@ -30,7 +30,7 @@ digest_curly <- function(curly, ns) {
   for (curl in curlies) {
     attributes <- "curly='true'"
 
-    alt_fragment <- regmatches(curl, gregexpr("alt=['\"].*?\1", curl))[[1]]
+    alt_fragment <- regmatches(curl, gregexpr("alt=(['\"]).*?\\1", curl))[[1]]
     if (length(alt_fragment) > 0) {
       alt_text <- sub("^alt=", "", alt_fragment)
       attributes <- sprintf("%s alt=%s", attributes, alt_text)
