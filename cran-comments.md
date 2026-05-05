@@ -1,2 +1,1 @@
-This is a submission that contains new features and bug fixes.
-
+this submission contains a bug fix.

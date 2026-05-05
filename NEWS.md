@@ -1,3 +1,11 @@
+# tinkr 0.3.1
+
+## BUG FIX
+
+* list sub-items will no longer be incorrectly indented if the parent item is
+an ordered item (reported and fixed: @maelle, #140)
+* we now use the air formatter for code in the project (#141)
+
 # tinkr 0.3.0
 
 ## NEW FEATURES
@@ -6,7 +14,7 @@
   subset the output by the lines of text. A warning is produced if a stylesheet
   is supplied in place of `lines`.
 * `yarn$append_md()` and `yarn$prepend_md()` methods allow you to add new
-  markdown to specific places in the document using XPath expressions. 
+  markdown to specific places in the document using XPath expressions.
 * `to_md_vec()` takes an xml node or nodelist and returns a character vector of
   the markdown produced.
 * `show_list()`, `show_block()`, and `show_censor()` will show the markdown
@@ -28,7 +36,7 @@
   of the frontmatter. (issue: #126, @maelle)
 * New `protect_fences()` function will add a `fence='true'` attribute to fences
   of Pandoc fenced divs to allow parsing of the XML for sending to external
-  APIs. 
+  APIs.
 * New `$protect_fences()` method implements `protect_fences()` on yarn objects
 
 ## NEW IMPORTS
@@ -40,7 +48,7 @@
 ## BUG FIX
 
 * Bare links in Markdown (e.g. `<https://example.com/one>`) are no longer
-  transformed to markdown-style links (e.g. 
+  transformed to markdown-style links (e.g.
   `[https://example.com/one](https://example.com/one)`). (issue: #59; fix: #115)
 * Inline math with single characters will no longer cause an error (issue: #101,
   fix: #103, @maelle)
@@ -61,9 +69,9 @@
 
 ## BUG FIX
 
-* Empty YAML will not prepend with newline in {glue} (> 1.6.2). 
+* Empty YAML will not prepend with newline in {glue} (> 1.6.2).
   (#93, @jennybc)
-- Relative links whose text and anchor key are identical (e.g. footnotes) are
+* Relative links whose text and anchor key are identical (e.g. footnotes) are
   no longer doubled in the output document (issue: #92, fix: #94)
 
 ## NEW FEATURES
@@ -77,11 +85,11 @@
 * unescaped square braces from the source code can now make the roundtrip
   without extra markup. This is implemented in a new default parameter for
   `to_xml()` called `unescaped = TRUE`, which indicates that you would like
-  unescaped square braces to remain unescaped (#78). 
+  unescaped square braces to remain unescaped (#78).
 
 ## DEPENDENCY UPDATE
 
-* removed dependency on stringr in favor of base R functions wrapped in internal 
+* removed dependency on stringr in favor of base R functions wrapped in internal
   functions with a stringr-like interface (#88).
 
 # tinkr 0.1.0
@@ -92,7 +100,7 @@ First version on CRAN
 
 * The stylesheets now are in the `stylesheets/` path, not `extdata/`. If you
   have not used `tinkr::stylesheet()` to access the default stylesheet, you will
-  need to modify your code. 
+  need to modify your code.
 
 # tinkr 0.0.0.9002
 
@@ -106,19 +114,19 @@ First version on CRAN
 * xml and yaml objects are now stored in an R6 class called `yarn`.
 * testthat edition 3 is now being used with snapshot testing.
 * Tables are now pretty after a full loop `to_xml()` + `to_md()` (@pdaengeli, #9)
-* 2021-05-04: yarn objects remember the `sourcepos` and `encoding` options 
+* 2021-05-04: yarn objects remember the `sourcepos` and `encoding` options
   when using the `$reset()` method.
-* 2021-05-06: `protect_math()` function and method protects LaTeX math (dollar 
+* 2021-05-06: `protect_math()` function and method protects LaTeX math (dollar
   notation) from escaping by commonmark (@zkamvar, #39).
 * 2021-05-06: GitHub-flavored markdown ticks/checkboxes are now protected by
   default (@zkamvar, #39).
-* 2021-05-11: `md_ns()` is a new convenience function to provide the `md` 
+* 2021-05-11: `md_ns()` is a new convenience function to provide the `md`
   namespace prefix for commonmark xml documents (@zkamvar, #39).
 * 2021-05-11: `stylesheet()` returns the path to the internal {tinkr} stylesheet
   so that it can easily be discovered by other packages
-* 2021-05-11: yarn methods `show()`, `head()`, and `tail()` all gain 
+* 2021-05-11: yarn methods `show()`, `head()`, and `tail()` all gain
   `stylesheet_path` arguments so the modified stylesheets can be used.
-* 2021-05-24: reference style links (i.e. `[text][link-ref]` with `[link-ref]: 
+* 2021-05-24: reference style links (i.e. `[text][link-ref]` with `[link-ref]:
   <link>` on another place in the document will be preserved and the anchor will
   sink to the bottom of the document.
 * 2021-09-14: numeric options fig.width and fig.height will no longer be quoted;

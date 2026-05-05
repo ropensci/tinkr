@@ -1,6 +1,6 @@
 Package: tinkr
 Title: Cast '(R)Markdown' Files to 'XML' and Back Again
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: 
     c(person(given = "Maëlle",
              family = "Salmon",
