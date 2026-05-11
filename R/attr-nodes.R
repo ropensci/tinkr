@@ -75,9 +75,9 @@ protect_curly <- function(body, ns = md_ns()) {
   curly <- find_curly(body, ns)
   new_nodes <- purrr::map(curly, digest_curly, ns = ns)
   # since we split up the nodes, we have to do this node by node
-  for (i in seq(new_nodes)) {
+  purrr::map(seq(new_nodes), \(i) {
     add_node_siblings(curly[[i]], new_nodes[[i]], remove = TRUE)
-  }
+  })
   copy_xml(body)
 }
 
