@@ -9,7 +9,7 @@
 #' This function protects inline and block math elements that use `$` and `$$`
 #' for delimiters, respectively.
 #'
-#' @note this function is also a method in the [tinkr::yarn] object.
+#' @yarn
 #'
 #' @export
 #' @examples

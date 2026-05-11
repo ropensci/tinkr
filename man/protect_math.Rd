@@ -24,9 +24,6 @@ interpreted as \verb{<emph>} elements and all backslashes are escaped by default
 This function protects inline and block math elements that use \code{$} and \verb{$$}
 for delimiters, respectively.
 }
-\note{
-this function is also a method in the \link{yarn} object.
-}
 \examples{
 m <- tinkr::to_xml(system.file("extdata", "math-example.md", package = "tinkr"))
 txt <- textConnection(tinkr::to_md(m))
@@ -37,3 +34,7 @@ txt <- textConnection(tinkr::to_md(m))
 cat(tail(readLines(txt)), sep = "\n") # fixed math
 close(txt)
 }
+\section{Note: yarn method}{
+  This function is also a method in the \link{yarn} object.
+    }
+
