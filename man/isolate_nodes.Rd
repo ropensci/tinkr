@@ -53,8 +53,8 @@ tnk$isolate_nodes(items, type = "list")
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-Other nodeset isolation functions: 
-\code{\link{provision_isolation}()}
+Other nodeset isolation functions:
+\code{\link[=provision_isolation]{provision_isolation()}}
 }
 \concept{nodeset isolation functions}
 \keyword{internal}

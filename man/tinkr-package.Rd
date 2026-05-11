@@ -22,6 +22,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Zhian N. Kamvar \email{zkamvar@gmail.com} (\href{https://orcid.org/0000-0003-1458-7108}{ORCID})
   \item Maëlle Salmon \email{msmaellesalmon@gmail.com} (\href{https://orcid.org/0000-0002-2815-0399}{ORCID})
   \item Jeroen Ooms
 }
