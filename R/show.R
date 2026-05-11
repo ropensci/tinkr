@@ -183,20 +183,23 @@ isolate_nodes_list <- function(nodelist) {
   if (inherits(nodelist, "xml_node")) {
     nodelist <- list(nodelist)
   }
-  for (node in nodelist) {
-    parent <- xml2::xml_add_child(doc, "paragraph")
-    if (inherits(node, "xml_node")) {
-      xml2::xml_add_child(parent, node)
-    } else {
-      purrr::walk(node, function(n) {
-        xml2::xml_add_child(parent, n)
-        xml2::xml_add_child(parent, "softbreak")
-      })
-    }
-  }
+
+  purrr::map(nodelist, \(node) isolate_that_node(node, doc))
+
   return(list(doc = doc, key = NULL))
 }
 
+isolate_that_node <- function(node, doc) {
+  parent <- xml2::xml_add_child(doc, "paragraph")
+  if (inherits(node, "xml_node")) {
+    xml2::xml_add_child(parent, node)
+  } else {
+    purrr::walk(node, function(n) {
+      xml2::xml_add_child(parent, n)
+      xml2::xml_add_child(parent, "softbreak")
+    })
+  }
+}
 
 isolate_nodes_block <- function(nodelist) {
   res <- provision_isolation(nodelist)
