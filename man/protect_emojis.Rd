@@ -32,7 +32,7 @@ this function is also a method in the \link{yarn} object.
 }
 \examples{
 m <- tinkr::to_xml(system.file("extdata", "emoji.md", package = "tinkr"))
-xml2::xml_child(m$body)
+m$body
 m$body <- protect_emojis(m$body)
-xml2::xml_child(m$body)
+m$body
 }

@@ -129,7 +129,10 @@ find_emojis <- function(body, ns) {
 
 digest_emoji <- function(emoji_node, ns) {
   char <- as.character(emoji_node)
-  emojis <- regmatches(char, gregexpr("(?<![0-9A-Za-z]):[_0-9A-Za-z-]+:", char, perl = TRUE))[[1]]
+  emojis <- regmatches(
+    char,
+    gregexpr("(?<![0-9A-Za-z]):[_0-9A-Za-z-]+:", char, perl = TRUE)
+  )[[1]]
   for (em in emojis) {
     char <- sub(
       em,
@@ -159,9 +162,9 @@ digest_emoji <- function(emoji_node, ns) {
 #' @export
 #' @examples
 #' m <- tinkr::to_xml(system.file("extdata", "emoji.md", package = "tinkr"))
-#' xml2::xml_child(m$body)
+#' m$body
 #' m$body <- protect_emojis(m$body)
-#' xml2::xml_child(m$body)
+#' m$body
 protect_emojis <- function(body, ns = md_ns()) {
   body <- copy_xml(body)
   emojis <- find_emojis(body, ns)
