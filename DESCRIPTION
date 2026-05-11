@@ -36,6 +36,8 @@ Description: Parsing '(R)Markdown' files with numerous regular expressions can
 License: GPL-3
 URL: https://docs.ropensci.org/tinkr/, https://github.com/ropensci/tinkr
 BugReports: https://github.com/ropensci/tinkr/issues
+Depends:
+    R (>= 4.1.0)
 Imports: 
     cli,
     commonmark (>= 1.6),
