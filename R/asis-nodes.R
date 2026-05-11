@@ -124,9 +124,10 @@ protect_inline_math <- function(body, ns) {
   if (length(imath)) {
     new_nodes <- purrr::map(imath, fix_fully_inline)
     # since we split up the nodes, we have to do this node by node
-    for (i in seq(new_nodes)) {
-      add_node_siblings(imath[[i]], new_nodes[[i]], remove = TRUE)
-    }
+    purrr::map(
+      seq(new_nodes),
+      \(i) add_node_siblings(imath[[i]], new_nodes[[i]], remove = TRUE)
+    )
   }
 
   # protect math that is broken across lines or markdown elements
