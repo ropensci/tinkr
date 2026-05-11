@@ -99,7 +99,7 @@
     Output
       <?xml version="1.0" encoding="UTF-8"?>
       <!DOCTYPE document SYSTEM "CommonMark.dtd">
-      <document xmlns="http://commonmark.org/xml/1.0" sourcepos="1:1-11:26">
+      <document xmlns="http://commonmark.org/xml/1.0" sourcepos="1:1-15:26">
         <heading sourcepos="1:1-1:12" level="1">
           <text sourcepos="1:3-1:12" xml:space="preserve">Emoji test</text>
         </heading>
@@ -120,11 +120,17 @@
           <text emoji="true">:tada:</text>
           <text>.</text>
         </paragraph>
-        <paragraph sourcepos="9:1-9:26">
-          <text sourcepos="9:1-9:26" xml:space="preserve">The meeting is at 1:30:00.</text>
+        <paragraph sourcepos="9:1-9:79">
+          <text sourcepos="9:1-9:79" xml:space="preserve">Let me call a tinkr::function without formatting it as code: I am a bad writer.</text>
         </paragraph>
-        <paragraph sourcepos="11:1-11:26">
-          <text sourcepos="11:1-11:26" xml:space="preserve">This is foo:bar: notation.</text>
+        <paragraph sourcepos="11:1-11:56">
+          <text sourcepos="11:1-11:56" xml:space="preserve">In French we put a space before and after ":" : like so.</text>
+        </paragraph>
+        <paragraph sourcepos="13:1-13:26">
+          <text sourcepos="13:1-13:26" xml:space="preserve">The meeting is at 1:30:00.</text>
+        </paragraph>
+        <paragraph sourcepos="15:1-15:26">
+          <text sourcepos="15:1-15:26" xml:space="preserve">This is foo:bar: notation.</text>
         </paragraph>
       </document>
 
