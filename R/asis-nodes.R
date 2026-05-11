@@ -297,9 +297,10 @@ protect_tickbox <- function(body, ns) {
   char <- sub("(\\[.\\])", "\\1</text><text>", char, perl = TRUE)
   new_nodes <- purrr::map(char, make_text_nodes)
   # since we split up the nodes, we have to do this node by node
-  for (i in seq(new_nodes)) {
+  purrr::map(seq(new_nodes), \(i) {
     add_node_siblings(ticks[[i]], new_nodes[[i]], remove = TRUE)
-  }
+  })
+
   copy_xml(body)
 }
 
