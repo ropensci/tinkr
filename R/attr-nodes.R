@@ -6,22 +6,26 @@ find_curly <- function(body, ns) {
   attr_texts <- xml2::xml_text(curlies)
   no_closing <- !grepl("[}]", attr_texts)
   if (any(no_closing)) {
-    close_xpath <- "self::*/following-sibling::md:text[contains(text(), '}')]"
-    for (not_closed in curlies[no_closing]) {
-      closing <- xml2::xml_find_all(
-        not_closed,
-        sprintf("./%s", close_xpath),
-        ns
-      )
-      xml2::xml_text(not_closed) <- paste(
-        xml2::xml_text(not_closed),
-        xml2::xml_text(closing),
-        sep = "\n"
-      )
-      xml2::xml_remove(closing)
-    }
+    purrr::map(curlies[no_closing], \(not_closed) {
+      handle_not_closing(not_closed, ns, no_closing)
+    })
   }
   curlies
+}
+
+handle_not_closing <- function(not_closed, ns, no_closing) {
+  close_xpath <- "self::*/following-sibling::md:text[contains(text(), '}')]"
+  closing <- xml2::xml_find_all(
+    not_closed,
+    sprintf("./%s", close_xpath),
+    ns
+  )
+  xml2::xml_text(not_closed) <- paste(
+    xml2::xml_text(not_closed),
+    xml2::xml_text(closing),
+    sep = "\n"
+  )
+  xml2::xml_remove(closing)
 }
 
 digest_curly <- function(curly, ns) {
