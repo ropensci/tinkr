@@ -160,9 +160,7 @@ protect_inline_math <- function(body, ns) {
     tags <- seq_along(bmath[endless])
     xml2::xml_set_attr(bmath[endless], "latex-pair", tags)
     xml2::xml_set_attr(bmath[headless], "latex-pair", tags)
-    for (i in tags) {
-      fix_partial_inline(i, body, ns)
-    }
+    purrr::map(tags, \(i) fix_partial_inline(i, body, ns))
   }
   copy_xml(body)
 }
