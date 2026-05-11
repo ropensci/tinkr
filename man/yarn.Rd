@@ -152,16 +152,6 @@ ex <- tinkr::yarn$new(path)
 ex$protect_fences()$head()
 
 ## ------------------------------------------------
-## Method `yarn$protect_emojis()`
-## ------------------------------------------------
-
-path <- system.file("extdata", "emoji.md", package = "tinkr")
-ex <- tinkr::yarn$new(path)
-ex$body
-ex$protect_emoji()
-ex$body
-
-## ------------------------------------------------
 ## Method `yarn$protect_unescaped()`
 ## ------------------------------------------------
 
@@ -239,7 +229,6 @@ commonmark.}
     \item \href{#method-yarn-protect_math}{\code{yarn$protect_math()}}
     \item \href{#method-yarn-protect_curly}{\code{yarn$protect_curly()}}
     \item \href{#method-yarn-protect_fences}{\code{yarn$protect_fences()}}
-    \item \href{#method-yarn-protect_emojis}{\code{yarn$protect_emojis()}}
     \item \href{#method-yarn-protect_unescaped}{\code{yarn$protect_unescaped()}}
     \item \href{#method-yarn-get_protected}{\code{yarn$get_protected()}}
     \item \href{#method-yarn-clone}{\code{yarn$clone()}}
@@ -651,28 +640,6 @@ ex$protect_curly()$head()
     \preformatted{path <- system.file("extdata", "fenced-divs.md", package = "tinkr")
 ex <- tinkr::yarn$new(path)
 ex$protect_fences()$head()
-}
-    \if{html}{\out{</div>}}
-  }
-}
-
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-yarn-protect_emojis"></a>}}
-\if{latex}{\out{\hypertarget{method-yarn-protect_emojis}{}}}
-\subsection{\code{yarn$protect_emojis()}}{
-  Protect emoji shortcodes \verb{:like_this:} from being escaped
-  \subsection{Usage}{
-    \if{html}{\out{<div class="r">}}
-    \preformatted{yarn$protect_emojis()}
-    \if{html}{\out{</div>}}
-  }
-  \subsection{Examples}{
-    \if{html}{\out{<div class="r example copy">}}
-    \preformatted{path <- system.file("extdata", "emoji.md", package = "tinkr")
-ex <- tinkr::yarn$new(path)
-ex$body
-ex$protect_emoji()
-ex$body
 }
     \if{html}{\out{</div>}}
   }

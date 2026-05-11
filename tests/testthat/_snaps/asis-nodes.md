@@ -4,15 +4,14 @@
       me$protect_math()
     Condition
       Error in `unbalanced_math_error()`:
-      ! Inline math delimiters are not balanced.
-      HINT: If you are writing BASIC code, make sure you wrap variable
-                names and code in backtics like so: {.code INKEY$}
+      ! x Inline math delimiters are not balanced.
+      i HINT: If you are writing BASIC code, make sure you wrap variable names and code in backtics like so: `INKEY$`
       Below are the pairs that were found:
-      "           start           ...                       end                        "
-      "           -----           ...                       ---                        "
-      " Give you $2 to            ...                        me what INKEY$ means.     "
-      " Give you $2 to            ...                        2$ verbally.              "
-      "We write $2 but            ...                                                  "
+                 start ... end
+                 ----- ... ---
+       Give you $2 to  ...  me what INKEY$ means.
+       Give you $2 to  ...  2$ verbally.
+      We write $2 but  ... 
 
 # block math can be protected
 
