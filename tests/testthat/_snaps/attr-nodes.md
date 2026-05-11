@@ -32,13 +32,13 @@
           <text curly="true" alt="a picture of a kitten">{#kitteh alt='a picture of a kitten'}</text>
           <text/>
         </paragraph>
-        <paragraph sourcepos="12:1-13:10">
+        <paragraph sourcepos="12:1-13:17">
           <image sourcepos="12:1-12:47" destination="https://placedog.net/200/300" title="">
             <text sourcepos="12:3-12:16" xml:space="preserve">a pretty puppy</text>
           </image>
           <text sourcepos="12:48-12:68" xml:space="preserve"/>
-          <text curly="true" alt="a picture of a dog">{#dog alt="a picture
-      of a dog"}</text>
+          <text curly="true" alt="a picture of Mickey's dog">{#dog alt="a picture
+      of Mickey's dog"}</text>
           <text/>
           <softbreak/>
         </paragraph>
