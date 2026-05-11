@@ -436,27 +436,33 @@ fix_unescaped_squares <- function(nodes, txt) {
   # indicator of which lines have escaped square braces
   escapes <- which(vapply(squares, sum, integer(1)) > 0L)
   lines <- get_linestart(nodes)
-  for (i in seq_along(lines)) {
-    this_line <- lines[[i]]
-    this_node <- nodes[[i]]
-    if (!this_line %in% escapes) {
-      # if there are no existing escaped braces here, we need to protect them
-      fix_unescaped(this_node)
-    } else {
-      # if there are escaped braces, there may be situations where we have
-      # escaped and unescaped braces on the same line (for example a link and
-      # an example of a link). This will tell us if the node we are handling
-      # contain the characters we need to escape (markup splits the nodes).
-      start <- get_colstart(this_node)
-      end <- get_colend(this_node)
-      escape_sequence <- squares[[this_line]]
-      overlaps <- start <= max(escape_sequence) & end >= min(escape_sequence)
-      if (overlaps) {
-        fix_unescaped(this_node, escape_sequence, offset = start)
-      }
-    }
-  }
+
+  purrr::map(seq_along(lines), \(i) {
+    fix_single_unescaped_square(i, nodes, lines, squares, escapes)
+  })
+
   invisible()
+}
+
+fix_single_unescaped_square <- function(i, nodes, lines, squares, escapes) {
+  this_line <- lines[[i]]
+  this_node <- nodes[[i]]
+  if (!this_line %in% escapes) {
+    # if there are no existing escaped braces here, we need to protect them
+    fix_unescaped(this_node)
+    return(TRUE)
+  }
+  # if there are escaped braces, there may be situations where we have
+  # escaped and unescaped braces on the same line (for example a link and
+  # an example of a link). This will tell us if the node we are handling
+  # contain the characters we need to escape (markup splits the nodes).
+  start <- get_colstart(this_node)
+  end <- get_colend(this_node)
+  escape_sequence <- squares[[this_line]]
+  overlaps <- start <= max(escape_sequence) & end >= min(escape_sequence)
+  if (overlaps) {
+    fix_unescaped(this_node, escape_sequence, offset = start)
+  }
 }
 
 
