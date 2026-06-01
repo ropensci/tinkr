@@ -14,6 +14,7 @@ Defaults to \code{NULL}, which includes all protected nodes:
 \itemize{
 \item math: via the \code{protect_math()} function
 \item curly: via the \code{protect_curly()} function
+\item emoji: via the \code{protect_emojis()} function
 \item unescaped: via the \code{protect_unescaped()} function
 }}
 

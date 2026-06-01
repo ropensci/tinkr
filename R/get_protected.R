@@ -5,6 +5,7 @@
 #'   Defaults to `NULL`, which includes all protected nodes:
 #'   - math: via the `protect_math()` function
 #'   - curly: via the `protect_curly()` function
+#'   - emoji: via the `protect_emojis()` function
 #'   - unescaped: via the `protect_unescaped()` function
 #' @param ns the namespace of the document (defaults to [md_ns()])
 #' @return an `xml_nodelist` object.
@@ -36,6 +37,7 @@ get_protected <- function(body, type = NULL, ns = md_ns()) {
     math = "@math",
     curly = "@curly",
     fence = "@fence",
+    emoji = "@emoji",
     unescaped = "(@asis and text()='[' or text()=']')"
   )
   if (!is.null(type)) {

@@ -117,3 +117,60 @@ find_fences <- function(body, ns) {
 digest_fence <- function(fence, ns) {
   xml2::xml_attr(fence, "fence") <- "true"
 }
+
+# EMOJIS ------------------
+
+find_emojis <- function(body, ns) {
+  i <- ".//md:text[not(@asis) and contains(text(), ':')]"
+  candidates <- xml2::xml_find_all(body, i, ns = ns)
+  texts <- xml2::xml_text(candidates)
+  candidates[grepl("(?<![0-9A-Za-z]):[_0-9A-Za-z-]+:", texts, perl = TRUE)]
+}
+
+digest_emoji <- function(emoji_node, ns) {
+  char <- as.character(emoji_node)
+  emojis <- regmatches(
+    char,
+    gregexpr("(?<![0-9A-Za-z]):[_0-9A-Za-z-]+:", char, perl = TRUE)
+  )[[1]]
+  for (em in emojis) {
+    char <- sub(
+      em,
+      sprintf("</text><text emoji='true'>%s</text><text>", em),
+      char,
+      fixed = TRUE
+    )
+  }
+  make_text_nodes(char)
+}
+
+#' Protect emoji shortcodes for further processing
+#'
+#' @inheritParams protect_math
+#' @return a copy of the modified XML object
+#' @details Commonmark will render emoji shortcodes such as `:wave:`
+#' as normal text which might be problematic if trying to extract
+#' real text from the XML.
+#'
+#' If sending the XML to, say, a translation API that allows some tags
+#' to be ignored, you could first transform the text tags with the
+#' attribute `emoji` to `emoji` tags, and then transform them back
+#' to text tags before using `to_md()`.
+#'
+#' @note this function is also a method in the [tinkr::yarn] object.
+#'
+#' @export
+#' @examples
+#' m <- tinkr::to_xml(system.file("extdata", "emoji.md", package = "tinkr"))
+#' m$body
+#' m$body <- protect_emojis(m$body)
+#' m$body
+protect_emojis <- function(body, ns = md_ns()) {
+  body <- copy_xml(body)
+  emojis <- find_emojis(body, ns)
+  new_nodes <- purrr::map(emojis, digest_emoji, ns = ns)
+  for (i in seq(new_nodes)) {
+    add_node_siblings(emojis[[i]], new_nodes[[i]], remove = TRUE)
+  }
+  copy_xml(body)
+}

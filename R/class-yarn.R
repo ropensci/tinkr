@@ -310,6 +310,18 @@ yarn <- R6::R6Class(
       self$body <- protect_fences(self$body, self$ns)
       invisible(self)
     },
+    #' @description Protect emoji shortcodes `:like_this:` from being escaped
+    #'
+    #' @examples
+    #' path <- system.file("extdata", "emoji.md", package = "tinkr")
+    #' ex <- tinkr::yarn$new(path)
+    #' ex$body
+    #' ex$protect_emojis()
+    #' ex$body
+    protect_emojis = function() {
+      self$body <- protect_emojis(self$body, self$ns)
+      invisible(self)
+    },
     #' @description Protect unescaped square braces from being escaped.
     #'
     #' This is applied by default when you use `yarn$new(sourcepos = TRUE)`.
@@ -339,6 +351,7 @@ yarn <- R6::R6Class(
     #'   - math: via the [protect_math()] function
     #'   - curly: via the `protect_curly()` function
     #'   - fence: via the `protect_fences()` function
+    #'   - emoji: via the `protect_emojis()` function
     #'   - unescaped: via the `protect_unescaped()` function
     #'
     #' @examples
