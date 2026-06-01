@@ -66,8 +66,10 @@ test_that("to_md works", {
 
   yaml_xml_list <- to_xml(path)
   # transform level 3 headers into level 1 headers
-  yaml_xml_list$body %>%
-    xml2::xml_find_all(xpath = './/d1:heading[@level="3"]', xml2::xml_ns(.)) %>%
+  xml2::xml_find_all(
+    yaml_xml_list$body,
+    xpath = './/d1:heading[@level="3"]'
+  ) |>
     xml2::xml_set_attr("level", 1)
 
   # save back and have a look
@@ -96,8 +98,7 @@ test_that("to_md works for Rmd", {
 
   yaml_xml_list <- to_xml(path, sourcepos = TRUE)
   body <- yaml_xml_list$body
-  blocks <- yaml_xml_list$body %>%
-    xml2::xml_find_all(xpath = './/d1:code_block', xml2::xml_ns(.))
+  blocks <- xml2::xml_find_all(yaml_xml_list$body, xpath = './/d1:code_block')
 
   # Two non-evaluated blocks
   lang_attr <- xml2::xml_attr(blocks, "language")
@@ -194,19 +195,19 @@ test_that("to_md_vec() returns a vector of the same length as the nodelist", {
   tables <- xml2::xml_find_all(y$body, ".//md:table", tinkr::md_ns())
 
   # each item is a character vector of equal length to the nodelist
-  expect_length(to_md_vec(items), length(items)) %>%
+  expect_length(to_md_vec(items), length(items)) |>
     expect_type("character")
-  expect_length(to_md_vec(links), length(links)) %>%
+  expect_length(to_md_vec(links), length(links)) |>
     expect_type("character")
-  expect_length(to_md_vec(code), length(code)) %>%
+  expect_length(to_md_vec(code), length(code)) |>
     expect_type("character")
-  expect_length(to_md_vec(blocks), length(blocks)) %>%
+  expect_length(to_md_vec(blocks), length(blocks)) |>
     expect_type("character")
-  expect_length(to_md_vec(tables), 0) %>%
+  expect_length(to_md_vec(tables), 0) |>
     expect_type("character")
 
   # single elements work as well
-  expect_length(to_md_vec(blocks[[1]]), 1) %>%
+  expect_length(to_md_vec(blocks[[1]]), 1) |>
     expect_type("character")
 
   # the output is as expected

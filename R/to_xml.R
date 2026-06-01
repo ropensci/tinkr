@@ -51,9 +51,8 @@ to_xml <- function(
 
   frontmatter <- splitted_content$frontmatter
 
-  splitted_content$body %>%
-    clean_content() %>%
-    commonmark::markdown_xml(extensions = TRUE, sourcepos = sourcepos) %>%
+  splitted_content$body |>
+    commonmark::markdown_xml(extensions = TRUE, sourcepos = sourcepos) |>
     xml2::read_xml(encoding = encoding) -> body
 
   parse_rmd(body)
@@ -79,9 +78,9 @@ clean_content <- function(content) {
   illegal_control_chars <- "[^\u0009\u000a\u000d\u0020-\uD7FF\uE000-\uFFFD]"
   smart_double_quotes <- "[\u201C\u201D]"
   smart_single_quotes <- "[\u2018\u2019]"
-  content %>%
-    str_replace_all(smart_double_quotes, '"') %>%
-    str_replace_all(smart_single_quotes, "'") %>%
+  content |>
+    str_replace_all(smart_double_quotes, '"') |>
+    str_replace_all(smart_single_quotes, "'") |>
     str_replace_all(illegal_control_chars, "")
 }
 
@@ -111,8 +110,6 @@ transform_block <- function(code_block) {
 }
 
 parse_rmd <- function(body) {
-  code_blocks <- body %>%
-    xml2::xml_find_all(xpath = './/d1:code_block', xml2::xml_ns(.))
-
-  purrr::walk(code_blocks, transform_block)
+  xml2::xml_find_all(body, xpath = './/d1:code_block') |>
+    purrr::walk(transform_block)
 }

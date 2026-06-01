@@ -121,8 +121,7 @@ copy_xml <- function(xml) {
 
 transform_code_blocks <- function(xml) {
   # Find all code blocks with a language attribute (those without it are not processed)
-  code_blocks <- xml %>%
-    xml2::xml_find_all(xpath = './/d1:code_block[@language]', xml2::xml_ns(.))
+  code_blocks <- xml2::xml_find_all(xml, xpath = './/d1:code_block[@language]')
 
   if (length(code_blocks) == 0) {
     return(TRUE)
@@ -141,7 +140,7 @@ to_info <- function(code_block) {
   ]
 
   if (length(options) > 0) {
-    options <- sprintf("%s=%s", names(options), options) %>%
+    options <- sprintf("%s=%s", names(options), options) |>
       toString()
     options <- paste(",", options)
   } else {

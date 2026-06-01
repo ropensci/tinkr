@@ -23,9 +23,9 @@ test_that("to_xml works for Rmd", {
   expect_equal(names(post_list)[2], "body")
   expect_s3_class(post_list[[2]], "xml_document")
 
-  blocks <- post_list[[2]] %>%
-    xml2::xml_find_all(xpath = './/d1:code_block', xml2::xml_ns(.)) %>%
-    .[xml2::xml_has_attr(., "language")]
+  blocks <- post_list[[2]] |>
+    xml2::xml_find_all(xpath = './/d1:code_block', ns = xml2::xml_ns(x = _)) |>
+    (\(x) x[xml2::xml_has_attr(x, "language")])()
 
   expect_equal(length(blocks), 4)
 })
