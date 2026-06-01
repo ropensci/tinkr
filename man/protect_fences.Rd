@@ -27,12 +27,13 @@ to be ignored, you could first transform the text tags with the
 attribute \code{fences} to \code{fences} tags, and then transform them back
 to text tags before using \code{to_md()}.
 }
-\note{
-this function is also a method in the \link{yarn} object.
-}
 \examples{
 m <- tinkr::to_xml(system.file("extdata", "fenced-divs.md", package = "tinkr"))
 xml2::xml_child(m$body)
 m$body <- protect_fences(m$body)
 xml2::xml_child(m$body)
 }
+\section{Note: yarn method}{
+  This function is also a method in the \link{yarn} object.
+    }
+

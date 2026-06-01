@@ -62,7 +62,7 @@ digest_curly <- function(curly, ns) {
 #' attribute `curly` to `curly` tags, and then transform them back
 #' to text tags before using `to_md()`.
 #'
-#' @note this function is also a method in the [tinkr::yarn] object.
+#' @yarn
 #'
 #' @export
 #' @examples
@@ -94,7 +94,7 @@ protect_curly <- function(body, ns = md_ns()) {
 #' attribute `fences` to `fences` tags, and then transform them back
 #' to text tags before using `to_md()`.
 #'
-#' @note this function is also a method in the [tinkr::yarn] object.
+#' @yarn
 #'
 #' @export
 #' @examples
