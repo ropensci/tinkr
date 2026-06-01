@@ -1,63 +1,54 @@
 Package: tinkr
 Title: Cast '(R)Markdown' Files to 'XML' and Back Again
 Version: 0.3.1
-Authors@R: 
-    c(person(given = "Maëlle",
-             family = "Salmon",
-             role = c("aut"),
-             email = "msmaellesalmon@gmail.com",
-             comment = c(ORCID = "0000-0002-2815-0399")),
-      person(given = "Zhian N.",
-             family = "Kamvar",
-             role = c("aut", "cre"),
-             email = "zkamvar@gmail.com",
-             comment = c(ORCID = "0000-0003-1458-7108")),
-      person(given = "Jeroen",
-             family = "Ooms",
-             role = "aut"),
-      person(given = "Nick",
-             family = "Wellnhofer",
-             role = "cph",
-             comment = "Nick Wellnhofer wrote the XSLT stylesheet."),
-      person(given = "rOpenSci",
-             role = "fnd",
-             comment = c(ROR = "019jywm96")),
-      person(given = "Peter",
-             family = "Daengeli",
-             role = "ctb"))
-Description: Parsing '(R)Markdown' files with numerous regular expressions can
-    be fraught with peril, but it does not have to be this way. Converting
-    '(R)Markdown' files to 'XML' using the 'commonmark' package allows
-    in-memory editing via of 'markdown' elements via 'XPath' through the
-    extensible 'R6' class called 'yarn'. These modified 'XML' representations
-    can be written to '(R)Markdown' documents via an 'xslt' stylesheet which
-    implements an extended version of 'GitHub'-flavoured 'markdown' so that you
-    can tinker to your hearts content.
+Authors@R: c(
+    person("Maëlle", "Salmon", , "msmaellesalmon@gmail.com", role = "aut",
+           comment = c(ORCID = "0000-0002-2815-0399")),
+    person("Zhian N.", "Kamvar", , "zkamvar@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-1458-7108")),
+    person("Jeroen", "Ooms", role = "aut"),
+    person("Nick", "Wellnhofer", role = "cph",
+           comment = "Nick Wellnhofer wrote the XSLT stylesheet."),
+    person("rOpenSci", role = "fnd",
+           comment = c(ROR = "019jywm96")),
+    person("Peter", "Daengeli", role = "ctb")
+  )
+Description: Parsing '(R)Markdown' files with numerous regular expressions
+    can be fraught with peril, but it does not have to be this way.
+    Converting '(R)Markdown' files to 'XML' using the 'commonmark' package
+    allows in-memory editing via of 'markdown' elements via 'XPath'
+    through the extensible 'R6' class called 'yarn'. These modified 'XML'
+    representations can be written to '(R)Markdown' documents via an
+    'xslt' stylesheet which implements an extended version of
+    'GitHub'-flavoured 'markdown' so that you can tinker to your hearts
+    content.
 License: GPL-3
 URL: https://docs.ropensci.org/tinkr/, https://github.com/ropensci/tinkr
 BugReports: https://github.com/ropensci/tinkr/issues
+Depends: 
+    R (>= 4.1.0)
 Imports: 
     cli,
     commonmark (>= 1.6),
     lifecycle,
-    magrittr,
     purrr,
     R6,
     rlang (>= 0.4.5),
     xml2,
     xslt
 Suggests: 
+    covr,
     knitr,
     rmarkdown,
-    covr,
     testthat (>= 3.0.0),
-    withr,
-    roxygen2
+    withr
+VignetteBuilder: 
+    knitr
+Config/Needs/build: moodymudskipper/devtag
+Config/roxygen2/version: 8.0.0.9000
 Config/testthat/edition: 3
 Encoding: UTF-8
-LazyData: true
-Roxygen: list(markdown = TRUE, roclets = c("collate", "rd", "namespace", "devtag::dev_roclet"))
-VignetteBuilder: knitr
-Config/Needs/build: moodymudskipper/devtag
 Language: en-US
-Config/roxygen2/version: 8.0.0
+LazyData: true
+Roxygen: list(markdown = TRUE, roclets = c("collate", "rd", "namespace",
+    "devtag::dev_roclet"))
