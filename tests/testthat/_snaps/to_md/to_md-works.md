@@ -95,10 +95,10 @@ Just like rOpenSci has a taxonomic toolbelt
 occurrence data toolbelt ([`spocc`](https://github.com/ropensci/spocc)),
 it has a super package for querying the scientific literature:
 [`fulltext`](https://github.com/ropensci/fulltext)! This package
-supports search for "PLOS via the rplos package, Crossref via the
+supports search for “PLOS via the rplos package, Crossref via the
 rcrossref package, Entrez via the rentrez package, arXiv via the aRxiv
 package, and BMC, Biorxiv, EuroPMC, and Scopus via internal helper
-functions".
+functions”.
 
 We shall use `fulltext` to retrieve the titles and abstracts of
 scientific articles mentioning each species, and will use `tidytext` to
@@ -140,15 +140,15 @@ by data source.
 ## [10] "Dietary Compositions and Their Seasonal Shifts in Japanese Resident Birds, Estimated from the Analysis of Volunteer Monitoring Data"
 ```
 
-If we were working on a scientific study, we'd add a few more filters,
+If we were working on a scientific study, we’d add a few more filters,
 e.g. having the species mentioned in the abstract, and not only
 somewhere in the paper which is probably the way the different
-literature search providers define a match. But we're not, so we can
+literature search providers define a match. But we’re not, so we can
 keep our query quite free! My favourite paper involving the Carrion Crow
-is ["Investigating the impact of media on demand for wildlife: A case
+is [“Investigating the impact of media on demand for wildlife: A case
 study of Harry Potter and the UK trade in
-owls"](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0182368)
-because it's a fun and important scientific question, and is supported
+owls”](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0182368)
+because it’s a fun and important scientific question, and is supported
 by open data (by the way you can access CITES trade data (international
 trade in endangered species) in R using
 [`cites`](https://github.com/ecohealthalliance/cites/) and CITES
@@ -220,7 +220,7 @@ head(words, n = 10)
 ```
 
 Not too surprising, and obviously less entertaining than looking at
-individual species' results. Maybe a wordcloud can give us a better idea
+individual species’ results. Maybe a wordcloud can give us a better idea
 of the wide area of topics of studies involving our 50 most frequent
 bird species. We use the [`wordcloud`
 package](https://cran.r-project.org/web/packages/wordcloud/index.html).
@@ -234,9 +234,9 @@ with(words, wordcloud(word, n, max.words = 100))
 ![wordcloud of titles and abstracts of scientific
 papers](/img/blog-images/2018-09-11-birds-science/wordcloud-1.png)
 
-We see that topics include ecological words such as "foraging" but also
-epidemiological questions since "influenza" and "h5n1" come up. Now, how
-informative as this wordcloud can be, it's a bit ugly, so we'll prettify
+We see that topics include ecological words such as “foraging” but also
+epidemiological questions since “influenza” and “h5n1” come up. Now, how
+informative as this wordcloud can be, it’s a bit ugly, so we’ll prettify
 it using the [`wordcloud2`
 package](https://github.com/Lchiffon/wordcloud2) instead, and the
 silhouette of a bird [from
@@ -253,7 +253,7 @@ htmlwidgets::saveWidget(bird,
                         selfcontained = F)
 ```
 
-I wasn't able to `webshot` the resulting html despite increasing the
+I wasn’t able to `webshot` the resulting html despite increasing the
 `delay` parameter so I screenshot it by hand!
 
 ```r
@@ -265,9 +265,9 @@ magick::image_read("screenshot.png")
 wordcloud shaped as a bird
 </p>
 
-The result is a bit kitsch, doesn't include the word "species", one
-needs to know it's the silhouette of a bird to recognize it, and we'd
-need to work a bit on not reshaping the silhouette, but it's fun as it
+The result is a bit kitsch, doesn’t include the word “species”, one
+needs to know it’s the silhouette of a bird to recognize it, and we’d
+need to work a bit on not reshaping the silhouette, but it’s fun as it
 is.
 
 # Querying scientific open data
@@ -375,7 +375,7 @@ head(data_words, n = 10)
 ```
 
 Data is the most common word which is quite logical for metadata of
-actual datasets. Let's also have a look at a regular wordcloud.
+actual datasets. Let’s also have a look at a regular wordcloud.
 
 ```r
 with(data_words, wordcloud(word, n, max.words = 100))
@@ -455,12 +455,12 @@ and can support your workflow. As a reminder, in this series we saw
 - [How to identify spots for birding using open geographical
   data](https://ropensci.org/blog/2018/08/14/where-to-bird/).
   Featuring `opencage` for geocoding, `bbox` for bounding box
-  creation, `osmdata` for OpenStreetMap's Overpass API querying,
-  `osmplotr` for map drawing using OpenStreetMap's data.
+  creation, `osmdata` for OpenStreetMap’s Overpass API querying,
+  `osmplotr` for map drawing using OpenStreetMap’s data.
 
 - [How to obtain bird occurrence data in
   R](https://ropensci.org/blog/2018/08/21/birds-radolfzell/).
-  Featuring `rebird` for interaction with the eBird's API, and `auk`
+  Featuring `rebird` for interaction with the eBird’s API, and `auk`
   for munging of the whole eBird dataset.
 
 - [How to extract text from old natural history
@@ -475,9 +475,9 @@ and can support your workflow. As a reminder, in this series we saw
   providing access to species traits data.
 
 - How to query the scientific literature and scientific open data
-  repositories. This is the post you've just read!
+  repositories. This is the post you’ve just read!
 
-That's a wrap! But now, don't *you* hesitate to explore our packages
+That’s a wrap! But now, don’t *you* hesitate to explore our packages
 suite for your own needs, and to share about your use cases of rOpenSci
 packages as a birder or not via [our friendly discussion
 forum](https://discuss.ropensci.org/c/usecases)! Happy birding!
