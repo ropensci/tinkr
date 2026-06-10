@@ -124,9 +124,10 @@ protect_inline_math <- function(body, ns) {
   if (length(imath)) {
     new_nodes <- purrr::map(imath, fix_fully_inline)
     # since we split up the nodes, we have to do this node by node
-    for (i in seq(new_nodes)) {
-      add_node_siblings(imath[[i]], new_nodes[[i]], remove = TRUE)
-    }
+    purrr::map(
+      seq(new_nodes),
+      \(i) add_node_siblings(imath[[i]], new_nodes[[i]], remove = TRUE)
+    )
   }
 
   # protect math that is broken across lines or markdown elements
@@ -159,9 +160,7 @@ protect_inline_math <- function(body, ns) {
     tags <- seq_along(bmath[endless])
     xml2::xml_set_attr(bmath[endless], "latex-pair", tags)
     xml2::xml_set_attr(bmath[headless], "latex-pair", tags)
-    for (i in tags) {
-      fix_partial_inline(i, body, ns)
-    }
+    purrr::map(tags, \(i) fix_partial_inline(i, body, ns))
   }
   copy_xml(body)
 }
@@ -298,9 +297,10 @@ protect_tickbox <- function(body, ns) {
   char <- sub("(\\[.\\])", "\\1</text><text>", char, perl = TRUE)
   new_nodes <- purrr::map(char, make_text_nodes)
   # since we split up the nodes, we have to do this node by node
-  for (i in seq(new_nodes)) {
+  purrr::map(seq(new_nodes), \(i) {
     add_node_siblings(ticks[[i]], new_nodes[[i]], remove = TRUE)
-  }
+  })
+
   copy_xml(body)
 }
 
@@ -437,27 +437,33 @@ fix_unescaped_squares <- function(nodes, txt) {
   # indicator of which lines have escaped square braces
   escapes <- which(vapply(squares, sum, integer(1)) > 0L)
   lines <- get_linestart(nodes)
-  for (i in seq_along(lines)) {
-    this_line <- lines[[i]]
-    this_node <- nodes[[i]]
-    if (!this_line %in% escapes) {
-      # if there are no existing escaped braces here, we need to protect them
-      fix_unescaped(this_node)
-    } else {
-      # if there are escaped braces, there may be situations where we have
-      # escaped and unescaped braces on the same line (for example a link and
-      # an example of a link). This will tell us if the node we are handling
-      # contain the characters we need to escape (markup splits the nodes).
-      start <- get_colstart(this_node)
-      end <- get_colend(this_node)
-      escape_sequence <- squares[[this_line]]
-      overlaps <- start <= max(escape_sequence) & end >= min(escape_sequence)
-      if (overlaps) {
-        fix_unescaped(this_node, escape_sequence, offset = start)
-      }
-    }
-  }
+
+  purrr::map(seq_along(lines), \(i) {
+    fix_single_unescaped_square(i, nodes, lines, squares, escapes)
+  })
+
   invisible()
+}
+
+fix_single_unescaped_square <- function(i, nodes, lines, squares, escapes) {
+  this_line <- lines[[i]]
+  this_node <- nodes[[i]]
+  if (!this_line %in% escapes) {
+    # if there are no existing escaped braces here, we need to protect them
+    fix_unescaped(this_node)
+    return(TRUE)
+  }
+  # if there are escaped braces, there may be situations where we have
+  # escaped and unescaped braces on the same line (for example a link and
+  # an example of a link). This will tell us if the node we are handling
+  # contain the characters we need to escape (markup splits the nodes).
+  start <- get_colstart(this_node)
+  end <- get_colend(this_node)
+  escape_sequence <- squares[[this_line]]
+  overlaps <- start <= max(escape_sequence) & end >= min(escape_sequence)
+  if (overlaps) {
+    fix_unescaped(this_node, escape_sequence, offset = start)
+  }
 }
 
 

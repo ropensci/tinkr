@@ -6,44 +6,51 @@ find_curly <- function(body, ns) {
   attr_texts <- xml2::xml_text(curlies)
   no_closing <- !grepl("[}]", attr_texts)
   if (any(no_closing)) {
-    close_xpath <- "self::*/following-sibling::md:text[contains(text(), '}')]"
-    for (not_closed in curlies[no_closing]) {
-      closing <- xml2::xml_find_all(
-        not_closed,
-        sprintf("./%s", close_xpath),
-        ns
-      )
-      xml2::xml_text(not_closed) <- paste(
-        xml2::xml_text(not_closed),
-        xml2::xml_text(closing),
-        sep = "\n"
-      )
-      xml2::xml_remove(closing)
-    }
+    purrr::map(curlies[no_closing], \(not_closed) {
+      handle_not_closing(not_closed, ns, no_closing)
+    })
   }
   curlies
+}
+
+handle_not_closing <- function(not_closed, ns, no_closing) {
+  close_xpath <- "self::*/following-sibling::md:text[contains(text(), '}')]"
+  closing <- xml2::xml_find_all(
+    not_closed,
+    sprintf("./%s", close_xpath),
+    ns
+  )
+  xml2::xml_text(not_closed) <- paste(
+    xml2::xml_text(not_closed),
+    xml2::xml_text(closing),
+    sep = "\n"
+  )
+  xml2::xml_remove(closing)
 }
 
 digest_curly <- function(curly, ns) {
   char <- as.character(curly)
   curlies <- regmatches(char, gregexpr("\\{.*?\\}", char))[[1]]
-  for (curl in curlies) {
-    attributes <- "curly='true'"
 
-    alt_fragment <- regmatches(curl, gregexpr("alt=(['\"]).*?\\1", curl))[[1]]
-    if (length(alt_fragment) > 0) {
-      alt_text <- sub("^alt=", "", alt_fragment)
-      attributes <- sprintf("%s alt=%s", attributes, alt_text)
-    }
+  purrr::reduce(curlies, absorb_curly, .init = char) |>
+    make_text_nodes()
+}
 
-    char <- sub(
-      curl,
-      sprintf("</text><text %s>%s</text><text>", attributes, curl),
-      char,
-      fixed = TRUE
-    )
+absorb_curly <- function(char, curl) {
+  attributes <- "curly='true'"
+
+  alt_fragment <- regmatches(curl, gregexpr("alt=(['\"]).*?\\1", curl))[[1]]
+  if (length(alt_fragment) > 0) {
+    alt_text <- sub("^alt=", "", alt_fragment)
+    attributes <- sprintf("%s alt=%s", attributes, alt_text)
   }
-  make_text_nodes(char)
+
+  char <- sub(
+    curl,
+    sprintf("</text><text %s>%s</text><text>", attributes, curl),
+    char,
+    fixed = TRUE
+  )
 }
 
 #' Protect curly elements for further processing
@@ -75,9 +82,9 @@ protect_curly <- function(body, ns = md_ns()) {
   curly <- find_curly(body, ns)
   new_nodes <- purrr::map(curly, digest_curly, ns = ns)
   # since we split up the nodes, we have to do this node by node
-  for (i in seq(new_nodes)) {
+  purrr::map(seq(new_nodes), \(i) {
     add_node_siblings(curly[[i]], new_nodes[[i]], remove = TRUE)
-  }
+  })
   copy_xml(body)
 }
 
