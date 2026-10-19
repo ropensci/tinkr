@@ -39,8 +39,24 @@ knitr::opts_chunk$set(
 
 Wanna try the package and tell us what doesn't work yet? 
 
+### From rOpenSci's R-universe
+
 ```r 
 install.packages("tinkr", repos = "https://ropensci.r-universe.dev")
+```
+
+### From conda-forge
+
+Versioned releases of tinkr are available on [conda-forge](https://github.com/conda-forge/r-tinkr-feedstock) as `r-tinkr` and can be installed with [Pixi](https://pixi.prefix.dev/):
+
+```sh
+pixi add r-tinkr
+```
+
+or with [`conda`](https://docs.conda.io/):
+
+```sh
+conda install --channel conda-forge r-tinkr
 ```
 
 ## Examples
